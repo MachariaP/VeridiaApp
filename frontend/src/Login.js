@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import './styles/Login.css';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,13 +18,11 @@ function Login() {
     setError('');
     try {
       const response = await axios.post('/api/login', { email, password });
-      alert(response.data.message);
+      localStorage.setItem('authToken', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      navigate('/dashboard');
     } catch (error) {
-      if (error.response) {
-        setError(error.response.data.message);
-      } else {
-        setError('An error occurred. Please try again.');
-      }
+      setError(error.response?.data?.message || 'An error occurred. Please try again.');
     }
   };
 
@@ -42,6 +42,7 @@ function Login() {
           <h1>Project Planner</h1>
         </div>
         <h2>Login to Your Account</h2>
+        {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -65,9 +66,14 @@ function Login() {
               required
             />
           </div>
-          {error && <p className="error">{error}</p>}
           <button type="submit" className="login-btn">Login</button>
         </form>
+        <p className="auth-switch">
+          Don't have an account? <Link to="/register">Sign up</Link>
+        </p>
+        <p className="auth-switch">
+          Forgot your password? <Link to="/forgot-password">Reset it</Link>
+        </p>
       </div>
     </div>
   );
