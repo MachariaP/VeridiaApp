@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import '../../styles/Login.css';
+import '../../styles/Register.css';
 
 function Register() {
   const [name, setName] = useState('');
@@ -10,6 +10,12 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const getPasswordStrength = (password) => {
+    if (password.length < 6) return 'weak';
+    if (password.length < 10) return 'medium';
+    return 'strong';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,13 +43,13 @@ function Register() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
+    <div className="auth-container">
+      <div className="auth-box">
         <div className="logo">
           <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M9 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V15M7 7H17M7 11H17M7 15H13"
-              stroke="#4776E6"
+              stroke="#667eea"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -86,6 +92,9 @@ function Register() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <div className="password-strength">
+              <div className={`strength-meter strength-${getPasswordStrength(password)}`}></div>
+            </div>
           </div>
           <div className="form-group">
             <label htmlFor="confirm-password">Confirm Password</label>
@@ -98,7 +107,7 @@ function Register() {
               required
             />
           </div>
-          <button type="submit" className="login-btn">Create Account</button>
+          <button type="submit" className="auth-btn">Create Account</button>
         </form>
         <p className="auth-switch">
           Already have an account? <Link to="/login">Sign in</Link>
