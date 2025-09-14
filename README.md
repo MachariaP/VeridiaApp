@@ -1,1 +1,0 @@
-# UGC Community Platform
