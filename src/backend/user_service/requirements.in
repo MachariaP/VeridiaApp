@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+asyncpg
+passlib[bcrypt]
+pytest
+pytest-asyncio
+httpx
+python-keycloak
