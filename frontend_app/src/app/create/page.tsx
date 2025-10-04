@@ -50,20 +50,48 @@ export default function CreateContentPage() {
     }
 
     try {
-      // TODO: This will be connected to content_service API once implemented
-      // For now, just show a success message
-      setSuccess("Content submission feature coming soon! The content_service is being developed.");
+      const token = localStorage.getItem("access_token");
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      // Submit to content_service API
+      const response = await fetch("http://localhost:8001/api/v1/content/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          source_url: sourceUrl,
+          description,
+          category,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to submit content");
+      }
+
+      const data = await response.json();
+      setSuccess("Content submitted successfully! Redirecting to content page...");
       
-      // Clear form on success
+      // Clear form
       setTitle("");
       setSourceUrl("");
       setDescription("");
       setCategory(CATEGORIES[0]);
+      
+      // Redirect to content detail page after a short delay
+      setTimeout(() => {
+        router.push(`/content/${data.id}`);
+      }, 1500);
     } catch (err: any) {
-      setError(err.detail || err.message || "Failed to submit content");
+      setError(err.message || "Failed to submit content");
     } finally {
       setLoading(false);
     }

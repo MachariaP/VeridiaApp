@@ -11,9 +11,17 @@ export default function Layout({ children }: LayoutProps) {
       <header className="bg-foreground text-background shadow-md">
         <nav className="container mx-auto px-4 py-4 md:px-6 md:py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <Link href="/" className="text-xl md:text-2xl font-bold hover:opacity-80 transition-opacity">
-              VeridiaApp
-            </Link>
+            <div className="flex items-center gap-6">
+              <Link href="/" className="text-xl md:text-2xl font-bold hover:opacity-80 transition-opacity">
+                VeridiaApp
+              </Link>
+              <Link
+                href="/discovery"
+                className="text-sm md:text-base hover:opacity-80 transition-opacity"
+              >
+                Discover
+              </Link>
+            </div>
             <div className="flex gap-3 sm:gap-4">
               <Link
                 href="/login"

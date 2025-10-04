@@ -109,9 +109,12 @@ export default function DashboardPage() {
             <p className="text-sm opacity-70 mb-4">
               Explore verified content from the community
             </p>
-            <button className="w-full px-4 py-2 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity">
+            <Link
+              href="/discovery"
+              className="block w-full px-4 py-2 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity text-center"
+            >
               Browse Content
-            </button>
+            </Link>
           </div>
 
           <div className="bg-foreground/5 p-6 rounded-lg border border-foreground/20">
