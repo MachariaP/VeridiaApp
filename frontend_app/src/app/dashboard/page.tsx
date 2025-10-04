@@ -67,7 +67,7 @@ export default function DashboardPage() {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 animate-fadeIn">
           <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
           <button
             onClick={handleLogout}
@@ -78,7 +78,7 @@ export default function DashboardPage() {
         </div>
 
         {user && (
-          <div className="bg-foreground/5 p-6 md:p-8 rounded-lg border border-foreground/20 mb-6">
+          <div className="bg-foreground/5 p-6 md:p-8 rounded-lg border border-foreground/20 mb-6 animate-fadeIn delay-100">
             <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
             <div className="space-y-3">
               <div>
@@ -104,7 +104,7 @@ export default function DashboardPage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-foreground/5 p-6 rounded-lg border border-foreground/20">
+          <div className="bg-foreground/5 p-6 rounded-lg border border-foreground/20 hover-lift animate-slideInFromLeft delay-200">
             <h3 className="text-lg font-semibold mb-2">Content Discovery</h3>
             <p className="text-sm opacity-70 mb-4">
               Explore verified content from the community
@@ -117,7 +117,7 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className="bg-foreground/5 p-6 rounded-lg border border-foreground/20">
+          <div className="bg-foreground/5 p-6 rounded-lg border border-foreground/20 hover-lift animate-slideInFromRight delay-300">
             <h3 className="text-lg font-semibold mb-2">Submit Content</h3>
             <p className="text-sm opacity-70 mb-4">
               Share content for community verification

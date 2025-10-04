@@ -3,6 +3,7 @@
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import { useState, FormEvent } from "react";
+import { register } from "@/lib/api";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -30,23 +31,13 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Registration failed");
-      }
-
+      // Use the register utility function
+      await register(username, email, password);
+      
       // Registration successful, redirect to login
       window.location.href = "/login";
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred during registration");
+    } catch (err: any) {
+      setError(err.detail || err.message || "An error occurred during registration");
     } finally {
       setLoading(false);
     }
@@ -54,7 +45,7 @@ export default function RegisterPage() {
 
   return (
     <Layout>
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto animate-fadeIn">
         <div className="bg-foreground/5 p-6 md:p-8 rounded-lg border border-foreground/20">
           <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center">Register</h1>
           
