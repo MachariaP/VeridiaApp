@@ -2,9 +2,12 @@
 
 import Layout from "@/components/Layout";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, FormEvent } from "react";
+import { login } from "@/lib/api";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,27 +19,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Login failed");
-      }
-
-      const data = await response.json();
-      // Store token in localStorage
-      localStorage.setItem("access_token", data.access_token);
+      // Use the login utility function which handles token storage
+      await login(username, password);
       
-      // Redirect to dashboard or home
-      window.location.href = "/";
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred during login");
+      // Redirect to dashboard after successful login
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.detail || err.message || "An error occurred during login");
     } finally {
       setLoading(false);
     }
