@@ -3,7 +3,7 @@
 import { useEffect, useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Layout from "@/components/Layout";
-import { isAuthenticated } from "@/lib/api";
+import { isAuthenticated, createContent } from "@/lib/api";
 
 // Content categories for dropdown
 const CATEGORIES = [
@@ -50,34 +50,19 @@ export default function CreateContentPage() {
     }
 
     try {
-      const token = localStorage.getItem("access_token");
-      
-      if (!token) {
+      if (!isAuthenticated()) {
         router.push("/login");
         return;
       }
 
-      // Submit to content_service API
-      const response = await fetch("http://localhost:8001/api/v1/content/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title,
-          source_url: sourceUrl,
-          description,
-          category,
-        }),
+      // Submit to content_service API using the utility function
+      const data = await createContent({
+        title,
+        source_url: sourceUrl,
+        description,
+        category,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to submit content");
-      }
-
-      const data = await response.json();
       setSuccess("Content submitted successfully! Redirecting to content page...");
       
       // Clear form

@@ -4,25 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Layout from "@/components/Layout";
-
-interface SearchResult {
-  content_id: string;
-  title: string;
-  description: string;
-  source_url: string;
-  category: string;
-  status: string;
-  created_by_username?: string;
-  created_at?: string;
-  score: number;
-}
-
-interface SearchResponse {
-  query: string;
-  total: number;
-  results: SearchResult[];
-  took_ms: number;
-}
+import { searchContent, getCategories, SearchResult } from "@/lib/api";
 
 export default function DiscoveryPage() {
   const router = useRouter();
@@ -39,20 +21,16 @@ export default function DiscoveryPage() {
 
   useEffect(() => {
     // Fetch available categories on mount
+    const fetchCategories = async () => {
+      try {
+        const cats = await getCategories();
+        setCategories(cats);
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
     fetchCategories();
   }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("http://localhost:8003/api/v1/search/categories");
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data.categories || []);
-      }
-    } catch (err) {
-      console.error("Failed to fetch categories:", err);
-    }
-  };
 
   const handleSearch = async (e?: FormEvent<HTMLFormElement>) => {
     if (e) {
@@ -69,28 +47,13 @@ export default function DiscoveryPage() {
     setHasSearched(true);
 
     try {
-      // Build query params
-      const params = new URLSearchParams({
+      // Use the search utility function
+      const data = await searchContent({
         query: query.trim(),
+        category: category || undefined,
+        sort_by: sortBy || undefined,
       });
 
-      if (category) {
-        params.append("category", category);
-      }
-
-      if (sortBy) {
-        params.append("sort_by", sortBy);
-      }
-
-      const response = await fetch(
-        `http://localhost:8003/api/v1/search/?${params.toString()}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Search request failed");
-      }
-
-      const data: SearchResponse = await response.json();
       setSearchResults(data.results);
       setTotalResults(data.total);
       setSearchTime(data.took_ms);

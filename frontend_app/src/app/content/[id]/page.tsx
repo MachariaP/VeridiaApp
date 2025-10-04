@@ -3,40 +3,24 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Layout from "@/components/Layout";
-import { isAuthenticated, getToken } from "@/lib/api";
-
-interface ContentData {
-  id: string;
-  title: string;
-  source_url: string;
-  description: string;
-  category: string;
-  status: string;
-  created_by_username?: string;
-  created_at: string;
-}
-
-interface VoteStats {
-  content_id: string;
-  total_votes: number;
-  verified_votes: number;
-  disputed_votes: number;
-  verification_percentage: number;
-}
-
-interface Comment {
-  id: number;
-  username: string;
-  comment: string;
-  created_at: string;
-}
+import {
+  isAuthenticated,
+  getContentById,
+  getVoteStats,
+  submitVote,
+  getComments,
+  postComment,
+  Content,
+  VoteStats,
+  Comment,
+} from "@/lib/api";
 
 export default function ContentDetailPage() {
   const params = useParams();
   const router = useRouter();
   const contentId = params.id as string;
 
-  const [content, setContent] = useState<ContentData | null>(null);
+  const [content, setContent] = useState<Content | null>(null);
   const [voteStats, setVoteStats] = useState<VoteStats | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,37 +44,19 @@ export default function ContentDetailPage() {
     setError("");
 
     try {
-      // Fetch content details from content_service
-      const contentResponse = await fetch(
-        `http://localhost:8001/api/v1/content/${contentId}`
-      );
-      
-      if (!contentResponse.ok) {
-        throw new Error("Content not found");
-      }
-      
-      const contentData = await contentResponse.json();
+      // Fetch content details using API utility
+      const contentData = await getContentById(contentId);
       setContent(contentData);
 
-      // Fetch vote statistics from verification_service
-      const voteResponse = await fetch(
-        `http://localhost:8002/api/v1/verify/${contentId}/votes`
-      );
-      
-      if (voteResponse.ok) {
-        const voteData = await voteResponse.json();
+      // Fetch vote statistics using API utility
+      const voteData = await getVoteStats(contentId);
+      if (voteData) {
         setVoteStats(voteData);
       }
 
-      // Fetch comments from verification_service
-      const commentsResponse = await fetch(
-        `http://localhost:8002/api/v1/verify/${contentId}/comments`
-      );
-      
-      if (commentsResponse.ok) {
-        const commentsData = await commentsResponse.json();
-        setComments(commentsData);
-      }
+      // Fetch comments using API utility
+      const commentsData = await getComments(contentId);
+      setComments(commentsData);
 
     } catch (err: any) {
       setError(err.message || "Failed to load content");
@@ -107,30 +73,13 @@ export default function ContentDetailPage() {
 
     setVotingLoading(true);
     try {
-      const token = getToken();
-      const response = await fetch(
-        `http://localhost:8002/api/v1/verify/${contentId}/vote`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({ vote }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit vote");
-      }
-
+      // Submit vote using API utility
+      await submitVote(contentId, vote);
       setUserVote(vote);
+      
       // Refresh vote stats
-      const voteResponse = await fetch(
-        `http://localhost:8002/api/v1/verify/${contentId}/votes`
-      );
-      if (voteResponse.ok) {
-        const voteData = await voteResponse.json();
+      const voteData = await getVoteStats(contentId);
+      if (voteData) {
         setVoteStats(voteData);
       }
 
@@ -157,32 +106,13 @@ export default function ContentDetailPage() {
     setCommentError("");
 
     try {
-      const token = getToken();
-      const response = await fetch(
-        `http://localhost:8002/api/v1/verify/${contentId}/comments`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({ comment: newComment }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to post comment");
-      }
-
+      // Post comment using API utility
+      await postComment(contentId, newComment);
       setNewComment("");
+      
       // Refresh comments
-      const commentsResponse = await fetch(
-        `http://localhost:8002/api/v1/verify/${contentId}/comments`
-      );
-      if (commentsResponse.ok) {
-        const commentsData = await commentsResponse.json();
-        setComments(commentsData);
-      }
+      const commentsData = await getComments(contentId);
+      setComments(commentsData);
 
     } catch (err: any) {
       setCommentError(err.message || "Failed to post comment");
