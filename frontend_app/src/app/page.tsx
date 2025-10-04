@@ -1,103 +1,58 @@
-import Image from "next/image";
+import Layout from "@/components/Layout";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <Layout>
+      <div className="max-w-4xl mx-auto text-center">
+        <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-6">
+          Welcome to VeridiaApp
+        </h1>
+        <p className="text-base md:text-xl mb-6 md:mb-8 opacity-80">
+          Empowering Truth-Seekers in a World of Information Overload
+        </p>
+        <p className="text-sm md:text-base mb-8 md:mb-12 opacity-70 max-w-2xl mx-auto">
+          A dynamic, mobile-first platform designed for content verification, 
+          fostering a community-driven ecosystem for truth-seekers, researchers, 
+          and content creators.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 md:mb-16">
+          <Link
+            href="/register"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-foreground text-background hover:opacity-90 transition-opacity font-medium text-base md:text-lg"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Get Started
+          </Link>
+          <Link
+            href="/login"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg border border-foreground hover:bg-foreground hover:text-background transition-colors font-medium text-base md:text-lg"
           >
-            Read our docs
-          </a>
+            Sign In
+          </Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-12 md:mt-16 text-left">
+          <div className="p-4 md:p-6 rounded-lg border border-foreground/20">
+            <h3 className="text-lg md:text-xl font-semibold mb-2">Create & Verify</h3>
+            <p className="text-sm md:text-base opacity-70">
+              Tools for generating and verifying content with AI assistance
+            </p>
+          </div>
+          <div className="p-4 md:p-6 rounded-lg border border-foreground/20">
+            <h3 className="text-lg md:text-xl font-semibold mb-2">Community</h3>
+            <p className="text-sm md:text-base opacity-70">
+              Collaborative features for discussions, voting, and real-time interactions
+            </p>
+          </div>
+          <div className="p-4 md:p-6 rounded-lg border border-foreground/20">
+            <h3 className="text-lg md:text-xl font-semibold mb-2">Discover</h3>
+            <p className="text-sm md:text-base opacity-70">
+              Advanced search and recommendation engines powered by AI
+            </p>
+          </div>
+        </div>
+      </div>
+    </Layout>
   );
 }
