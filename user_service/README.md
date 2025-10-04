@@ -5,12 +5,13 @@ This microservice handles user authentication, registration, profiles, and relat
 ## Features
 - ✅ User registration with email validation
 - ✅ Secure login with JWT authentication
-- ✅ Password hashing using bcrypt
+- ✅ Password hashing using Argon2 (production-grade security)
 - ✅ Protected profile endpoint (/me)
 - ✅ Event publishing to RabbitMQ (stub implementation)
 - ✅ Comprehensive error handling
 - ✅ Type safety with Pydantic models
 - ✅ SQLAlchemy ORM for database operations
+- ✅ Automatic database initialization
 - ✅ CORS enabled for frontend integration
 
 ## Technologies
@@ -19,7 +20,7 @@ This microservice handles user authentication, registration, profiles, and relat
 - **SQLAlchemy** - SQL toolkit and ORM
 - **PostgreSQL** - Primary database (with SQLite fallback for development)
 - **JWT (python-jose)** - JSON Web Tokens for authentication
-- **Passlib** - Password hashing library with bcrypt
+- **Passlib** - Password hashing library with bcrypt and Argon2
 - **Uvicorn** - ASGI server implementation
 
 ## API Endpoints
@@ -44,27 +45,84 @@ This microservice handles user authentication, registration, profiles, and relat
    ```bash
    pip install -r requirements.txt
    ```
+   
+   **Note:** All required dependencies including `argon2-cffi` for password hashing are included in `requirements.txt`.
 
 2. Set environment variables (optional):
    ```bash
    export DATABASE_URL="postgresql://user:password@localhost:5432/veridiadb"
    export SECRET_KEY="your-secret-key-here"
    ```
-   Note: If DATABASE_URL is not set, SQLite will be used as fallback.
+   
+   **Note:** If DATABASE_URL is not set, SQLite will be used as fallback (stored as `veridiaapp.db`).
 
 3. Run the development server:
    ```bash
-   uvicorn main:app --reload
+   uvicorn app.main:app --reload --port 8000
    ```
-   Or alternatively:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
+   
+   The database will be initialized automatically on startup.
 
 4. Access the API:
    - API: http://localhost:8000
    - Interactive API docs (Swagger UI): http://localhost:8000/docs
    - Alternative API docs (ReDoc): http://localhost:8000/redoc
+
+## Troubleshooting
+
+### Unable to login after registration
+
+If you can register but not login, check:
+
+1. **Missing argon2-cffi dependency**: 
+   ```bash
+   pip install argon2-cffi
+   ```
+   This should already be in `requirements.txt`, but if you installed before the update, install it manually.
+
+2. **Database not initialized properly**:
+   ```bash
+   # Check if database file exists
+   ls -lh veridiaapp.db
+   
+   # View database schema
+   sqlite3 veridiaapp.db ".schema users"
+   
+   # Check registered users
+   sqlite3 veridiaapp.db "SELECT id, username, email, is_active FROM users;"
+   ```
+
+3. **Service logs**: Check the terminal output for error messages when attempting to register or login.
+
+For more detailed troubleshooting, see the [DATABASE_SETUP.md](../DATABASE_SETUP.md) guide in the root directory.
+
+## Database Management
+
+### View Database Contents
+```bash
+# View all users (excluding passwords)
+sqlite3 veridiaapp.db "SELECT id, username, email, is_active, created_at FROM users;"
+
+# Count total users
+sqlite3 veridiaapp.db "SELECT COUNT(*) as total_users FROM users;"
+
+# Check specific user
+sqlite3 veridiaapp.db "SELECT * FROM users WHERE username='testuser';"
+```
+
+### Reset Database
+```bash
+# Backup first (optional)
+cp veridiaapp.db veridiaapp.db.backup
+
+# Remove database
+rm veridiaapp.db
+
+# Restart service to recreate
+uvicorn app.main:app --reload --port 8000
+```
+
+See `init_db.sql` for the complete database schema reference.
 
 ### Docker
 1. Build the Docker image:

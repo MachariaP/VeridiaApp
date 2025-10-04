@@ -2,6 +2,8 @@
 
 This guide will help you set up and run the entire VeridiaApp stack on your local machine.
 
+**🔥 Having trouble logging in after registration?** See [DATABASE_SETUP.md](DATABASE_SETUP.md) for solutions to common database and authentication issues.
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
@@ -29,7 +31,6 @@ cd VeridiaApp
 ```bash
 cd user_service
 pip install -r requirements.txt
-pip install argon2-cffi  # Required for password hashing
 
 # Optional: Set environment variables
 export DATABASE_URL="postgresql://user:password@localhost:5432/veridiadb"
@@ -44,6 +45,8 @@ The user service will:
 - Create database tables automatically on startup
 - Be available at http://localhost:8000
 - Provide API docs at http://localhost:8000/docs
+
+**Note:** All required dependencies including `argon2-cffi` for password hashing are now included in `requirements.txt`. If you experience login issues after registration, see [DATABASE_SETUP.md](DATABASE_SETUP.md) for troubleshooting.
 
 #### Content Service (Port 8001)
 
