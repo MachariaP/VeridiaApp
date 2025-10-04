@@ -33,7 +33,7 @@ export default function LoginPage() {
 
   return (
     <Layout>
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto animate-fadeIn">
         <div className="bg-foreground/5 p-6 md:p-8 rounded-lg border border-foreground/20">
           <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center">Login</h1>
           
