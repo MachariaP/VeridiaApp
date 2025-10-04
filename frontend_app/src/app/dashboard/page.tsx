@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Layout from "@/components/Layout";
 import { getCurrentUser, isAuthenticated, logout, User } from "@/lib/api";
 
@@ -118,9 +119,12 @@ export default function DashboardPage() {
             <p className="text-sm opacity-70 mb-4">
               Share content for community verification
             </p>
-            <button className="w-full px-4 py-2 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity">
+            <Link
+              href="/create"
+              className="block w-full px-4 py-2 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity text-center"
+            >
               Create New
-            </button>
+            </Link>
           </div>
         </div>
 
