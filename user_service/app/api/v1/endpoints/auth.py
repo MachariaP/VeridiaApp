@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
+import logging
 
 from app.core.database import get_db
 from app.core.security import (
@@ -14,6 +15,9 @@ from app.core.security import (
 from app.models.user import User
 from app.schemas.user import UserIn, UserOut, Token, UserLogin
 from app.utils.messaging import event_publisher
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
@@ -58,46 +62,56 @@ def register(user_in: UserIn, db: Session = Depends(get_db)):
     - **email**: Valid email address
     - **password**: Password (8-72 characters, max 72 bytes)
     """
-    # Fallback validation for password length (Pydantic should handle this)
-    if len(user_in.password.encode('utf-8')) > 72:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password is too long. Must be 72 bytes or less."
-        )
+    try:
+        # Fallback validation for password length (Pydantic should handle this)
+        if len(user_in.password.encode('utf-8')) > 72:
+            logger.error(f"Password validation failed: Password exceeds 72 bytes for username {user_in.username}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password is too long. Must be 72 bytes or less."
+            )
 
-    # Check if username already exists
-    if get_user_by_username(db, user_in.username):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered"
+        # Check if username already exists
+        if get_user_by_username(db, user_in.username):
+            logger.error(f"Username already registered: {user_in.username}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already registered"
+            )
+        
+        # Check if email already exists
+        if get_user_by_email(db, user_in.email):
+            logger.error(f"Email already registered: {user_in.email}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered"
+            )
+        
+        # Create new user with hashed password
+        db_user = User(
+            username=user_in.username,
+            email=user_in.email,
+            hashed_password=get_password_hash(user_in.password)
         )
-    
-    # Check if email already exists
-    if get_user_by_email(db, user_in.email):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+        
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        
+        # Publish UserRegistered event to message broker
+        event_publisher.publish_user_registered(
+            user_id=db_user.id,
+            username=db_user.username,
+            email=db_user.email
         )
-    
-    # Create new user with hashed password
-    db_user = User(
-        username=user_in.username,
-        email=user_in.email,
-        hashed_password=get_password_hash(user_in.password)
-    )
-    
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    
-    # Publish UserRegistered event to message broker
-    event_publisher.publish_user_registered(
-        user_id=db_user.id,
-        username=db_user.username,
-        email=db_user.email
-    )
-    
-    return db_user
+        
+        logger.info(f"User registered successfully: {db_user.username}")
+        return db_user
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Registration failed: {str(e)}")
+        raise
 
 @router.post("/login", response_model=Token)
 def login(user_login: UserLogin, db: Session = Depends(get_db)):
@@ -110,6 +124,7 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
     user = get_user_by_username(db, user_login.username)
     
     if not user or not verify_password(user_login.password, user.hashed_password):
+        logger.error(f"Login failed for username: {user_login.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -117,6 +132,7 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
         )
     
     if not user.is_active:
+        logger.error(f"Inactive user account: {user_login.username}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Inactive user account"
@@ -128,6 +144,7 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     
+    logger.info(f"User logged in successfully: {user_login.username}")
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me", response_model=UserOut)
@@ -137,4 +154,5 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
     
     Requires valid JWT token in Authorization header.
     """
+    logger.info(f"User profile accessed: {current_user.username}")
     return current_user
