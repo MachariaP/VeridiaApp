@@ -1,21 +1,123 @@
 # User Service: VeridiaApp Backend Microservice for User Management
 
-This microservice handles user authentication, registration, profiles, and related functionalities.
+This microservice handles user authentication, registration, profiles, and related functionalities as part of the VeridiaApp microservices architecture.
 
 ## Features
-- User registration and login with JWT authentication.
-- Profile management.
-- Secure password hashing.
+- ✅ User registration with email validation
+- ✅ Secure login with JWT authentication
+- ✅ Password hashing using bcrypt
+- ✅ Protected profile endpoint (/me)
+- ✅ Event publishing to RabbitMQ (stub implementation)
+- ✅ Comprehensive error handling
+- ✅ Type safety with Pydantic models
+- ✅ SQLAlchemy ORM for database operations
+- ✅ CORS enabled for frontend integration
 
 ## Technologies
-- FastAPI for API development.
-- PostgreSQL for data storage.
-- JWT for auth tokens.
+- **FastAPI** - Modern, fast web framework for building APIs
+- **Pydantic** - Data validation using Python type annotations
+- **SQLAlchemy** - SQL toolkit and ORM
+- **PostgreSQL** - Primary database (with SQLite fallback for development)
+- **JWT (python-jose)** - JSON Web Tokens for authentication
+- **Passlib** - Password hashing library with bcrypt
+- **Uvicorn** - ASGI server implementation
+
+## API Endpoints
+
+### Authentication
+- `POST /api/v1/auth/register` - Register a new user
+  - Request body: `{"username": "string", "email": "string", "password": "string"}`
+  - Response: User object with id, username, email, is_active
+
+- `POST /api/v1/auth/login` - Login and get JWT token
+  - Request body: `{"username": "string", "password": "string"}`
+  - Response: `{"access_token": "string", "token_type": "bearer"}`
+
+- `GET /api/v1/auth/me` - Get current user profile (requires authentication)
+  - Headers: `Authorization: Bearer <token>`
+  - Response: User object with id, username, email, is_active
 
 ## Setup and Running
-1. Install dependencies: `pip install -r requirements.txt`
-2. Set environment variables in `.env` (copy from `.env.example`).
-3. Run locally: `uvicorn app.main:app --reload`
-4. Build and run with Docker: `docker build -t user-service .` then `docker run -p 8000:8000 user-service`
 
-Visit http://localhost:8000/docs for API documentation (Swagger UI).
+### Local Development
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. Set environment variables (optional):
+   ```bash
+   export DATABASE_URL="postgresql://user:password@localhost:5432/veridiadb"
+   export SECRET_KEY="your-secret-key-here"
+   ```
+   Note: If DATABASE_URL is not set, SQLite will be used as fallback.
+
+3. Run the development server:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+4. Access the API:
+   - API: http://localhost:8000
+   - Interactive API docs (Swagger UI): http://localhost:8000/docs
+   - Alternative API docs (ReDoc): http://localhost:8000/redoc
+
+### Docker
+1. Build the Docker image:
+   ```bash
+   docker build -t user-service .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -p 8000:8000 user-service
+   ```
+
+## Architecture
+
+This service follows best practices:
+- **Dependency Injection** - FastAPI's DI system for database sessions
+- **Layered Architecture** - Separation of concerns (routes, models, schemas, core)
+- **Type Safety** - Full type hints and Pydantic validation
+- **Security** - Password hashing, JWT tokens, CORS configuration
+- **Event-Driven** - RabbitMQ event publishing (stub for future implementation)
+
+## Directory Structure
+```
+user_service/
+├── app/
+│   ├── api/
+│   │   └── v1/
+│   │       └── endpoints/
+│   │           └── auth.py          # Authentication endpoints
+│   ├── core/
+│   │   ├── database.py              # Database configuration
+│   │   └── security.py              # Password hashing & JWT utilities
+│   ├── models/
+│   │   └── user.py                  # SQLAlchemy User model
+│   ├── schemas/
+│   │   └── user.py                  # Pydantic schemas
+│   ├── utils/
+│   │   └── messaging.py             # RabbitMQ event publisher (stub)
+│   └── main.py                      # FastAPI application entry point
+├── Dockerfile
+├── requirements.txt
+└── README.md
+```
+
+## Testing
+```bash
+# Test registration
+curl -X POST http://localhost:8000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","email":"test@example.com","password":"testpass123"}'
+
+# Test login
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","password":"testpass123"}'
+
+# Test profile (use token from login)
+curl http://localhost:8000/api/v1/auth/me \
+  -H "Authorization: Bearer <your-token-here>"
+```
