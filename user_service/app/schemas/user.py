@@ -1,39 +1,37 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
+from pydantic import BaseModel, EmailStr, validator
 
-
-class UserBase(BaseModel):
-    """Base user schema with common attributes."""
+class UserIn(BaseModel):
+    username: str
     email: EmailStr
-    username: str = Field(..., min_length=3, max_length=50)
+    password: str
 
+    @validator("password")
+    def validate_password(cls, v):
+        if len(v.encode('utf-8')) > 72:
+            raise ValueError("Password must be 72 bytes or less")
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters")
+        return v
 
-class UserIn(UserBase):
-    """Schema for user registration input."""
-    password: str = Field(..., min_length=8, max_length=100)
+    @validator("username")
+    def validate_username(cls, v):
+        if len(v) < 3 or len(v) > 50:
+            raise ValueError("Username must be between 3 and 50 characters")
+        return v
 
-
-class UserOut(UserBase):
-    """Schema for user output (response)."""
+class UserOut(BaseModel):
     id: int
-    is_active: bool = True
+    username: str
+    email: EmailStr
+    is_active: bool
 
     class Config:
         from_attributes = True
 
-
-class Token(BaseModel):
-    """Schema for JWT token response."""
-    access_token: str
-    token_type: str = "bearer"
-
-
-class TokenData(BaseModel):
-    """Schema for JWT token payload data."""
-    username: Optional[str] = None
-
-
 class UserLogin(BaseModel):
-    """Schema for user login input."""
     username: str
     password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
