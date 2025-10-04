@@ -54,6 +54,10 @@ This microservice handles user authentication, registration, profiles, and relat
 
 3. Run the development server:
    ```bash
+   uvicorn main:app --reload
+   ```
+   Or alternatively:
+   ```bash
    uvicorn app.main:app --reload
    ```
 
