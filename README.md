@@ -43,10 +43,12 @@ Services communicate asynchronously via RabbitMQ:
 ### Prerequisites
 - Python 3.11+ (for backend services)
 - Node.js 18+ (for frontend)
-- MongoDB 6.0+
-- PostgreSQL 14+
-- Elasticsearch 8.x
-- RabbitMQ 3.x
+- MongoDB 6.0+ (optional - defaults to in-memory storage)
+- PostgreSQL 14+ (optional - defaults to SQLite)
+- Elasticsearch 8.x (optional - defaults to in-memory storage)
+- RabbitMQ 3.x (optional - currently stubbed)
+
+**Note:** Most external services are optional. The application can run with just Python and Node.js installed, using SQLite for databases and in-memory storage for other services.
 
 ### Quick Start
 
@@ -92,6 +94,17 @@ Services communicate asynchronously via RabbitMQ:
    - Content Service API: http://localhost:8001/docs
    - Verification Service API: http://localhost:8002/docs
    - Search Service API: http://localhost:8003/docs
+
+### Troubleshooting
+
+**Unable to login after registration?** 
+👉 See [QUICK_FIX.md](QUICK_FIX.md) for immediate solution
+
+**Database configuration help?**
+👉 See [DATABASE_SETUP.md](DATABASE_SETUP.md) for complete guide
+
+**General setup issues?**
+👉 See [SETUP.md](SETUP.md) for detailed instructions
 
 ### Detailed Setup
 For detailed setup instructions for each service:
