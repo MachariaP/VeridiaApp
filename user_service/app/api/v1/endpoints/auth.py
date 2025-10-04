@@ -18,16 +18,13 @@ from app.utils.messaging import event_publisher
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
-
 def get_user_by_username(db: Session, username: str):
     """Retrieve a user by username."""
     return db.query(User).filter(User.username == username).first()
 
-
 def get_user_by_email(db: Session, email: str):
     """Retrieve a user by email."""
     return db.query(User).filter(User.email == email).first()
-
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -52,7 +49,6 @@ async def get_current_user(
     
     return user
 
-
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def register(user_in: UserIn, db: Session = Depends(get_db)):
     """
@@ -60,8 +56,15 @@ def register(user_in: UserIn, db: Session = Depends(get_db)):
     
     - **username**: Unique username (3-50 characters)
     - **email**: Valid email address
-    - **password**: Password (minimum 8 characters)
+    - **password**: Password (8-72 characters, max 72 bytes)
     """
+    # Fallback validation for password length (Pydantic should handle this)
+    if len(user_in.password.encode('utf-8')) > 72:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password is too long. Must be 72 bytes or less."
+        )
+
     # Check if username already exists
     if get_user_by_username(db, user_in.username):
         raise HTTPException(
@@ -96,7 +99,6 @@ def register(user_in: UserIn, db: Session = Depends(get_db)):
     
     return db_user
 
-
 @router.post("/login", response_model=Token)
 def login(user_login: UserLogin, db: Session = Depends(get_db)):
     """
@@ -127,7 +129,6 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
     )
     
     return {"access_token": access_token, "token_type": "bearer"}
-
 
 @router.get("/me", response_model=UserOut)
 async def read_users_me(current_user: User = Depends(get_current_user)):
