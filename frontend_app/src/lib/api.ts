@@ -2,7 +2,7 @@
  * API utility functions for making authenticated requests to the backend
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export interface ApiError {
   detail: string;
@@ -93,7 +93,7 @@ export async function apiRequest<T>(
  */
 export async function login(username: string, password: string): Promise<void> {
   const data = await apiRequest<{ access_token: string; token_type: string }>(
-    "/api/v1/auth/login",
+    "/auth/login",
     {
       method: "POST",
       body: JSON.stringify({ username, password }),
@@ -111,7 +111,7 @@ export async function register(
   email: string,
   password: string
 ): Promise<void> {
-  await apiRequest("/api/v1/auth/register", {
+  await apiRequest("/auth/register", {
     method: "POST",
     body: JSON.stringify({ username, email, password }),
   });
@@ -128,7 +128,7 @@ export interface User {
 }
 
 export async function getCurrentUser(): Promise<User> {
-  return apiRequest<User>("/api/v1/auth/me");
+  return apiRequest<User>("/auth/me");
 }
 
 /**
