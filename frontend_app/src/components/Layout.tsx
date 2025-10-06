@@ -1,11 +1,25 @@
+"use client";
+
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { isAuthenticated, logout } from "@/lib/api";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check authentication status on client side
+    setIsLoggedIn(isAuthenticated());
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="bg-foreground text-background shadow-md">
@@ -23,18 +37,37 @@ export default function Layout({ children }: LayoutProps) {
               </Link>
             </div>
             <div className="flex gap-3 sm:gap-4">
-              <Link
-                href="/login"
-                className="px-4 py-2 rounded-md border border-background hover:bg-background hover:text-foreground transition-colors text-sm md:text-base"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="px-4 py-2 rounded-md bg-background text-foreground hover:opacity-80 transition-opacity text-sm md:text-base"
-              >
-                Register
-              </Link>
+              {!isLoggedIn ? (
+                <>
+                  <Link
+                    href="/login"
+                    className="px-4 py-2 rounded-md border border-background hover:bg-background hover:text-foreground transition-colors text-sm md:text-base"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="px-4 py-2 rounded-md bg-background text-foreground hover:opacity-80 transition-opacity text-sm md:text-base"
+                  >
+                    Register
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="px-4 py-2 rounded-md border border-background hover:bg-background hover:text-foreground transition-colors text-sm md:text-base"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 rounded-md bg-background text-foreground hover:opacity-80 transition-opacity text-sm md:text-base"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </nav>
