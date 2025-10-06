@@ -22,6 +22,8 @@ app.add_middleware(
 )
 
 # Include routers
+# IMPORTANT: The auth.router does NOT have a prefix defined on it.
+# The prefix is specified here to create endpoints at /api/v1/auth/*
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 
 # Create database tables
