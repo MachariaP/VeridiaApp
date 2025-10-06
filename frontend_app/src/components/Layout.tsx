@@ -10,10 +10,19 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     // Check authentication status on client side
     setIsLoggedIn(isAuthenticated());
+
+    // Handle scroll for header shadow
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleLogout = () => {
@@ -22,47 +31,92 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <header className="bg-foreground text-background shadow-md">
-        <nav className="container mx-auto px-4 py-4 md:px-6 md:py-5">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-6">
-              <Link href="/" className="text-xl md:text-2xl font-bold hover:opacity-80 transition-opacity">
-                VeridiaApp
-              </Link>
-              <Link
-                href="/discovery"
-                className="text-sm md:text-base hover:opacity-80 transition-opacity"
+      {/* Enhanced Header with Scroll Effect */}
+      <header 
+        className={`sticky top-0 z-50 transition-all duration-300 ${
+          scrolled 
+            ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-lg' 
+            : 'bg-white dark:bg-gray-900 shadow-md'
+        }`}
+      >
+        <nav className="container mx-auto px-4 py-4 md:px-6">
+          <div className="flex items-center justify-between">
+            {/* Logo & Primary Nav */}
+            <div className="flex items-center gap-8">
+              <Link 
+                href="/" 
+                className="text-xl md:text-2xl font-bold hover:opacity-80 transition-opacity flex items-center gap-2"
+                style={{ color: '#0A7FFF' }}
               >
-                Discover
+                <span className="text-2xl">✓</span>
+                <span>VeridiaApp</span>
               </Link>
+              
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex items-center gap-6">
+                <Link
+                  href="/discovery"
+                  className="text-base font-medium hover:opacity-80 transition-opacity"
+                  style={{ color: '#374151' }}
+                >
+                  Discover
+                </Link>
+                {isLoggedIn && (
+                  <Link
+                    href="/create"
+                    className="text-base font-medium hover:opacity-80 transition-opacity"
+                    style={{ color: '#374151' }}
+                  >
+                    Create
+                  </Link>
+                )}
+              </div>
             </div>
-            <div className="flex gap-3 sm:gap-4">
+
+            {/* Auth Buttons */}
+            <div className="flex gap-3">
               {!isLoggedIn ? (
                 <>
                   <Link
                     href="/login"
-                    className="px-4 py-2 rounded-md border border-background hover:bg-background hover:text-foreground transition-colors text-sm md:text-base"
+                    className="px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all btn-hover"
+                    style={{ 
+                      color: '#0A7FFF',
+                      border: '2px solid #0A7FFF'
+                    }}
                   >
-                    Login
+                    Sign In
                   </Link>
                   <Link
                     href="/register"
-                    className="px-4 py-2 rounded-md bg-background text-foreground hover:opacity-80 transition-opacity text-sm md:text-base"
+                    className="px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all btn-hover"
+                    style={{ 
+                      backgroundColor: '#0A7FFF',
+                      color: 'white'
+                    }}
                   >
-                    Register
+                    Get Started
                   </Link>
                 </>
               ) : (
                 <>
                   <Link
                     href="/dashboard"
-                    className="px-4 py-2 rounded-md border border-background hover:bg-background hover:text-foreground transition-colors text-sm md:text-base"
+                    className="px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all btn-hover"
+                    style={{ 
+                      color: '#0A7FFF',
+                      border: '2px solid #0A7FFF'
+                    }}
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 rounded-md bg-background text-foreground hover:opacity-80 transition-opacity text-sm md:text-base"
+                    className="px-4 py-2 rounded-lg text-sm md:text-base font-medium transition-all btn-hover"
+                    style={{ 
+                      backgroundColor: '#EF4444',
+                      color: 'white'
+                    }}
                   >
                     Logout
                   </button>
@@ -73,15 +127,117 @@ export default function Layout({ children }: LayoutProps) {
         </nav>
       </header>
       
-      <main className="flex-1 container mx-auto px-4 py-8 md:px-6 md:py-12">
+      {/* Main Content */}
+      <main className="flex-1 container mx-auto px-4 py-12 md:px-6 md:py-16">
         {children}
       </main>
       
-      <footer className="bg-foreground text-background py-6 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm md:text-base">
-          <p>&copy; {new Date().getFullYear()} VeridiaApp. Empowering Truth-Seekers.</p>
+      {/* Enhanced Footer */}
+      <footer className="bg-gray-900 text-white py-12 mt-auto">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* Brand Column */}
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl" style={{ color: '#0A7FFF' }}>✓</span>
+                <span className="text-xl font-bold">VeridiaApp</span>
+              </div>
+              <p className="text-gray-400 mb-4 max-w-md">
+                Empowering truth-seekers with AI-assisted content verification 
+                and community-driven fact-checking.
+              </p>
+            </div>
+            
+            {/* Quick Links */}
+            <div>
+              <h4 className="font-semibold mb-4">Platform</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <Link href="/discovery" className="hover:text-white transition-colors">
+                    Discover
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/create" className="hover:text-white transition-colors">
+                    Create Content
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/dashboard" className="hover:text-white transition-colors">
+                    Dashboard
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            
+            {/* About */}
+            <div>
+              <h4 className="font-semibold mb-4">About</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    How it Works
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Community Guidelines
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Privacy Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          {/* Bottom Bar */}
+          <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
+            <p>&copy; {new Date().getFullYear()} VeridiaApp. Empowering Truth-Seekers Worldwide.</p>
+          </div>
         </div>
       </footer>
+
+      {/* Mobile Bottom Navigation (iOS/Android style) */}
+      {isLoggedIn && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-40">
+          <div className="flex justify-around items-center px-4 py-2">
+            <Link href="/" className="flex flex-col items-center gap-1 p-2 min-w-[60px]">
+              <span className="text-xl">🏠</span>
+              <span className="text-xs font-medium" style={{ color: '#6B7280' }}>Home</span>
+            </Link>
+            <Link href="/discovery" className="flex flex-col items-center gap-1 p-2 min-w-[60px]">
+              <span className="text-xl">🔍</span>
+              <span className="text-xs font-medium" style={{ color: '#6B7280' }}>Discover</span>
+            </Link>
+            <Link 
+              href="/create" 
+              className="flex flex-col items-center gap-1 p-2 min-w-[60px] -mt-6"
+            >
+              <div 
+                className="w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg"
+                style={{ backgroundColor: '#0A7FFF' }}
+              >
+                <span style={{ color: 'white' }}>+</span>
+              </div>
+              <span className="text-xs font-medium mt-1" style={{ color: '#6B7280' }}>Create</span>
+            </Link>
+            <Link href="/dashboard" className="flex flex-col items-center gap-1 p-2 min-w-[60px]">
+              <span className="text-xl">💬</span>
+              <span className="text-xs font-medium" style={{ color: '#6B7280' }}>Activity</span>
+            </Link>
+            <Link href="/dashboard" className="flex flex-col items-center gap-1 p-2 min-w-[60px]">
+              <span className="text-xl">👤</span>
+              <span className="text-xs font-medium" style={{ color: '#6B7280' }}>Profile</span>
+            </Link>
+          </div>
+        </nav>
+      )}
+      
+      {/* Add padding to body when mobile nav is visible */}
+      {isLoggedIn && <div className="md:hidden h-20" />}
     </div>
   );
 }
