@@ -1,31 +1,139 @@
 @import "tailwindcss";
 
+/**
+ * VeridiaApp Global Styles
+ * Design System Implementation
+ * See DESIGN.md for full specifications
+ */
+
 :root {
+  /* Color Palette - Light Mode */
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Primary Colors */
+  --color-primary: #0A7FFF;
+  --color-primary-light: #4DA6FF;
+  --color-primary-dark: #0862CC;
+  
+  /* Secondary Colors */
+  --color-secondary: #00B5B8;
+  --color-secondary-light: #33D4D7;
+  --color-secondary-dark: #008C8E;
+  
+  /* Status Colors */
+  --color-success: #10B981;
+  --color-success-light: #34D399;
+  --color-success-dark: #059669;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FBBF24;
+  --color-warning-dark: #D97706;
+  --color-error: #EF4444;
+  --color-error-light: #F87171;
+  --color-error-dark: #DC2626;
+  
+  /* Gray Scale */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-300: #D1D5DB;
+  --color-gray-500: #6B7280;
+  --color-gray-700: #374151;
+  --color-gray-900: #111827;
+  
+  /* Spacing (8px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  
+  /* Animation */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-base: 300ms;
+  --duration-moderate: 400ms;
+  --duration-slow: 500ms;
+  
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  --shadow-hover: 0 20px 40px rgba(10, 127, 255, 0.15);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', Consolas, Monaco, monospace;
 }
 
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --color-gray-50: #1A1A1A;
+    --color-gray-100: #2A2A2A;
+    --color-gray-200: #3A3A3A;
+    --color-gray-300: #4A4A4A;
+    --color-gray-500: #A3A3A3;
+    --color-gray-700: #D1D1D1;
+    --color-gray-900: #EDEDED;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Animations */
+/* Typography Improvements */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: clamp(24px, 4vw, 32px);
+}
+
+h3 {
+  font-size: clamp(20px, 3vw, 24px);
+}
+
+code, pre {
+  font-family: 'JetBrains Mono', 'Courier New', Consolas, Monaco, monospace;
+}
+
+/* ============================================
+   ANIMATIONS & MICRO-INTERACTIONS
+   ============================================ */
+
+/* Core Animations - Optimized for 60 FPS (GPU-accelerated) */
+
+/* Fade In - Standard entrance */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -37,6 +145,7 @@ body {
   }
 }
 
+/* Slide In from Left */
 @keyframes slideInFromLeft {
   from {
     opacity: 0;
@@ -48,6 +157,7 @@ body {
   }
 }
 
+/* Slide In from Right */
 @keyframes slideInFromRight {
   from {
     opacity: 0;
@@ -59,6 +169,7 @@ body {
   }
 }
 
+/* Scale In - Zoom entrance */
 @keyframes scaleIn {
   from {
     opacity: 0;
@@ -70,6 +181,7 @@ body {
   }
 }
 
+/* Pulse - Breathing effect */
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -79,27 +191,131 @@ body {
   }
 }
 
+/* Verification Success - Checkmark with bounce */
+@keyframes verifySuccess {
+  0% { 
+    transform: scale(0.95); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+}
+
+/* Shimmer Effect - Loading placeholder */
+@keyframes shimmer {
+  0% { 
+    transform: translateX(-100%); 
+  }
+  100% { 
+    transform: translateX(100%); 
+  }
+}
+
+/* Bounce In - Playful entrance */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Shake - Error feedback */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* Slide Up - Toast notifications */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Rotate - Loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Progress Bar Fill */
+@keyframes progressFill {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ============================================
+   ANIMATION UTILITY CLASSES
+   ============================================ */
+
 .animate-fadeIn {
-  animation: fadeIn 0.6s ease-out forwards;
+  animation: fadeIn var(--duration-base) var(--ease-out) forwards;
 }
 
 .animate-slideInFromLeft {
-  animation: slideInFromLeft 0.6s ease-out forwards;
+  animation: slideInFromLeft var(--duration-base) var(--ease-out) forwards;
 }
 
 .animate-slideInFromRight {
-  animation: slideInFromRight 0.6s ease-out forwards;
+  animation: slideInFromRight var(--duration-base) var(--ease-out) forwards;
 }
 
 .animate-scaleIn {
-  animation: scaleIn 0.5s ease-out forwards;
+  animation: scaleIn var(--duration-base) var(--ease-out) forwards;
+}
+
+.animate-bounceIn {
+  animation: bounceIn var(--duration-moderate) var(--ease-bounce) forwards;
 }
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Staggered animation delays */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-shake {
+  animation: shake var(--duration-moderate) var(--ease-out);
+}
+
+.animate-verifySuccess {
+  animation: verifySuccess var(--duration-moderate) var(--ease-bounce);
+}
+
+/* ============================================
+   ANIMATION DELAYS (Staggered Animations)
+   ============================================ */
 .delay-100 {
   animation-delay: 0.1s;
 }
@@ -124,23 +340,132 @@ body {
   animation-delay: 0.6s;
 }
 
-/* Hover effects */
+/* ============================================
+   HOVER & INTERACTION EFFECTS
+   ============================================ */
+
+/* Card Lift - Discovery and content cards */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--duration-fast) var(--ease-out), 
+              box-shadow var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
 }
 
 .hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
 }
 
-/* Loading spinner */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+/* Button Hover - Subtle scale */
+.btn-hover {
+  transition: transform var(--duration-fast) var(--ease-out),
+              opacity var(--duration-fast) var(--ease-out);
+}
+
+.btn-hover:hover {
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
+.btn-hover:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+/* Skeleton Screen with Shimmer */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-gray-200);
+  border-radius: 8px;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background-color: var(--color-gray-100);
+  }
+  
+  .skeleton::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
   }
 }
 
-.animate-spin {
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   FOCUS STATES (Accessibility)
+   ============================================ */
+
+/* High-contrast focus indicators */
+*:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Button and link focus */
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Input focus */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(10, 127, 255, 0.1);
+  outline: none;
+}
+
+/* ============================================
+   REDUCED MOTION (Accessibility)
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .skeleton::after {
+    animation: none;
+  }
 }
