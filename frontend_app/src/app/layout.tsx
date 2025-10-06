@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -6,7 +6,12 @@ export const metadata: Metadata = {
   description: "A dynamic, mobile-first platform for truth-seekers, researchers, and content creators. Create, share, and discover verified, AI-assisted content through a community-driven ecosystem.",
   keywords: ["verification", "truth", "content", "fact-checking", "community", "AI-assisted"],
   authors: [{ name: "VeridiaApp Team" }],
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#0A7FFF" },
     { media: "(prefers-color-scheme: dark)", color: "#0A0A0A" }
