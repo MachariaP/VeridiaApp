@@ -2,6 +2,21 @@
 
 VeridiaApp is a dynamic, mobile-first platform designed for truth-seekers, researchers, and content creators. It enables users to create, share, and discover verified, AI-assisted content through a community-driven ecosystem. Built with a microservices architecture and a headless approach, VeridiaApp ensures scalability, flexibility, and resilience while prioritizing user privacy, content verification, and seamless integration with emerging technologies.
 
+## 🎨 Design System
+
+VeridiaApp features a **comprehensive, modern design system** that emphasizes:
+- **Trustworthiness** - Professional, consistent, and reliable
+- **Precision** - Clean lines with intentional whitespace
+- **Modernity** - Contemporary without being trendy
+- **Accessibility** - WCAG 2.1 AA compliance target
+- **Performance** - 60 FPS animations, optimistic UI
+
+### Design Documentation
+- **[DESIGN_SUMMARY.md](./DESIGN_SUMMARY.md)** - Quick overview and reference
+- **[DESIGN.md](./DESIGN.md)** - Complete design system specification
+- **[COMPONENTS.md](./COMPONENTS.md)** - Reusable UI component library
+- **[ACCESSIBILITY.md](./ACCESSIBILITY.md)** - Accessibility compliance guide
+
 ## Project Overview
 VeridiaApp aims to revolutionize how users engage with information by:
 - **Empowering Creation:** Tools for generating and verifying content with AI assistance.
@@ -146,6 +161,21 @@ For detailed setup instructions for each service:
 - [x] Mobile-first responsive design
 - [x] Real-time content indexing
 - [x] RESTful APIs with OpenAPI documentation
+
+### Design System & UX ✅ NEW
+- [x] Comprehensive design system with 150+ design tokens
+- [x] Modern color palette (Primary Blue #0A7FFF, Teal #00B5B8)
+- [x] Professional typography (Inter + JetBrains Mono)
+- [x] 12+ GPU-accelerated animations (60 FPS)
+- [x] Skeleton screens with shimmer loading effects
+- [x] Mobile bottom navigation (iOS/Android style)
+- [x] Sticky header with scroll effects
+- [x] Enhanced cards with hover lift effects
+- [x] Status badges with icons (✓ Verified, ⚠ Disputed, ⏱ Pending)
+- [x] Dark mode support with proper contrast
+- [x] Accessibility features (keyboard navigation, focus indicators)
+- [x] F-pattern and Z-pattern layouts
+- [x] Comprehensive documentation (64KB across 4 guides)
 
 ### User Workflows
 
