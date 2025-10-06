@@ -19,6 +19,10 @@ from app.utils.messaging import event_publisher
 # Set up logging
 logger = logging.getLogger(__name__)
 
+# Create router without prefix - the prefix is added when including the router in main.py
+# This prevents duplicate /api/v1 prefixes in the URL path
+# Router is included in main.py with: app.include_router(auth.router, prefix="/api/v1/auth")
+# Result: endpoints are at /api/v1/auth/login, /api/v1/auth/register, etc.
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 

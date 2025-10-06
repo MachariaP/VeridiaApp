@@ -37,6 +37,9 @@ def on_startup():
     init_db()
 
 # Include authentication router
+# IMPORTANT: The auth.router does NOT have a prefix defined on it.
+# The prefix is specified here to create endpoints at /api/v1/auth/*
+# This prevents duplicate prefixes (e.g., /api/v1/api/v1/auth/login)
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 
 @app.get("/")
