@@ -15,10 +15,10 @@ app = FastAPI(title="VeridiaApp User Service")
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust to specific origins in production (e.g., ["https://yourfrontend.com"])
+    allow_origins=["*"],  # Adjust to specific origins in production
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],  # Explicitly allow OPTIONS
-    allow_headers=["*"],  # Allow all headers, adjust as needed
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 # Include routers
@@ -26,6 +26,11 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 
 # Create database tables
 user.Base.metadata.create_all(bind=engine)
+
+# Root endpoint
+@app.get("/")
+async def root():
+    return {"message": "Welcome to VeridiaApp User Service. Access API at /api/v1/auth."}
 
 # Global exception handlers
 @app.exception_handler(ValueError)
