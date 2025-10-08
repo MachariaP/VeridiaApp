@@ -163,3 +163,42 @@ async def get_comments(
     ).order_by(DiscussionComment.created_at.desc()).offset(skip).limit(limit).all()
     
     return comments
+
+
+@router.delete("/{content_id}/comments/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_comment(
+    content_id: str,
+    comment_id: int,
+    current_user: tuple = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete a comment.
+    Only the comment author can delete their own comment.
+    """
+    username, user_id = current_user
+    
+    # Find the comment
+    comment = db.query(DiscussionComment).filter(
+        DiscussionComment.id == comment_id,
+        DiscussionComment.content_id == content_id
+    ).first()
+    
+    if not comment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Comment not found"
+        )
+    
+    # Check if user is the comment author
+    if comment.user_id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only delete your own comments"
+        )
+    
+    # Delete the comment
+    db.delete(comment)
+    db.commit()
+    
+    return None

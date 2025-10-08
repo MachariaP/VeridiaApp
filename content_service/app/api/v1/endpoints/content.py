@@ -163,3 +163,38 @@ async def list_content(
         content_list.append(ContentOut(**content_data))
     
     return content_list
+
+
+@router.delete("/{content_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_content(
+    content_id: str,
+    current_user: tuple = Depends(get_current_user),
+    db: Database = Depends(get_database)
+):
+    """
+    Delete content by ID.
+    Only the content creator can delete their own content.
+    Requires JWT authentication.
+    """
+    username, user_id = current_user
+    
+    repo = ContentRepository(db)
+    content_doc = repo.get_content_by_id(content_id)
+    
+    if not content_doc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Content not found"
+        )
+    
+    # Check if user is the content creator
+    if content_doc.get("user_id") != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only delete your own content"
+        )
+    
+    # Delete the content
+    repo.delete_content(content_id)
+    
+    return None
