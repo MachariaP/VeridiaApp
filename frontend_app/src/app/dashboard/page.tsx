@@ -24,7 +24,8 @@ export default function DashboardPage() {
       try {
         const userData = await getCurrentUser();
         setUser(userData);
-      } catch (err: any) {
+      } catch (error) {
+        const err = error as { detail?: string; status?: number };
         setError(err.detail || "Failed to load profile");
         // If unauthorized, redirect to login
         if (err.status === 401) {

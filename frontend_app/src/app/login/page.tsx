@@ -24,8 +24,9 @@ export default function LoginPage() {
       
       // Redirect to dashboard after successful login
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.detail || err.message || "An error occurred during login");
+    } catch (error) {
+      const err = error as { detail?: string };
+      setError(err.detail || (error instanceof Error ? error.message : "An error occurred during login"));
     } finally {
       setLoading(false);
     }

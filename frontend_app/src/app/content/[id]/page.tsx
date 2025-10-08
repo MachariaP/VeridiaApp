@@ -58,8 +58,9 @@ export default function ContentDetailPage() {
       const commentsData = await getComments(contentId);
       setComments(commentsData);
 
-    } catch (err: any) {
-      setError(err.message || "Failed to load content");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to load content";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -83,8 +84,9 @@ export default function ContentDetailPage() {
         setVoteStats(voteData);
       }
 
-    } catch (err: any) {
-      alert(err.message || "Failed to submit vote");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to submit vote";
+      alert(errorMessage);
     } finally {
       setVotingLoading(false);
     }
@@ -114,8 +116,9 @@ export default function ContentDetailPage() {
       const commentsData = await getComments(contentId);
       setComments(commentsData);
 
-    } catch (err: any) {
-      setCommentError(err.message || "Failed to post comment");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to post comment";
+      setCommentError(errorMessage);
     } finally {
       setCommentLoading(false);
     }

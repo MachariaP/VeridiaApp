@@ -36,8 +36,9 @@ export default function RegisterPage() {
       
       // Registration successful, redirect to login
       window.location.href = "/login";
-    } catch (err: any) {
-      setError(err.detail || err.message || "An error occurred during registration");
+    } catch (error) {
+      const err = error as { detail?: string };
+      setError(err.detail || (error instanceof Error ? error.message : "An error occurred during registration"));
     } finally {
       setLoading(false);
     }
