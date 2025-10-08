@@ -470,14 +470,13 @@ export async function postComment(contentId: string, comment: string): Promise<v
  * Note: Backend endpoint needs to be implemented
  */
 export async function deleteComment(contentId: string, commentId: number): Promise<void> {
-  const VERIFICATION_API_URL = process.env.NEXT_PUBLIC_VERIFICATION_API_URL || "http://localhost:8002";
   const token = getToken();
   
   if (!token) {
     throw new Error("Authentication required");
   }
 
-  const response = await fetch(`${VERIFICATION_API_URL}/api/v1/verify/${contentId}/comments/${commentId}`, {
+  const response = await fetch(`/api/verify/${contentId}/comments/${commentId}`, {
     method: "DELETE",
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -494,14 +493,13 @@ export async function deleteComment(contentId: string, commentId: number): Promi
  * Note: Backend endpoint needs to be implemented
  */
 export async function deleteContent(contentId: string): Promise<void> {
-  const CONTENT_API_URL = process.env.NEXT_PUBLIC_CONTENT_API_URL || "http://localhost:8001";
   const token = getToken();
   
   if (!token) {
     throw new Error("Authentication required");
   }
 
-  const response = await fetch(`${CONTENT_API_URL}/api/v1/content/${contentId}`, {
+  const response = await fetch(`/api/content/${contentId}`, {
     method: "DELETE",
     headers: {
       "Authorization": `Bearer ${token}`,
