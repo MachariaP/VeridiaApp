@@ -30,6 +30,23 @@ class Settings:
         "http://127.0.0.1:8000",
     ]
     
+    # Content validation constants
+    VALID_CATEGORIES: list = [
+        "Technology",
+        "Science",
+        "Health",
+        "Politics",
+        "Business",
+        "Environment",
+        "Education",
+        "Entertainment",
+        "Sports",
+        "Other"
+    ]
+    MIN_DESCRIPTION_LENGTH: int = 50
+    MAX_DESCRIPTION_LENGTH: int = 5000
+    MAX_TITLE_LENGTH: int = 250
+    
     @property
     def MONGODB_CONNECTION_STRING(self) -> str:
         """Build MongoDB connection string with authentication if provided."""

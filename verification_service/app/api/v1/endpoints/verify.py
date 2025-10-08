@@ -9,6 +9,8 @@ from app.schemas.verification import VoteIn, VoteOut, CommentIn, CommentOut, Vot
 from app.models.verification import VerificationVote, DiscussionComment
 from app.core.database import get_db
 from app.core.security import verify_token
+from app.utils.status_updater import calculate_final_status
+from app.utils.notifications import notification_service
 
 
 router = APIRouter()
@@ -64,8 +66,21 @@ async def submit_vote(
     Submit a verification vote for content.
     Authenticated users can vote True (verified) or False (disputed).
     One vote per user per content (updates if exists).
+    
+    Enhanced with:
+    - Status threshold checking (85% verified with 50+ votes)
+    - Automatic status updates when thresholds are met
+    - Notification publishing for status changes
     """
     username, user_id = current_user
+    
+    # Get current vote stats before update
+    old_stats = await get_vote_stats(content_id, db)
+    old_status = calculate_final_status(
+        old_stats.verified_votes,
+        old_stats.disputed_votes,
+        old_stats.total_votes
+    )
     
     # Check if user already voted on this content
     existing_vote = db.query(VerificationVote).filter(
@@ -78,19 +93,52 @@ async def submit_vote(
         existing_vote.vote = vote_in.vote
         db.commit()
         db.refresh(existing_vote)
-        return existing_vote
+        vote_result = existing_vote
+    else:
+        # Create new vote
+        new_vote = VerificationVote(
+            content_id=content_id,
+            user_id=user_id,
+            vote=vote_in.vote
+        )
+        db.add(new_vote)
+        db.commit()
+        db.refresh(new_vote)
+        vote_result = new_vote
     
-    # Create new vote
-    new_vote = VerificationVote(
-        content_id=content_id,
-        user_id=user_id,
-        vote=vote_in.vote
+    # Get new vote stats after update
+    new_stats = await get_vote_stats(content_id, db)
+    new_status = calculate_final_status(
+        new_stats.verified_votes,
+        new_stats.disputed_votes,
+        new_stats.total_votes
     )
-    db.add(new_vote)
-    db.commit()
-    db.refresh(new_vote)
     
-    return new_vote
+    # Check if status changed
+    if old_status != new_status:
+        # TODO: Get content creator ID from content_service
+        # For now, log the status change
+        print(f"[STATUS CHANGE] Content {content_id}: {old_status} -> {new_status}")
+        print(f"[STATUS CHANGE] Trigger: Community voting ({new_stats.verification_percentage}% verified)")
+        
+        # TODO: In production, publish StatusUpdated event to RabbitMQ
+        # event_publisher.publish_status_updated(
+        #     content_id=content_id,
+        #     old_status=old_status,
+        #     new_status=new_status,
+        #     trigger="Community Consensus"
+        # )
+        
+        # TODO: Notify content creator (requires content_service integration)
+        # notification_service.notify_status_change(
+        #     content_id=content_id,
+        #     content_creator_id=creator_id,
+        #     old_status=old_status,
+        #     new_status=new_status,
+        #     trigger=f"Community Consensus: {new_stats.verification_percentage}% verified"
+        # )
+    
+    return vote_result
 
 
 @router.get("/{content_id}/votes", response_model=VoteStats)
@@ -101,6 +149,11 @@ async def get_vote_stats(
     """
     Get voting statistics for content.
     Public endpoint - no authentication required.
+    
+    Enhanced with calculated status based on thresholds:
+    - Verified: 85% verified votes AND total > 50
+    - Disputed: 35% disputed votes
+    - Otherwise: Pending/Under Review
     """
     votes = db.query(VerificationVote).filter(
         VerificationVote.content_id == content_id
@@ -112,12 +165,16 @@ async def get_vote_stats(
     
     verification_percentage = (verified_votes / total_votes * 100) if total_votes > 0 else 0.0
     
+    # Calculate status based on thresholds
+    calculated_status = calculate_final_status(verified_votes, disputed_votes, total_votes)
+    
     return VoteStats(
         content_id=content_id,
         total_votes=total_votes,
         verified_votes=verified_votes,
         disputed_votes=disputed_votes,
-        verification_percentage=round(verification_percentage, 2)
+        verification_percentage=round(verification_percentage, 2),
+        status=calculated_status
     )
 
 

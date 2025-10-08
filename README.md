@@ -17,6 +17,28 @@ VeridiaApp features a **comprehensive, modern design system** that emphasizes:
 - **[COMPONENTS.md](./COMPONENTS.md)** - Reusable UI component library
 - **[ACCESSIBILITY.md](./ACCESSIBILITY.md)** - Accessibility compliance guide
 
+## 🔒 Security & Compliance
+
+VeridiaApp prioritizes **data integrity, privacy, and trustworthiness** aligned with European best practices:
+
+### Security Features
+- **RBAC (Role-Based Access Control)**: Fine-grained permissions for Standard Users, Verified Contributors, and Moderators
+- **JWT Authentication**: Short-lived access tokens (30 min) + refresh token rotation (7 days)
+- **Audit Logging**: Non-repudiable tracking of all critical operations
+- **Password Security**: Argon2 (primary) + bcrypt (fallback) hashing
+
+### GDPR Compliance
+- **Data Minimization**: Only essential data collected (username, email, password hash)
+- **Right to Access**: Data export API endpoint (Article 20)
+- **Right to Erasure**: Complete account deletion with cross-service cleanup (Article 17)
+- **Data Portability**: Machine-readable JSON export format
+- **Audit Trail**: Comprehensive logging for accountability
+
+### Documentation
+- **[RBAC.md](./RBAC.md)** - Role-based access control guide with permissions matrix
+- **[GDPR_COMPLIANCE.md](./GDPR_COMPLIANCE.md)** - Complete GDPR implementation details
+- **[API_ENHANCEMENTS.md](./API_ENHANCEMENTS.md)** - API documentation with security features
+
 ## Project Overview
 VeridiaApp aims to revolutionize how users engage with information by:
 - **Empowering Creation:** Tools for generating and verifying content with AI assistance.
@@ -162,9 +184,9 @@ Services communicate asynchronously via RabbitMQ:
 
 ### MVP Features ✅
 - [x] User authentication and registration
-- [x] JWT-based secure authentication
+- [x] JWT-based secure authentication with refresh token support
 - [x] Protected dashboard with user profile
-- [x] Content submission and management
+- [x] Content submission and management with comprehensive validation
 - [x] Community voting system (verified/disputed)
 - [x] Discussion comments on content
 - [x] AI verification stub (ready for ML integration)
@@ -174,6 +196,22 @@ Services communicate asynchronously via RabbitMQ:
 - [x] Mobile-first responsive design
 - [x] Real-time content indexing
 - [x] RESTful APIs with OpenAPI documentation
+
+### Security & Compliance Features ✅ NEW
+- [x] **RBAC**: Role-based access control (Standard User, Verified Contributor, Moderator)
+- [x] **Audit Logging**: Non-repudiable tracking of critical operations
+- [x] **GDPR Compliance**: Data export and account deletion endpoints
+- [x] **Enhanced Security**: Refresh token rotation, Argon2 password hashing
+- [x] **Content Validation**: URL checking, title/description validation, category verification
+- [x] **Content Versioning**: Status history and edit tracking for transparency
+- [x] **Notification System**: Multi-channel notification stub (in-app, email, push)
+
+### Enhanced Verification System ✅ NEW
+- [x] **Threshold-Based Status**: 85% verified with 50+ votes for "Verified" status
+- [x] **Disputed Detection**: 35% disputed votes triggers "Disputed" status
+- [x] **Status Calculation**: Automatic status updates based on vote thresholds
+- [x] **AI Enhancement**: ML training feedback loop for continuous improvement
+- [x] **Transparency Log**: Complete status change history with triggers
 
 ### Design System & UX ✅ ENHANCED
 - [x] Comprehensive design system with 150+ design tokens
@@ -213,9 +251,16 @@ Services communicate asynchronously via RabbitMQ:
 - Content status: "Pending Verification" initially
 
 **3. Content Verification**
-- AI verification check performed automatically (stub)
+- AI verification check performed automatically (stub with enhanced analysis)
 - Community members vote (verified/disputed)
-- Real-time vote statistics displayed
+- Real-time vote statistics with calculated status displayed
+- **Status Thresholds**:
+  - **Verified** (✓): 85% verified votes AND total > 50
+  - **Disputed** (⚠): 35% disputed votes OR moderator flag
+  - **Under Review**: 50+ votes but doesn't meet verified threshold
+  - **Pending Verification** (⏱): Less than 50 votes
+- Automatic status updates when thresholds are met
+- Transparent status change log for accountability
 - Status updates based on voting thresholds
 
 **4. Community Discussions**

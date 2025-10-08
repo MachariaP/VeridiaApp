@@ -9,6 +9,7 @@ import os
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_EXPIRE_DAYS = 7  # Refresh tokens valid for 7 days
 
 # Password hashing context with argon2 as primary, bcrypt as fallback
 pwd_context = CryptContext(schemes=["argon2", "bcrypt"], deprecated="auto")
@@ -49,12 +50,30 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def verify_token(token: str) -> Optional[str]:
+def create_refresh_token(data: dict) -> str:
+    """
+    Create a JWT refresh token with longer expiration.
+    
+    Args:
+        data: Dictionary containing claims to encode in the token
+    
+    Returns:
+        Encoded JWT refresh token string
+    """
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode.update({"exp": expire, "type": "refresh"})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def verify_token(token: str, token_type: str = "access") -> Optional[str]:
     """
     Verify and decode a JWT token.
     
     Args:
         token: JWT token string
+        token_type: Expected token type ("access" or "refresh")
     
     Returns:
         Username from token or None if invalid
@@ -62,6 +81,9 @@ def verify_token(token: str) -> Optional[str]:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+        # Verify token type if specified in payload
+        if payload.get("type") and payload.get("type") != token_type:
+            return None
         return username
     except JWTError:
         return None
