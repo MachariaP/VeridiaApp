@@ -10,9 +10,13 @@ import {
   submitVote,
   getComments,
   postComment,
+  deleteComment,
+  deleteContent,
+  getCurrentUser,
   Content,
   VoteStats,
   Comment,
+  User,
 } from "@/lib/api";
 
 export default function ContentDetailPage() {
@@ -32,12 +36,25 @@ export default function ContentDetailPage() {
   const [newComment, setNewComment] = useState("");
   const [commentLoading, setCommentLoading] = useState(false);
   const [commentError, setCommentError] = useState("");
-
+  
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const authenticated = isAuthenticated();
 
   useEffect(() => {
     fetchContentData();
-  }, [contentId]);
+    if (authenticated) {
+      fetchCurrentUser();
+    }
+  }, [contentId, authenticated]);
+  
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+    } catch (err) {
+      console.error("Failed to fetch current user:", err);
+    }
+  };
 
   const fetchContentData = async () => {
     setLoading(true);
@@ -123,6 +140,37 @@ export default function ContentDetailPage() {
       setCommentLoading(false);
     }
   };
+  
+  const handleDeleteComment = async (commentId: number) => {
+    if (!confirm("Are you sure you want to delete this comment?")) {
+      return;
+    }
+    
+    try {
+      await deleteComment(contentId, commentId);
+      // Refresh comments
+      const commentsData = await getComments(contentId);
+      setComments(commentsData);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete comment";
+      alert(errorMessage);
+    }
+  };
+  
+  const handleDeleteContent = async () => {
+    if (!confirm("Are you sure you want to delete this content? This action cannot be undone.")) {
+      return;
+    }
+    
+    try {
+      await deleteContent(contentId);
+      alert("Content deleted successfully");
+      router.push("/discovery");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete content";
+      alert(errorMessage);
+    }
+  };
 
   if (loading) {
     return (
@@ -151,17 +199,29 @@ export default function ContentDetailPage() {
       <div className="max-w-4xl mx-auto">
         {/* Content Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="px-3 py-1 rounded-full bg-foreground/10 text-sm">
-              {content.category}
-            </span>
-            <span className={`px-3 py-1 rounded-full text-sm ${
-              content.status === "Verified" ? "bg-green-500/20 text-green-500" :
-              content.status === "Disputed" ? "bg-red-500/20 text-red-500" :
-              "bg-yellow-500/20 text-yellow-500"
-            }`}>
-              {content.status}
-            </span>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-foreground/10 text-sm">
+                {content.category}
+              </span>
+              <span className={`px-3 py-1 rounded-full text-sm ${
+                content.status === "Verified" ? "bg-green-500/20 text-green-500" :
+                content.status === "Disputed" ? "bg-red-500/20 text-red-500" :
+                "bg-yellow-500/20 text-yellow-500"
+              }`}>
+                {content.status}
+              </span>
+            </div>
+            {/* Delete button - show if user is content creator */}
+            {currentUser && content.created_by_username === currentUser.username && (
+              <button
+                onClick={handleDeleteContent}
+                className="px-3 py-1 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-sm font-medium transition-colors"
+                title="Delete this content"
+              >
+                🗑️ Delete
+              </button>
+            )}
           </div>
           <h1 className="text-2xl md:text-3xl font-bold mb-2">{content.title}</h1>
           <p className="text-sm opacity-70">
@@ -285,10 +345,22 @@ export default function ContentDetailPage() {
               comments.map((comment) => (
                 <div key={comment.id} className="p-4 bg-background rounded-lg border border-foreground/20">
                   <div className="flex justify-between items-start mb-2">
-                    <span className="font-semibold">{comment.username}</span>
-                    <span className="text-xs opacity-60">
-                      {new Date(comment.created_at).toLocaleString()}
-                    </span>
+                    <div className="flex-1">
+                      <span className="font-semibold">{comment.username}</span>
+                      <span className="text-xs opacity-60 ml-2">
+                        {new Date(comment.created_at).toLocaleString()}
+                      </span>
+                    </div>
+                    {/* Delete button - show if user is comment author */}
+                    {currentUser && comment.username === currentUser.username && (
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="px-2 py-1 rounded text-xs text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors"
+                        title="Delete comment"
+                      >
+                        🗑️
+                      </button>
+                    )}
                   </div>
                   <p className="whitespace-pre-wrap">{comment.comment}</p>
                 </div>
