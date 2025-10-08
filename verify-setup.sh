@@ -66,29 +66,35 @@ echo "Checking Frontend Configuration..."
 if [ -f "frontend_app/.env.local" ]; then
     print_status "PASS" "frontend_app/.env.local exists"
     
-    # Check for correct verification service URL
-    if grep -q "NEXT_PUBLIC_VERIFICATION_API_URL=http://localhost:8002" frontend_app/.env.local; then
-        print_status "PASS" "Verification service URL is correct (port 8002)"
-    else
-        print_status "FAIL" "Verification service URL is incorrect (should be port 8002)"
-        echo "       Current value:"
-        grep "NEXT_PUBLIC_VERIFICATION_API_URL" frontend_app/.env.local || echo "       Not set"
-    fi
-    
-    # Check other URLs
-    if grep -q "NEXT_PUBLIC_API_URL=http://localhost:8000" frontend_app/.env.local; then
+    # Check client-side URL (for direct auth API calls)
+    if grep -q "NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1" frontend_app/.env.local; then
         print_status "PASS" "User service URL is correct (port 8000)"
     else
         print_status "WARN" "User service URL might be incorrect"
     fi
     
-    if grep -q "NEXT_PUBLIC_CONTENT_API_URL=http://localhost:8001" frontend_app/.env.local; then
+    # Check server-side URLs (used by Next.js API proxy routes)
+    if grep -q "API_URL=http://localhost:8000" frontend_app/.env.local; then
+        print_status "PASS" "User service proxy URL is correct (port 8000)"
+    else
+        print_status "WARN" "User service proxy URL might be incorrect"
+    fi
+    
+    if grep -q "CONTENT_API_URL=http://localhost:8001" frontend_app/.env.local; then
         print_status "PASS" "Content service URL is correct (port 8001)"
     else
         print_status "WARN" "Content service URL might be incorrect"
     fi
     
-    if grep -q "NEXT_PUBLIC_SEARCH_API_URL=http://localhost:8003" frontend_app/.env.local; then
+    if grep -q "VERIFICATION_API_URL=http://localhost:8002" frontend_app/.env.local; then
+        print_status "PASS" "Verification service URL is correct (port 8002)"
+    else
+        print_status "FAIL" "Verification service URL is incorrect (should be port 8002)"
+        echo "       Current value:"
+        grep "VERIFICATION_API_URL" frontend_app/.env.local || echo "       Not set"
+    fi
+    
+    if grep -q "SEARCH_API_URL=http://localhost:8003" frontend_app/.env.local; then
         print_status "PASS" "Search service URL is correct (port 8003)"
     else
         print_status "WARN" "Search service URL might be incorrect"
