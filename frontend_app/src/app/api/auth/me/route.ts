@@ -23,15 +23,15 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const data = await response.json();
-
     if (!response.ok) {
+      const data = await response.json().catch(() => ({ detail: 'Failed to get user' }));
       return NextResponse.json(
-        data || { detail: 'Failed to get user' },
+        data,
         { status: response.status }
       );
     }
 
+    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('Get user API error:', error);

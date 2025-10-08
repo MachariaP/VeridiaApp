@@ -17,15 +17,15 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    const data = await response.json();
-
     if (!response.ok) {
+      const data = await response.json().catch(() => ({ detail: 'Registration failed' }));
       return NextResponse.json(
-        data || { detail: 'Registration failed' },
+        data,
         { status: response.status }
       );
     }
 
+    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('Register API error:', error);
