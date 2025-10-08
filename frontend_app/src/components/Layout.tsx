@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
 import { isAuthenticated, logout } from "@/lib/api";
+import { HomeIcon, SearchIcon, PlusIcon, UserIcon, BellIcon } from "@/components/icons";
 
 interface LayoutProps {
   children: ReactNode;
@@ -202,35 +203,37 @@ export default function Layout({ children }: LayoutProps) {
 
       {/* Mobile Bottom Navigation (iOS/Android style) */}
       {isLoggedIn && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-40">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-40 shadow-lg">
           <div className="flex justify-around items-center px-4 py-2">
-            <Link href="/" className="flex flex-col items-center gap-1 p-2 min-w-[60px]">
-              <span className="text-xl">🏠</span>
-              <span className="text-xs font-medium" style={{ color: '#6B7280' }}>Home</span>
+            <Link href="/" className="flex flex-col items-center gap-1 p-2 min-w-[60px] transition-all hover:opacity-70">
+              <HomeIcon size={24} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Home</span>
             </Link>
-            <Link href="/discovery" className="flex flex-col items-center gap-1 p-2 min-w-[60px]">
-              <span className="text-xl">🔍</span>
-              <span className="text-xs font-medium" style={{ color: '#6B7280' }}>Discover</span>
+            <Link href="/discovery" className="flex flex-col items-center gap-1 p-2 min-w-[60px] transition-all hover:opacity-70">
+              <SearchIcon size={24} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Discover</span>
             </Link>
             <Link 
               href="/create" 
               className="flex flex-col items-center gap-1 p-2 min-w-[60px] -mt-6"
             >
               <div 
-                className="w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-lg"
+                className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95"
                 style={{ backgroundColor: '#0A7FFF' }}
               >
-                <span style={{ color: 'white' }}>+</span>
+                <PlusIcon size={28} className="text-white" />
               </div>
-              <span className="text-xs font-medium mt-1" style={{ color: '#6B7280' }}>Create</span>
+              <span className="text-xs font-medium mt-1 text-gray-600 dark:text-gray-400">Create</span>
             </Link>
-            <Link href="/dashboard" className="flex flex-col items-center gap-1 p-2 min-w-[60px]">
-              <span className="text-xl">💬</span>
-              <span className="text-xs font-medium" style={{ color: '#6B7280' }}>Activity</span>
+            <Link href="/dashboard" className="flex flex-col items-center gap-1 p-2 min-w-[60px] transition-all hover:opacity-70 relative">
+              <BellIcon size={24} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Activity</span>
+              {/* Notification Badge */}
+              <span className="absolute top-1 right-3 w-2 h-2 bg-red-500 rounded-full"></span>
             </Link>
-            <Link href="/dashboard" className="flex flex-col items-center gap-1 p-2 min-w-[60px]">
-              <span className="text-xl">👤</span>
-              <span className="text-xs font-medium" style={{ color: '#6B7280' }}>Profile</span>
+            <Link href="/dashboard" className="flex flex-col items-center gap-1 p-2 min-w-[60px] transition-all hover:opacity-70">
+              <UserIcon size={24} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Profile</span>
             </Link>
           </div>
         </nav>

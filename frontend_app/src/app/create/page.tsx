@@ -75,8 +75,8 @@ export default function CreateContentPage() {
       setTimeout(() => {
         router.push(`/content/${data.id}`);
       }, 1500);
-    } catch (err: any) {
-      setError(err.message || "Failed to submit content");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit content");
     } finally {
       setLoading(false);
     }

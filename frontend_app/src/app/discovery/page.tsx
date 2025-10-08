@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Layout from "@/components/Layout";
 import { searchContent, getCategories, SearchResult } from "@/lib/api";
 
 export default function DiscoveryPage() {
-  const router = useRouter();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [sortBy, setSortBy] = useState("relevance");
@@ -58,8 +56,9 @@ export default function DiscoveryPage() {
       setTotalResults(data.total);
       setSearchTime(data.took_ms);
 
-    } catch (err: any) {
-      setError(err.message || "Failed to perform search");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to perform search";
+      setError(errorMessage);
       setSearchResults([]);
       setTotalResults(0);
     } finally {
