@@ -22,6 +22,24 @@ git clone https://github.com/MachariaP/VeridiaApp.git
 cd VeridiaApp
 ```
 
+### Step 1.5: Verify Your Setup (Optional but Recommended)
+
+Run the setup verification script to check if your environment is properly configured:
+
+```bash
+chmod +x verify-setup.sh
+./verify-setup.sh
+```
+
+This script will check:
+- Python and Node.js installation
+- Environment configuration files
+- Correct API URLs (especially verification service on port 8002)
+- Service dependencies
+- Port availability
+
+If the script reports any issues, follow the recommendations or see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+
 ### Step 2: Set Up Backend Services
 
 #### User Service (Port 8000)

@@ -71,7 +71,14 @@ Services communicate asynchronously via RabbitMQ:
    cd VeridiaApp
    ```
 
-2. Start backend services (each in a separate terminal):
+2. Verify your setup (recommended):
+   ```bash
+   chmod +x verify-setup.sh
+   ./verify-setup.sh
+   ```
+   This checks if your environment is properly configured.
+
+3. Start backend services (each in a separate terminal):
    ```bash
    # User Service (Port 8000)
    cd user_service
@@ -94,14 +101,14 @@ Services communicate asynchronously via RabbitMQ:
    uvicorn app.main:app --reload --port 8003
    ```
 
-3. Start frontend:
+4. Start frontend:
    ```bash
    cd frontend_app
    npm install
    npm run dev
    ```
 
-4. Access the application:
+5. Access the application:
    - Frontend: http://localhost:3000
    - User Service API: http://localhost:8000/docs
    - Content Service API: http://localhost:8001/docs
