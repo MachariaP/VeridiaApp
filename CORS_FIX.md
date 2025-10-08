@@ -45,13 +45,14 @@ Created the following Next.js API route handlers in `frontend_app/src/app/api/`:
 
 #### Content Service Proxies
 - `api/content/route.ts` - List all content
-- `api/content/[id]/route.ts` - Get content by ID
+- `api/content/[id]/route.ts` - Get content by ID, Delete content
 - `api/content/create/route.ts` - Create new content
 
 #### Verification Service Proxies
 - `api/verify/[id]/vote/route.ts` - Submit vote
 - `api/verify/[id]/votes/route.ts` - Get vote statistics
 - `api/verify/[id]/comments/route.ts` - Get/Post comments
+- `api/verify/[id]/comments/[commentId]/route.ts` - Delete comment
 
 ### 2. Updated API Client Functions
 
@@ -76,6 +77,7 @@ Changed from client-side to server-side environment variables:
 ```bash
 NEXT_PUBLIC_SEARCH_API_URL=http://localhost:8003
 NEXT_PUBLIC_CONTENT_API_URL=http://localhost:8001
+NEXT_PUBLIC_VERIFICATION_API_URL=http://localhost:8002
 ```
 
 **New (.env.example):**
@@ -89,6 +91,8 @@ API_URL=http://localhost:8000
 # Client-side (for direct user auth API calls)
 NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 ```
+
+All references to `NEXT_PUBLIC_CONTENT_API_URL`, `NEXT_PUBLIC_VERIFICATION_API_URL`, and `NEXT_PUBLIC_SEARCH_API_URL` have been removed from the codebase.
 
 ## Setup Instructions
 
@@ -160,17 +164,36 @@ NEXT_PUBLIC_API_URL=https://your-user-service.com/api/v1
 The build was successful with all routes properly registered:
 
 ```
-├ ƒ /api/content                     
-├ ƒ /api/content/[id]                
-├ ƒ /api/content/create              
-├ ƒ /api/search                      
-├ ƒ /api/search/categories           
-├ ƒ /api/verify/[id]/comments        
-├ ƒ /api/verify/[id]/vote            
-└ ƒ /api/verify/[id]/votes
+├ ƒ /api/content                              - GET (list all content)
+├ ƒ /api/content/[id]                         - GET (fetch by ID), DELETE (delete content)
+├ ƒ /api/content/create                       - POST (create new content)
+├ ƒ /api/search                               - GET (search content)
+├ ƒ /api/search/categories                    - GET (list categories)
+├ ƒ /api/verify/[id]/comments                 - GET (list comments), POST (add comment)
+├ ƒ /api/verify/[id]/comments/[commentId]     - DELETE (delete comment)
+├ ƒ /api/verify/[id]/vote                     - POST (submit vote)
+└ ƒ /api/verify/[id]/votes                    - GET (get vote stats)
 ```
 
 (ƒ = Dynamic server-side routes)
+
+### API Coverage Summary
+
+All backend endpoints that were previously called directly from the browser are now proxied:
+
+| Function | Old Endpoint | New Endpoint | Status |
+|----------|-------------|--------------|---------|
+| Search Content | `localhost:8003/api/v1/search` | `/api/search` | ✅ |
+| Get Categories | `localhost:8003/api/v1/search/categories` | `/api/search/categories` | ✅ |
+| List Content | `localhost:8001/api/v1/content` | `/api/content` | ✅ |
+| Get Content | `localhost:8001/api/v1/content/{id}` | `/api/content/{id}` | ✅ |
+| Create Content | `localhost:8001/api/v1/content/create` | `/api/content/create` | ✅ |
+| Delete Content | `localhost:8001/api/v1/content/{id}` | `/api/content/{id}` | ✅ |
+| Submit Vote | `localhost:8002/api/v1/verify/{id}/vote` | `/api/verify/{id}/vote` | ✅ |
+| Get Votes | `localhost:8002/api/v1/verify/{id}/votes` | `/api/verify/{id}/votes` | ✅ |
+| Get Comments | `localhost:8002/api/v1/verify/{id}/comments` | `/api/verify/{id}/comments` | ✅ |
+| Post Comment | `localhost:8002/api/v1/verify/{id}/comments` | `/api/verify/{id}/comments` | ✅ |
+| Delete Comment | `localhost:8002/api/v1/verify/{id}/comments/{cid}` | `/api/verify/{id}/comments/{cid}` | ✅ |
 
 ## Troubleshooting
 
