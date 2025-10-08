@@ -2,7 +2,8 @@
  * API utility functions for making authenticated requests to the backend
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+// Use relative paths to leverage Next.js API routes (avoids CORS)
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 export interface ApiError {
   detail: string;

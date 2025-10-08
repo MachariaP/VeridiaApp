@@ -21,7 +21,7 @@ API_URL=http://localhost:8000
 CONTENT_API_URL=http://localhost:8001
 VERIFICATION_API_URL=http://localhost:8002
 SEARCH_API_URL=http://localhost:8003
-NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+# NEXT_PUBLIC_API_URL is optional and defaults to /api (uses Next.js API routes)
 ```
 
 ### 3. Verify Setup
