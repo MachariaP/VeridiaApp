@@ -453,6 +453,108 @@ select:focus {
 }
 
 /* ============================================
+   MICRO-INTERACTIONS
+   ============================================ */
+
+/* Vote Button Animation */
+@keyframes voteUp {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.1);
+  }
+}
+
+@keyframes voteDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px) scale(1.1);
+  }
+}
+
+.vote-up-animation {
+  animation: voteUp var(--duration-moderate) var(--ease-bounce);
+}
+
+.vote-down-animation {
+  animation: voteDown var(--duration-moderate) var(--ease-bounce);
+}
+
+/* Bookmark Fill Animation */
+@keyframes bookmarkFill {
+  0% {
+    fill: none;
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    fill: currentColor;
+    transform: scale(1);
+  }
+}
+
+.bookmark-fill-animation {
+  animation: bookmarkFill var(--duration-moderate) var(--ease-bounce) forwards;
+}
+
+/* Heart Beat Animation */
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+}
+
+.heart-beat-animation {
+  animation: heartBeat var(--duration-moderate) var(--ease-out);
+}
+
+/* Success Checkmark Animation */
+@keyframes drawCheck {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.draw-check-animation {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: drawCheck var(--duration-moderate) var(--ease-out) forwards;
+}
+
+/* Notification Ping */
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* ============================================
    REDUCED MOTION (Accessibility)
    ============================================ */
 
