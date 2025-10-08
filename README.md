@@ -108,13 +108,19 @@ Services communicate asynchronously via RabbitMQ:
    - Verification Service API: http://localhost:8002/docs
    - Search Service API: http://localhost:8003/docs
 
-### Detailed Setup
-For detailed setup instructions for each service:
-- **user_service**: See [user_service/README.md](user_service/README.md)
-- **content_service**: See [content_service/README.md](content_service/README.md)
-- **verification_service**: See [verification_service/README.md](verification_service/README.md)
-- **search_service**: See [search_service/README.md](search_service/README.md)
-- **frontend_app**: See [frontend_app/README.md](frontend_app/README.md)
+### Configuration & Setup Guides
+
+📚 **Setup Documentation:**
+- **[SETUP.md](./SETUP.md)** - Complete setup guide for all services
+- **[ENV_SETUP.md](./ENV_SETUP.md)** - Environment variables configuration guide
+- **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - Solutions to common problems
+
+📖 **Service Documentation:**
+- **user_service**: [user_service/README.md](user_service/README.md)
+- **content_service**: [content_service/README.md](content_service/README.md)
+- **verification_service**: [verification_service/README.md](verification_service/README.md)
+- **search_service**: [search_service/README.md](search_service/README.md)
+- **frontend_app**: [frontend_app/README.md](frontend_app/README.md)
 
 ## Key Technologies
 
