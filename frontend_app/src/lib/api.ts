@@ -295,6 +295,85 @@ export async function getContentById(contentId: string): Promise<Content> {
   return response.json();
 }
 
+/**
+ * Content with enriched data (votes and comments count)
+ */
+export interface EnrichedContent extends Content {
+  total_votes?: number;
+  verified_votes?: number;
+  disputed_votes?: number;
+  verification_percentage?: number;
+  comments_count?: number;
+}
+
+/**
+ * Get all content with optional sorting
+ */
+export async function getAllContent(params?: {
+  skip?: number;
+  limit?: number;
+  sort_by?: 'recent' | 'most_voted' | 'most_commented';
+}): Promise<EnrichedContent[]> {
+  const CONTENT_API_URL = process.env.NEXT_PUBLIC_CONTENT_API_URL || "http://localhost:8001";
+  
+  const queryParams = new URLSearchParams();
+  if (params?.skip) queryParams.append("skip", params.skip.toString());
+  if (params?.limit) queryParams.append("limit", params.limit.toString());
+  
+  const response = await fetch(
+    `${CONTENT_API_URL}/api/v1/content/?${queryParams.toString()}`
+  );
+  
+  if (!response.ok) {
+    throw new Error("Failed to fetch content");
+  }
+  
+  const contents: Content[] = await response.json();
+  
+  // Enrich with vote stats and comment counts
+  const enrichedContents = await Promise.all(
+    contents.map(async (content) => {
+      try {
+        // Fetch vote stats
+        const voteStats = await getVoteStats(content.id);
+        const comments = await getComments(content.id);
+        
+        return {
+          ...content,
+          total_votes: voteStats?.total_votes || 0,
+          verified_votes: voteStats?.verified_votes || 0,
+          disputed_votes: voteStats?.disputed_votes || 0,
+          verification_percentage: voteStats?.verification_percentage || 0,
+          comments_count: comments.length || 0,
+        } as EnrichedContent;
+      } catch {
+        // If enrichment fails, return basic content
+        return {
+          ...content,
+          total_votes: 0,
+          verified_votes: 0,
+          disputed_votes: 0,
+          verification_percentage: 0,
+          comments_count: 0,
+        } as EnrichedContent;
+      }
+    })
+  );
+  
+  // Sort if requested
+  if (params?.sort_by === 'most_voted') {
+    enrichedContents.sort((a, b) => (b.total_votes || 0) - (a.total_votes || 0));
+  } else if (params?.sort_by === 'most_commented') {
+    enrichedContents.sort((a, b) => (b.comments_count || 0) - (a.comments_count || 0));
+  } else if (params?.sort_by === 'recent') {
+    enrichedContents.sort((a, b) => 
+      new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+    );
+  }
+  
+  return enrichedContents;
+}
+
 // Verification Service API Functions
 
 /**
@@ -401,5 +480,53 @@ export async function postComment(contentId: string, comment: string): Promise<v
 
   if (!response.ok) {
     throw new Error("Failed to post comment");
+  }
+}
+
+/**
+ * Delete a comment (user can delete own comments)
+ * Note: Backend endpoint needs to be implemented
+ */
+export async function deleteComment(contentId: string, commentId: number): Promise<void> {
+  const VERIFICATION_API_URL = process.env.NEXT_PUBLIC_VERIFICATION_API_URL || "http://localhost:8002";
+  const token = getToken();
+  
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+
+  const response = await fetch(`${VERIFICATION_API_URL}/api/v1/verify/${contentId}/comments/${commentId}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete comment");
+  }
+}
+
+/**
+ * Delete content (user can delete own content)
+ * Note: Backend endpoint needs to be implemented
+ */
+export async function deleteContent(contentId: string): Promise<void> {
+  const CONTENT_API_URL = process.env.NEXT_PUBLIC_CONTENT_API_URL || "http://localhost:8001";
+  const token = getToken();
+  
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+
+  const response = await fetch(`${CONTENT_API_URL}/api/v1/content/${contentId}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete content");
   }
 }
