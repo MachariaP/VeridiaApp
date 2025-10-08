@@ -22,6 +22,24 @@ git clone https://github.com/MachariaP/VeridiaApp.git
 cd VeridiaApp
 ```
 
+### Step 1.5: Verify Your Setup (Optional but Recommended)
+
+Run the setup verification script to check if your environment is properly configured:
+
+```bash
+chmod +x verify-setup.sh
+./verify-setup.sh
+```
+
+This script will check:
+- Python and Node.js installation
+- Environment configuration files
+- Correct API URLs (especially verification service on port 8002)
+- Service dependencies
+- Port availability
+
+If the script reports any issues, follow the recommendations or see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+
 ### Step 2: Set Up Backend Services
 
 #### User Service (Port 8000)
@@ -68,15 +86,18 @@ Available at http://localhost:8001 | Docs at http://localhost:8001/docs
 cd verification_service
 pip install -r requirements.txt
 
-# Optional: Set environment variables
-export DATABASE_URL="postgresql://user:password@localhost:5432/veridiadb"
-# Or use SQLite (default)
+# Create .env file from example (REQUIRED for production, optional for dev)
+cp .env.example .env
+# Edit .env to set your PostgreSQL credentials if using PostgreSQL
+# If .env is not created, service will use SQLite as fallback
 
 # Run the service
 uvicorn app.main:app --reload --port 8002
 ```
 
 Available at http://localhost:8002 | Docs at http://localhost:8002/docs
+
+**Note:** For development, you can skip creating the `.env` file and the service will use SQLite. For production or if you want to use PostgreSQL/RabbitMQ, create and configure the `.env` file.
 
 #### Search Service (Port 8003)
 
@@ -100,15 +121,21 @@ Available at http://localhost:8003 | Docs at http://localhost:8003/docs
 cd frontend_app
 npm install
 
-# Optional: Create .env.local file
+# Create .env.local file from example
 cp .env.example .env.local
-# Edit .env.local if needed to customize API URLs
+# The default values in .env.local should work for local development:
+# - User Service: http://localhost:8000
+# - Content Service: http://localhost:8001
+# - Verification Service: http://localhost:8002
+# - Search Service: http://localhost:8003
 
 # Run the development server
 npm run dev
 ```
 
 The frontend will be available at http://localhost:3000
+
+**Important:** If you modify `.env.local`, you must restart the dev server for changes to take effect.
 
 ## Accessing the Application
 
@@ -280,11 +307,22 @@ After setting up, you can:
 4. **Set up RabbitMQ**: Enable real event-driven communication
 5. **Deploy to cloud**: Use Docker and Kubernetes for production
 
+## Troubleshooting
+
+If you encounter connection errors, API failures, or other issues, please refer to the comprehensive **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** guide.
+
+Common issues covered:
+- **Connection Refused Errors (ERR_CONNECTION_REFUSED)** - Wrong ports or missing environment configuration
+- **Database Connection Failed** - PostgreSQL setup issues
+- **Port Already in Use** - How to resolve port conflicts
+- **Environment Variables Not Loading** - Frontend .env configuration
+
 ## Support
 
 For issues or questions:
-- Check the individual service README files
-- Review the API documentation at `/docs` endpoints
+- Check the **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** guide first
+- Review the individual service README files
+- Check API documentation at `/docs` endpoints
 - Open an issue on GitHub
 
 ## License
