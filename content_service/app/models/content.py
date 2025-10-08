@@ -58,20 +58,77 @@ class ContentRepository:
         cursor = self.collection.find().sort("created_at", -1).skip(skip).limit(limit)
         return list(cursor)
     
-    def update_content_status(self, content_id: str, status: str) -> bool:
-        """Update content verification status."""
+    def update_content_status(self, content_id: str, status: str, trigger: Optional[str] = None) -> bool:
+        """
+        Update content verification status with versioning.
+        Creates a snapshot in version history for transparency.
+        
+        Args:
+            content_id: Content ID to update
+            status: New verification status
+            trigger: What triggered the status change (e.g., "Community Consensus")
+        """
         try:
+            # Get current content for versioning
+            current_content = self.get_content_by_id(content_id)
+            if not current_content:
+                return False
+            
+            # Create version snapshot
+            version_entry = {
+                "status": current_content.get("status", "Unknown"),
+                "timestamp": datetime.utcnow(),
+                "trigger": trigger or "Status Update"
+            }
+            
             result = self.collection.update_one(
                 {"_id": ObjectId(content_id)},
                 {
                     "$set": {
                         "status": status,
                         "updated_at": datetime.utcnow()
+                    },
+                    "$push": {
+                        "status_history": version_entry
                     }
                 }
             )
             return result.modified_count > 0
-        except:
+        except Exception as e:
+            print(f"Error updating content status: {e}")
+            return False
+    
+    def create_content_version(self, content_id: str, updated_by_user_id: int, 
+                              updated_by_username: str, changes: dict) -> bool:
+        """
+        Create a version snapshot when content is edited.
+        Enables reverting changes and provides transparency.
+        
+        Args:
+            content_id: Content ID
+            updated_by_user_id: User who made the edit
+            updated_by_username: Username who made the edit
+            changes: Dictionary of changes made
+        """
+        try:
+            version_entry = {
+                "timestamp": datetime.utcnow(),
+                "updated_by_user_id": updated_by_user_id,
+                "updated_by_username": updated_by_username,
+                "changes": changes
+            }
+            
+            result = self.collection.update_one(
+                {"_id": ObjectId(content_id)},
+                {
+                    "$push": {
+                        "edit_history": version_entry
+                    }
+                }
+            )
+            return result.modified_count > 0
+        except Exception as e:
+            print(f"Error creating content version: {e}")
             return False
     
     def delete_content(self, content_id: str) -> bool:

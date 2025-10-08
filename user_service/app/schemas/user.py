@@ -24,6 +24,7 @@ class UserOut(BaseModel):
     username: str
     email: EmailStr
     is_active: bool
+    role: str = "standard"
 
     class Config:
         from_attributes = True

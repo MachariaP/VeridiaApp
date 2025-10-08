@@ -42,22 +42,42 @@ def calculate_final_status(verified_votes: int, disputed_votes: int, total_votes
     """
     Calculate final verification status based on community votes.
     
+    Implements the status thresholds from the requirements:
+    - Verified: 85% verified votes AND total > 50
+    - Disputed: 35% disputed votes OR moderator flag
+    - Otherwise: Pending/Under Review
+    
     Args:
         verified_votes: Number of verified votes
         disputed_votes: Number of disputed votes
         total_votes: Total number of votes
     
     Returns:
-        Status string: "Verified", "Disputed", or "Pending Verification"
+        Status string: "Verified", "Disputed", "Under Review", or "Pending Verification"
     """
-    if total_votes < 5:
-        return "Pending Community Verification"
+    if total_votes == 0:
+        return "Pending Verification"
+    
+    if total_votes < 50:
+        # Need minimum 50 votes for verified status
+        return "Pending Verification"
     
     verification_percentage = (verified_votes / total_votes) * 100
+    disputed_percentage = (disputed_votes / total_votes) * 100
     
-    if verification_percentage >= 70:
+    # Check for Verified status: 85% verified AND total > 50
+    if verification_percentage >= 85 and total_votes > 50:
+        # Once verified, check if disputed votes exceed 20% of verified count
+        if disputed_votes > (verified_votes * 0.20):
+            return "Under Review"
         return "Verified"
-    elif verification_percentage <= 30:
+    
+    # Check for Disputed status: 35% or more disputed votes
+    if disputed_percentage >= 35:
         return "Disputed"
-    else:
+    
+    # If we have enough votes but don't meet verified threshold
+    if total_votes >= 50:
         return "Under Review"
+    
+    return "Pending Verification"
