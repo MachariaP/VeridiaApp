@@ -7,11 +7,18 @@ from datetime import datetime
 
 
 class ContentIn(BaseModel):
-    """Schema for creating new content."""
-    title: str = Field(..., min_length=1, max_length=200, description="Content title")
-    source_url: HttpUrl = Field(..., description="Original source URL")
-    description: str = Field(..., min_length=1, max_length=1000, description="Content description")
-    category: str = Field(..., description="Content category")
+    """
+    Schema for creating new content.
+    Enhanced validation per requirements:
+    - Title: Max 250 characters
+    - Description: Min 50, Max 5000 characters
+    - Source URL: Must be valid URL (HTTPS preferred)
+    - Category: Must be from predefined list
+    """
+    title: str = Field(..., min_length=1, max_length=250, description="Content title (max 250 chars)")
+    source_url: HttpUrl = Field(..., description="Original source URL (HTTPS preferred)")
+    description: str = Field(..., min_length=50, max_length=5000, description="Content description (50-5000 chars)")
+    category: str = Field(..., description="Content category (must be from predefined list)")
 
 
 class ContentOut(BaseModel):

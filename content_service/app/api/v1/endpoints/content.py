@@ -6,8 +6,10 @@ from typing import List, Optional
 from app.schemas.content import ContentIn, ContentOut
 from app.core.database import get_database
 from app.core.security import verify_token
+from app.core.config import settings
 from app.models.content import ContentRepository, serialize_content
 from app.utils.messaging import get_event_publisher
+from app.utils.validators import validate_url, validate_title, validate_description, validate_category
 from pymongo.database import Database
 
 
@@ -64,8 +66,46 @@ async def create_content(
     Create new content for verification.
     Requires JWT authentication.
     Publishes ContentCreated event to RabbitMQ.
+    
+    Enhanced with comprehensive validation:
+    - URL validation (HTTPS preferred, malware domain checking)
+    - Title validation (max 250 chars, sensationalism check)
+    - Description validation (50-5000 chars)
+    - Category validation (must be from predefined list)
     """
     username, user_id = current_user
+    
+    # Validate URL
+    url_valid, url_message = validate_url(str(content_in.source_url))
+    if not url_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=url_message
+        )
+    
+    # Validate title
+    title_valid, title_message = validate_title(content_in.title)
+    if not title_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=title_message
+        )
+    
+    # Validate description
+    desc_valid, desc_message = validate_description(content_in.description)
+    if not desc_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=desc_message
+        )
+    
+    # Validate category
+    cat_valid, cat_message = validate_category(content_in.category, settings.VALID_CATEGORIES)
+    if not cat_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=cat_message
+        )
     
     # Create content in MongoDB
     repo = ContentRepository(db)
@@ -163,6 +203,15 @@ async def list_content(
         content_list.append(ContentOut(**content_data))
     
     return content_list
+
+
+@router.get("/categories", response_model=List[str])
+async def get_categories():
+    """
+    Get list of valid content categories.
+    Public endpoint - useful for frontend dropdowns and validation.
+    """
+    return settings.VALID_CATEGORIES
 
 
 @router.delete("/{content_id}", status_code=status.HTTP_204_NO_CONTENT)

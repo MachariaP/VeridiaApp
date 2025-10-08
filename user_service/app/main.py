@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from app.api.v1.endpoints import auth
+from app.api.v1.endpoints import gdpr
 from app.core.database import init_db
 
 # Set up logging
@@ -36,11 +37,12 @@ app.add_middleware(
 def on_startup():
     init_db()
 
-# Include authentication router
-# IMPORTANT: The auth.router does NOT have a prefix defined on it.
-# The prefix is specified here to create endpoints at /api/v1/auth/*
+# Include routers
+# IMPORTANT: The routers do NOT have a prefix defined on them.
+# The prefix is specified here to create endpoints at /api/v1/auth/* and /api/v1/gdpr/*
 # This prevents duplicate prefixes (e.g., /api/v1/api/v1/auth/login)
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(gdpr.router, prefix="/api/v1/gdpr", tags=["gdpr"])
 
 @app.get("/")
 def read_root():

@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.models.user import Base
+from app.models.audit_log import AuditLog  # Import to register with Base
 import os
 
 # Database URL from environment variable or default to SQLite for development

@@ -42,9 +42,13 @@ class CommentOut(BaseModel):
 
 
 class VoteStats(BaseModel):
-    """Schema for vote statistics."""
+    """
+    Schema for vote statistics.
+    Enhanced with calculated status based on thresholds.
+    """
     content_id: str
     total_votes: int
     verified_votes: int
     disputed_votes: int
     verification_percentage: float
+    status: str = Field(default="Pending Verification", description="Calculated verification status")
