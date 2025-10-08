@@ -168,15 +168,13 @@ export async function createContent(data: {
   description: string;
   category: string;
 }): Promise<Content> {
-  // Content service runs on port 8001
-  const CONTENT_API_URL = process.env.NEXT_PUBLIC_CONTENT_API_URL || "http://localhost:8001";
   const token = getToken();
   
   if (!token) {
     throw new Error("Authentication required");
   }
 
-  const response = await fetch(`${CONTENT_API_URL}/api/v1/content/create`, {
+  const response = await fetch('/api/content/create', {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -235,9 +233,6 @@ export async function searchContent(params: {
   category?: string;
   sort_by?: string;
 }): Promise<SearchResponse> {
-  // Search service runs on port 8003
-  const SEARCH_API_URL = process.env.NEXT_PUBLIC_SEARCH_API_URL || "http://localhost:8003";
-  
   const queryParams = new URLSearchParams({
     query: params.query.trim(),
   });
@@ -251,7 +246,7 @@ export async function searchContent(params: {
   }
 
   const response = await fetch(
-    `${SEARCH_API_URL}/api/v1/search/?${queryParams.toString()}`
+    `/api/search?${queryParams.toString()}`
   );
 
   if (!response.ok) {
@@ -265,11 +260,8 @@ export async function searchContent(params: {
  * Get available content categories
  */
 export async function getCategories(): Promise<string[]> {
-  // Search service runs on port 8003
-  const SEARCH_API_URL = process.env.NEXT_PUBLIC_SEARCH_API_URL || "http://localhost:8003";
-  
   try {
-    const response = await fetch(`${SEARCH_API_URL}/api/v1/search/categories`);
+    const response = await fetch('/api/search/categories');
     if (response.ok) {
       const data = await response.json();
       return data.categories || [];
@@ -284,9 +276,7 @@ export async function getCategories(): Promise<string[]> {
  * Get content by ID
  */
 export async function getContentById(contentId: string): Promise<Content> {
-  const CONTENT_API_URL = process.env.NEXT_PUBLIC_CONTENT_API_URL || "http://localhost:8001";
-  
-  const response = await fetch(`${CONTENT_API_URL}/api/v1/content/${contentId}`);
+  const response = await fetch(`/api/content/${contentId}`);
   
   if (!response.ok) {
     throw new Error("Content not found");
@@ -314,14 +304,12 @@ export async function getAllContent(params?: {
   limit?: number;
   sort_by?: 'recent' | 'most_voted' | 'most_commented';
 }): Promise<EnrichedContent[]> {
-  const CONTENT_API_URL = process.env.NEXT_PUBLIC_CONTENT_API_URL || "http://localhost:8001";
-  
   const queryParams = new URLSearchParams();
   if (params?.skip) queryParams.append("skip", params.skip.toString());
   if (params?.limit) queryParams.append("limit", params.limit.toString());
   
   const response = await fetch(
-    `${CONTENT_API_URL}/api/v1/content/?${queryParams.toString()}`
+    `/api/content?${queryParams.toString()}`
   );
   
   if (!response.ok) {
@@ -401,10 +389,8 @@ export interface Comment {
  * Get vote statistics for content
  */
 export async function getVoteStats(contentId: string): Promise<VoteStats | null> {
-  const VERIFICATION_API_URL = process.env.NEXT_PUBLIC_VERIFICATION_API_URL || "http://localhost:8002";
-  
   try {
-    const response = await fetch(`${VERIFICATION_API_URL}/api/v1/verify/${contentId}/votes`);
+    const response = await fetch(`/api/verify/${contentId}/votes`);
     
     if (response.ok) {
       return response.json();
@@ -419,14 +405,13 @@ export async function getVoteStats(contentId: string): Promise<VoteStats | null>
  * Submit a vote for content
  */
 export async function submitVote(contentId: string, vote: boolean): Promise<void> {
-  const VERIFICATION_API_URL = process.env.NEXT_PUBLIC_VERIFICATION_API_URL || "http://localhost:8002";
   const token = getToken();
   
   if (!token) {
     throw new Error("Authentication required");
   }
 
-  const response = await fetch(`${VERIFICATION_API_URL}/api/v1/verify/${contentId}/vote`, {
+  const response = await fetch(`/api/verify/${contentId}/vote`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -444,10 +429,8 @@ export async function submitVote(contentId: string, vote: boolean): Promise<void
  * Get comments for content
  */
 export async function getComments(contentId: string): Promise<Comment[]> {
-  const VERIFICATION_API_URL = process.env.NEXT_PUBLIC_VERIFICATION_API_URL || "http://localhost:8002";
-  
   try {
-    const response = await fetch(`${VERIFICATION_API_URL}/api/v1/verify/${contentId}/comments`);
+    const response = await fetch(`/api/verify/${contentId}/comments`);
     
     if (response.ok) {
       return response.json();
@@ -462,14 +445,13 @@ export async function getComments(contentId: string): Promise<Comment[]> {
  * Post a comment on content
  */
 export async function postComment(contentId: string, comment: string): Promise<void> {
-  const VERIFICATION_API_URL = process.env.NEXT_PUBLIC_VERIFICATION_API_URL || "http://localhost:8002";
   const token = getToken();
   
   if (!token) {
     throw new Error("Authentication required");
   }
 
-  const response = await fetch(`${VERIFICATION_API_URL}/api/v1/verify/${contentId}/comments`, {
+  const response = await fetch(`/api/verify/${contentId}/comments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
