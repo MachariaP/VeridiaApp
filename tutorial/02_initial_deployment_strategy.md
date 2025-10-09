@@ -160,7 +160,7 @@ services:
     image: postgres:14-alpine
     environment:
       POSTGRES_USER: veridiauser
-      POSTGRES_PASSWORD: veridiapass
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
       POSTGRES_DB: veridiadb
     ports:
       - "5432:5432"
@@ -177,7 +177,7 @@ services:
     image: mongo:6.0
     environment:
       MONGO_INITDB_ROOT_USERNAME: veridiauser
-      MONGO_INITDB_ROOT_PASSWORD: veridiapass
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-changeme}
     ports:
       - "27017:27017"
     volumes:
@@ -210,7 +210,7 @@ services:
     image: rabbitmq:3-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: veridiauser
-      RABBITMQ_DEFAULT_PASS: veridiapass
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-changeme}
     ports:
       - "5672:5672"   # AMQP port
       - "15672:15672" # Management UI
@@ -230,8 +230,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://veridiauser:veridiapass@postgres:5432/veridiadb
-      SECRET_KEY: dev-secret-key-change-in-production
+      DATABASE_URL: postgresql://veridiauser:${POSTGRES_PASSWORD:-changeme}@postgres:5432/veridiadb
+      SECRET_KEY: ${SECRET_KEY:-change-this-in-production}
       ACCESS_TOKEN_EXPIRE_MINUTES: 30
     depends_on:
       postgres:
@@ -250,9 +250,9 @@ services:
     ports:
       - "8001:8001"
     environment:
-      MONGODB_URL: mongodb://veridiauser:veridiapass@mongodb:27017
+      MONGODB_URL: mongodb://veridiauser:${MONGO_PASSWORD:-changeme}@mongodb:27017
       DATABASE_NAME: veridiadb
-      SECRET_KEY: dev-secret-key-change-in-production
+      SECRET_KEY: ${SECRET_KEY:-change-this-in-production}
     depends_on:
       mongodb:
         condition: service_healthy
@@ -270,9 +270,9 @@ services:
     ports:
       - "8002:8002"
     environment:
-      DATABASE_URL: postgresql://veridiauser:veridiapass@postgres:5432/veridiadb
-      RABBITMQ_URL: amqp://veridiauser:veridiapass@rabbitmq:5672/
-      SECRET_KEY: dev-secret-key-change-in-production
+      DATABASE_URL: postgresql://veridiauser:${POSTGRES_PASSWORD:-changeme}@postgres:5432/veridiadb
+      RABBITMQ_URL: amqp://veridiauser:${RABBITMQ_PASSWORD:-changeme}@rabbitmq:5672/
+      SECRET_KEY: ${SECRET_KEY:-change-this-in-production}
       CONTENT_SERVICE_URL: http://content_service:8001
     depends_on:
       postgres:

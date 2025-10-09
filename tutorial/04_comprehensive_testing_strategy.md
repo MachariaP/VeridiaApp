@@ -427,7 +427,7 @@ class TestAuthEndpoints:
         user_data = {
             "username": "testuser",
             "email": "test@example.com",
-            "password": "SecurePassword123!"
+            "password": "TestPassword123!"
         }
         
         response = client.post("/api/v1/auth/register", json=user_data)
@@ -443,7 +443,7 @@ class TestAuthEndpoints:
         user_data = {
             "username": "duplicateuser",
             "email": "user1@example.com",
-            "password": "SecurePassword123!"
+            "password": "TestPassword123!"
         }
         
         # First registration
@@ -462,14 +462,14 @@ class TestAuthEndpoints:
         user_data = {
             "username": "loginuser",
             "email": "login@example.com",
-            "password": "SecurePassword123!"
+            "password": "TestPassword123!"
         }
         client.post("/api/v1/auth/register", json=user_data)
         
         # Login
         login_data = {
             "username": "loginuser",
-            "password": "SecurePassword123!"
+            "password": "TestPassword123!"
         }
         response = client.post("/api/v1/auth/login", data=login_data)
         
@@ -484,7 +484,7 @@ class TestAuthEndpoints:
         user_data = {
             "username": "loginuser2",
             "email": "login2@example.com",
-            "password": "SecurePassword123!"
+            "password": "TestPassword123!"
         }
         client.post("/api/v1/auth/register", json=user_data)
         
@@ -509,13 +509,13 @@ class TestAuthEndpoints:
         user_data = {
             "username": "tokenuser",
             "email": "token@example.com",
-            "password": "SecurePassword123!"
+            "password": "TestPassword123!"
         }
         client.post("/api/v1/auth/register", json=user_data)
         
         login_response = client.post(
             "/api/v1/auth/login",
-            data={"username": "tokenuser", "password": "SecurePassword123!"}
+            data={"username": "tokenuser", "password": "TestPassword123!"}
         )
         token = login_response.json()["access_token"]
         
@@ -536,13 +536,13 @@ class TestUserCRUD:
         user_data = {
             "username": "profileuser",
             "email": "profile@example.com",
-            "password": "SecurePassword123!"
+            "password": "TestPassword123!"
         }
         client.post("/api/v1/auth/register", json=user_data)
         
         login_response = client.post(
             "/api/v1/auth/login",
-            data={"username": "profileuser", "password": "SecurePassword123!"}
+            data={"username": "profileuser", "password": "TestPassword123!"}
         )
         token = login_response.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
@@ -561,13 +561,13 @@ class TestUserCRUD:
         user_data = {
             "username": "updateuser",
             "email": "update@example.com",
-            "password": "SecurePassword123!"
+            "password": "TestPassword123!"
         }
         client.post("/api/v1/auth/register", json=user_data)
         
         login_response = client.post(
             "/api/v1/auth/login",
-            data={"username": "updateuser", "password": "SecurePassword123!"}
+            data={"username": "updateuser", "password": "TestPassword123!"}
         )
         token = login_response.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
@@ -619,14 +619,14 @@ def authenticated_user():
     user_data = {
         "username": "integrationuser",
         "email": "integration@example.com",
-        "password": "SecurePassword123!"
+        "password": "TestPassword123!"
     }
     requests.post(f"{USER_SERVICE}/api/v1/auth/register", json=user_data)
     
     # Login
     login_response = requests.post(
         f"{USER_SERVICE}/api/v1/auth/login",
-        data={"username": "integrationuser", "password": "SecurePassword123!"}
+        data={"username": "integrationuser", "password": "TestPassword123!"}
     )
     token = login_response.json()["access_token"]
     
@@ -778,7 +778,7 @@ test.describe('Authentication Flow', () => {
     // Fill registration form
     await page.fill('input[name="username"]', 'e2euser');
     await page.fill('input[name="email"]', 'e2e@example.com');
-    await page.fill('input[name="password"]', 'SecurePassword123!');
+    await page.fill('input[name="password"]', 'TestPassword123!');
     
     // Submit
     await page.click('button[type="submit"]');
@@ -796,7 +796,7 @@ test.describe('Authentication Flow', () => {
     
     // Fill login form
     await page.fill('input[name="username"]', 'e2euser');
-    await page.fill('input[name="password"]', 'SecurePassword123!');
+    await page.fill('input[name="password"]', 'TestPassword123!');
     
     // Submit
     await page.click('button[type="submit"]');
@@ -822,7 +822,7 @@ test.describe('Content Creation Flow', () => {
     // Login before each test
     await page.goto('/login');
     await page.fill('input[name="username"]', 'e2euser');
-    await page.fill('input[name="password"]', 'SecurePassword123!');
+    await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
     await expect(page).toHaveURL('/dashboard');
   });
@@ -921,7 +921,7 @@ Each backend service provides interactive API documentation via Swagger UI:
    {
      "username": "apitest",
      "email": "apitest@example.com",
-     "password": "SecurePassword123!"
+     "password": "TestPassword123!"
    }
    ```
 5. Click "Execute"
@@ -937,7 +937,7 @@ Each backend service provides interactive API documentation via Swagger UI:
 2. Click "Try it out"
 3. Enter credentials in form:
    - username: `apitest`
-   - password: `SecurePassword123!`
+   - password: `TestPassword123!`
 4. Click "Execute"
 5. Copy the `access_token` from response
 
