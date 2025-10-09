@@ -1,0 +1,113 @@
+services:
+  # PostgreSQL Database for VeridiaApp (Mandated Configuration)
+  veridia-postgres:
+    image: postgres:14-alpine
+    container_name: veridia-postgres
+    environment:
+      POSTGRES_DB: VeridiaDB
+      POSTGRES_USER: veridia_user
+      POSTGRES_PASSWORD: 30937594PHINE
+    ports:
+      - "5432:5432"
+    volumes:
+      - veridia_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U veridia_user -d VeridiaDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - veridia-network
+
+  # Redis for Rate Limiting and Caching
+  redis:
+    image: redis:7-alpine
+    container_name: veridia-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - veridia-network
+
+  # Core API Gateway Service
+  core-api-gateway:
+    build:
+      context: ./core_api_gateway
+      dockerfile: Dockerfile
+    container_name: core-api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://veridia_user:30937594PHINE@veridia-postgres:5432/VeridiaDB
+      - REDIS_URL=redis://redis:6379
+      - AI_VERIFICATION_SERVICE_URL=http://ai-verification-engine:8002
+      - AUDIT_SERVICE_URL=http://audit-scoring-service:8003
+    depends_on:
+      veridia-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - veridia-network
+
+  # AI Verification Engine Service
+  ai-verification-engine:
+    build:
+      context: ./ai_verification_engine
+      dockerfile: Dockerfile
+    container_name: ai-verification-engine
+    ports:
+      - "8002:8002"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - veridia-network
+
+  # Audit & Scoring Service
+  audit-scoring-service:
+    build:
+      context: ./audit_scoring_service
+      dockerfile: Dockerfile
+    container_name: audit-scoring-service
+    ports:
+      - "8003:8003"
+    environment:
+      - DATABASE_URL=postgresql://veridia_user:30937594PHINE@veridia-postgres:5432/VeridiaDB
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      veridia-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - veridia-network
+
+volumes:
+  veridia_data:
+    driver: local
+
+networks:
+  veridia-network:
+    driver: bridge
