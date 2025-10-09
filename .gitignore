@@ -1,0 +1,37 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.egg-info/
+env/
+venv/
+.pytest_cache/
+*.sqlite3
+
+# Node.js / Next.js (Frontend)
+node_modules/
+.next/
+.env.local
+.env*.local
+
+# Environment Variables
+.env
+
+# IDE-Specific Files
+.vscode/
+.idea/
+*.iml
+
+# Docker
+*.dockerignore
+
+# Database Files
+*.db
+postgres-data/
+
+# Logs
+*.log
