@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PostgreSQL Database for VeridiaApp (Mandated Configuration)
   veridia-postgres:
