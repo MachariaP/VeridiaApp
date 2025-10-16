@@ -154,13 +154,14 @@ curl -X POST "http://localhost:8000/api/v1/auth/refresh" \
 ### Security Features
 
 1. **Password Hashing** - Uses Bcrypt with automatic salt generation
-2. **JWT Tokens** - HS256 algorithm (configurable to RS256 for production)
-3. **Token Types** - Separate access and refresh tokens
+2. **JWT Tokens** - HS256 algorithm with symmetric secret key (configurable for production)
+3. **Token Types** - Separate access and refresh tokens with type validation
 4. **Token Expiration** - Short-lived access tokens (15 min)
-5. **Refresh Token Rotation** - New tokens issued on each refresh
-6. **Input Validation** - Pydantic schemas validate all input
+5. **Refresh Token Rotation** - New tokens issued on each refresh for enhanced security
+6. **Input Validation** - Pydantic schemas validate all input data
 7. **SQL Injection Protection** - SQLAlchemy ORM with parameterized queries
-8. **CORS** - Configurable cross-origin resource sharing
+8. **CORS** - Restricted to localhost origins (configurable for production domains)
+9. **Secret Key Management** - Environment variable based configuration
 
 ### Database Schema
 
@@ -256,11 +257,18 @@ Set the following for production:
 
 ```env
 DATABASE_URL=postgresql://user:password@db-host:5432/veridiapp_db
-JWT_SECRET_KEY=long-random-secret-key-min-32-chars
-JWT_ALGORITHM=RS256  # Use RS256 with key pairs for production
+JWT_SECRET_KEY=<generate-strong-random-key>  # Use: python -c "import secrets; print(secrets.token_urlsafe(32))"
+JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=15
 REFRESH_TOKEN_EXPIRE_DAYS=7
 ```
+
+**Important Security Notes:**
+- Always generate a strong random secret key for JWT_SECRET_KEY
+- Never commit real secrets to version control
+- Use environment variables or secret management systems (AWS Secrets Manager, HashiCorp Vault)
+- Configure CORS with specific allowed origins in production (not wildcard)
+- Use HTTPS/TLS in production for all API communication
 
 ### Docker Deployment
 

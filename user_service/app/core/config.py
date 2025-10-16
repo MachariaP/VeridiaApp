@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     
     # JWT Settings
     JWT_SECRET_KEY: str = "your-secret-key-here-change-in-production"
-    JWT_ALGORITHM: str = "RS256"
+    JWT_ALGORITHM: str = "HS256"  # Use HS256 for symmetric key encryption (symmetric secret key)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
