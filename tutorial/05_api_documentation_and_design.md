@@ -456,7 +456,7 @@ class UserCreate(UserBase):
         min_length=8,
         max_length=100,
         description="Password (minimum 8 characters)",
-        example="SecurePassword123!"
+        example="TestPassword123!"
     )
     
     class Config:
@@ -464,7 +464,7 @@ class UserCreate(UserBase):
             "example": {
                 "username": "john_doe",
                 "email": "john@example.com",
-                "password": "SecurePassword123!"
+                "password": "TestPassword123!"
             }
         }
 
@@ -808,7 +808,7 @@ http://localhost:8000/docs
 {
   "username": "test_user",
   "email": "test@example.com",
-  "password": "SecurePassword123!"
+  "password": "TestPassword123!"
 }
 ```
 

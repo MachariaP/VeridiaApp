@@ -141,7 +141,7 @@ sudo -u postgres psql
 **In PostgreSQL shell:**
 ```sql
 CREATE DATABASE veridiadb;
-CREATE USER veridiauser WITH PASSWORD 'securepassword123';
+CREATE USER veridiauser WITH PASSWORD 'YOUR_PASSWORD_HERE';
 GRANT ALL PRIVILEGES ON DATABASE veridiadb TO veridiauser;
 \q
 ```
@@ -159,7 +159,7 @@ GRANT ALL PRIVILEGES ON DATABASE veridiadb TO veridiauser;
 # Run PostgreSQL in Docker
 docker run --name veridiadb-postgres \
   -e POSTGRES_USER=veridiauser \
-  -e POSTGRES_PASSWORD=securepassword123 \
+  -e POSTGRES_PASSWORD=YOUR_PASSWORD_HERE \
   -e POSTGRES_DB=veridiadb \
   -p 5432:5432 \
   -v postgres_data:/var/lib/postgresql/data \
@@ -175,15 +175,15 @@ docker exec -it veridiadb-postgres psql -U veridiauser -d veridiadb
 
 **user_service/.env:**
 ```bash
-DATABASE_URL=postgresql://veridiauser:securepassword123@localhost:5432/veridiadb
-SECRET_KEY=dev-secret-key-change-in-production
+DATABASE_URL=postgresql://veridiauser:YOUR_PASSWORD_HERE@localhost:5432/veridiadb
+SECRET_KEY=your-secret-key-here-change-in-production
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
 **verification_service/.env:**
 ```bash
-DATABASE_URL=postgresql://veridiauser:securepassword123@localhost:5432/veridiadb
-SECRET_KEY=dev-secret-key-change-in-production
+DATABASE_URL=postgresql://veridiauser:YOUR_PASSWORD_HERE@localhost:5432/veridiadb
+SECRET_KEY=your-secret-key-here-change-in-production
 CONTENT_SERVICE_URL=http://localhost:8001
 RABBITMQ_URL=amqp://guest:guest@localhost:5672/
 ```
@@ -246,13 +246,13 @@ sudo systemctl start mongod
 # Run MongoDB in Docker
 docker run --name veridiadb-mongo \
   -e MONGO_INITDB_ROOT_USERNAME=veridiauser \
-  -e MONGO_INITDB_ROOT_PASSWORD=securepassword123 \
+  -e MONGO_INITDB_ROOT_PASSWORD=YOUR_PASSWORD_HERE \
   -p 27017:27017 \
   -v mongodb_data:/data/db \
   -d mongo:6.0
 
 # Verify connection
-docker exec -it veridiadb-mongo mongosh -u veridiauser -p securepassword123
+docker exec -it veridiadb-mongo mongosh -u veridiauser -p YOUR_PASSWORD_HERE
 ```
 
 ---
@@ -281,10 +281,10 @@ mongodb+srv://veridiauser:<password>@cluster0.xxxxx.mongodb.net/veridiadb?retryW
 MONGODB_URL=mongodb://localhost:27017
 
 # Or MongoDB Atlas
-# MONGODB_URL=mongodb+srv://veridiauser:password@cluster0.xxxxx.mongodb.net
+# MONGODB_URL=mongodb+srv://veridiauser:<password>@cluster0.xxxxx.mongodb.net
 
 DATABASE_NAME=veridiadb
-SECRET_KEY=dev-secret-key-change-in-production
+SECRET_KEY=your-secret-key-here-change-in-production
 ```
 
 **Test Connection:**
@@ -378,17 +378,17 @@ TEST_USERS = [
     {
         "username": "john_doe",
         "email": "john@example.com",
-        "password": "SecurePassword123!"
+        "password": "TestPassword123!"
     },
     {
         "username": "jane_smith",
         "email": "jane@example.com",
-        "password": "SecurePassword123!"
+        "password": "TestPassword123!"
     },
     {
         "username": "bob_reporter",
         "email": "bob@example.com",
-        "password": "SecurePassword123!"
+        "password": "TestPassword123!"
     }
 ]
 
@@ -610,7 +610,7 @@ POSTGRES_CONFIG = {
     "port": 5432,
     "database": "veridiadb",
     "user": "veridiauser",
-    "password": "securepassword123"
+    "password": "YOUR_PASSWORD_HERE"
 }
 
 MONGODB_CONFIG = {
@@ -741,7 +741,7 @@ POSTGRES_CONFIG = {
     "port": 5432,
     "database": "veridiadb",
     "user": "veridiauser",
-    "password": "securepassword123"
+    "password": "YOUR_PASSWORD_HERE"
 }
 
 MONGODB_CONFIG = {
@@ -931,7 +931,7 @@ POSTGRES_CONFIG = {
     "port": 5432,
     "database": "veridiadb",
     "user": "veridiauser",
-    "password": "securepassword123"
+    "password": "YOUR_PASSWORD_HERE"
 }
 
 def test_postgres_transactions():
