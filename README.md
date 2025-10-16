@@ -239,6 +239,6 @@ VeridiaApp was conceived and developed to address the critical challenge of misi
 
 ---
 
-*Last Updated: October 2025*  
+*Last Updated: October 2024*  
 *Version: 1.0*  
 *Built with ❤️ for a more trustworthy internet*
