@@ -25,8 +25,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,  # Restricted to localhost for security
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Only necessary HTTP methods
+    allow_headers=["Content-Type", "Authorization"],  # Only necessary headers
 )
 
 # Include API router
