@@ -1,5 +1,4 @@
 """Tests for configuration settings."""
-import os
 import pytest
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import AliasChoices, Field
