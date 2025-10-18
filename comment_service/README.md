@@ -1,164 +1,164 @@
 # VeridiaApp Comment Service
 
-Discussion and comment threading service for community engagement.
+## 📜 Table of Contents
+* [Project Overview](#1-project-overview)
+* [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
+* [Technology Stack Overview](#3-technology-stack-overview)
+* [Database Design Overview](#4-database-design-overview)
+* [Feature Breakdown](#5-feature-breakdown)
+* [API Security Overview](#6-api-security-overview)
+* [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
+* [Resources](#8-resources)
+* [License](#9-license)
+* [Created By](#10-created-by)
 
-## Features
+---
 
-- Create comments and nested replies
-- Threaded discussions with parent-child relationships
-- XSS protection with HTML sanitization
-- Soft deletion for comment management
-- Role-based permissions (author or moderator can edit/delete)
-- Comment history tracking
+## 1. Project Overview
 
-## Technology Stack
+**Brief Description:**
 
-- FastAPI for RESTful API
-- PostgreSQL for relational data
-- SQLAlchemy ORM with threading support
-- Alembic for migrations
-- Bleach for XSS protection
-- JWT authentication
-- Python 3.11+
+The VeridiaApp Comment Service is a specialized microservice enabling threaded discussions and community engagement around content submissions. Built with FastAPI and PostgreSQL, this service provides robust commenting functionality with nested reply support, XSS protection, and role-based moderation capabilities. Users can discuss content authenticity, provide supporting evidence, and engage in constructive debate through a hierarchical comment structure. The service integrates seamlessly with the User Service for authentication and the Content Service for linking discussions to specific content items.
 
-## Prerequisites
+**Project Goals:**
 
-- Python 3.11+
-- PostgreSQL 14+
-- JWT_SECRET_KEY (must match user_service)
+* **Threaded Discussions**: Support nested comment replies creating rich conversation threads around content verification
+* **Security First**: Implement HTML sanitization preventing XSS attacks while allowing safe formatting (bold, links, code blocks)
+* **Moderation Tools**: Provide role-based permissions enabling comment authors and moderators to edit or delete inappropriate content
+* **Soft Deletion**: Use soft delete pattern preserving comment history and thread structure while removing inappropriate content
+* **High Performance**: Optimize query performance with strategic indexing on user_id, content_id, and parent_comment_id
+* **Community Engagement**: Enable transparent discussions where users can share evidence and reasoning about content authenticity
 
-## Installation
+**Key Tech Stack:**
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
+* **Backend**: Python 3.11+ with FastAPI for high-performance async API
+* **Database**: PostgreSQL 14+ with UUID primary keys and foreign key constraints
+* **ORM**: SQLAlchemy with relationship management for nested comment loading
+* **Security**: Bleach library for HTML sanitization and XSS protection
+* **Authentication**: JWT integration with User Service for secure access control
 
-# Set environment variables
-cp .env.example .env
-# Edit .env with your configuration
+---
 
-# Run database migrations
-alembic upgrade head
-```
+## 2. Team Roles and Responsibilities
 
-## Running the Service
+| Role | Key Responsibility |
+|------|-------------------|
+| **Backend Developer** | Implement comment CRUD endpoints, nested reply logic, and query optimization for threaded discussions |
+| **Database Administrator** | Design comment schema with self-referential foreign keys, create indexes, and optimize recursive queries for thread loading |
+| **Security Engineer** | Implement HTML sanitization, XSS protection, permission checks, and ensure comment moderation prevents abuse |
+| **QA Engineer** | Test comment threading, HTML sanitization edge cases, permission enforcement, and soft deletion behavior |
+| **DevOps Engineer** | Configure PostgreSQL deployment, manage database migrations, set up monitoring for query performance |
+| **Community Manager** | Define moderation policies, test moderation tools, and ensure comment features support healthy discussions |
 
-### With Docker Compose
+---
 
-```bash
-docker-compose up -d
-```
+## 3. Technology Stack Overview
 
-### Manual Start
+| Technology | Purpose in the Project |
+|-----------|----------------------|
+| **Python 3.11+** | Primary programming language with excellent async support for handling concurrent comment operations |
+| **FastAPI** | Modern async web framework providing automatic validation, OpenAPI documentation, and high performance |
+| **PostgreSQL 14+** | Relational database chosen for strong foreign key support, ACID compliance, and efficient recursive queries for comment threads |
+| **SQLAlchemy 2.0** | Python ORM enabling relationship management, self-referential foreign keys, and protection against SQL injection |
+| **Alembic** | Database migration tool for version-controlled schema changes and safe production deployments |
+| **UUID** | Universally unique identifiers for comment IDs ensuring global uniqueness across distributed systems |
+| **Bleach** | HTML sanitization library preventing XSS attacks by cleaning user-submitted HTML to safe subset |
+| **Pydantic** | Data validation ensuring comment text length limits, required fields, and proper UUID formats |
+| **python-jose** | JWT token validation for authenticating comment authors and extracting user identities |
+| **pytest** | Testing framework with async support for comprehensive comment API and business logic testing |
+| **httpx** | Async HTTP client for testing API endpoints and simulating multi-user comment scenarios |
+| **uvicorn** | ASGI server running FastAPI with production-grade performance and hot-reload in development |
+| **python-dotenv** | Environment variable management for secure configuration of database URLs and JWT secrets |
 
-```bash
-# Start PostgreSQL
-docker run -d -p 5434:5432 -e POSTGRES_PASSWORD=postgres postgres:14
+---
 
-# Start the service
-uvicorn app.main:app --host 0.0.0.0 --port 8004 --reload
-```
+## 4. Database Design Overview
 
-Service will be available at http://localhost:8004
+**Key Entities:**
 
-## API Endpoints
+* **Comment** - Core entity storing all user comments and discussion threads. Fields include: id (UUID primary key), user_id (UUID of comment author), content_id (UUID of content being discussed), parent_comment_id (optional UUID for nested replies creating threaded structure), comment_text (TEXT for flexible length comments), is_deleted (boolean for soft deletion preserving thread structure), and created_at (timestamp for chronological ordering). The self-referential foreign key on parent_comment_id enables unlimited nesting depth, though UI typically limits display to 2-3 levels for readability.
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/` | Service status | No |
-| GET | `/health` | Health check | No |
-| POST | `/api/v1/comments/` | Create comment | Yes (JWT) |
-| GET | `/api/v1/comments/content/{id}` | Get comments for content | No |
-| GET | `/api/v1/comments/{id}` | Get specific comment | No |
-| PATCH | `/api/v1/comments/{id}` | Update comment | Yes (Author/Mod) |
-| DELETE | `/api/v1/comments/{id}` | Delete comment | Yes (Author/Mod) |
-| GET | `/api/v1/comments/user/comments` | Get user's comments | Yes (JWT) |
+**Relationships:**
 
-## Database Schema
+* **User → Comment (One-to-Many)**: Each comment stores the user_id of its author, linking to the User in the User Service. This relationship enables comment attribution, author verification, and permission checks (users can edit their own comments). The relationship supports "view all comments by user" functionality for user profiles and helps moderators track user behavior patterns for abuse detection.
 
-### Comment Model
+* **Content → Comment (One-to-Many)**: Comments reference specific content items through content_id, linking discussions to verification submissions. This relationship enables displaying all comments for a content item, sorted chronologically or by popularity. The indexed content_id field ensures efficient queries when loading comment threads, which is the most common access pattern (users viewing a content item want to see all discussion).
 
-```python
-- id: UUID (primary key)
-- user_id: UUID (indexed)
-- content_id: UUID (indexed)
-- parent_comment_id: UUID (optional, foreign key to comments.id)
-- comment_text: TEXT
-- is_deleted: BOOLEAN (soft delete)
-- created_at: TIMESTAMP
-```
+* **Comment → Comment (Self-Referential One-to-Many)**: Comments can be replies to other comments through the parent_comment_id foreign key. This creates a tree structure where top-level comments (parent_comment_id = NULL) have multiple children (replies), and those replies can have their own replies. SQLAlchemy's relationship with remote_side configuration enables automatic loading of reply chains. Soft deletion preserves thread structure even when parent comments are deleted.
 
-## XSS Protection
+---
 
-Comments are sanitized using Bleach library. Allowed HTML tags:
-- `p`, `br`, `strong`, `em`, `u`
-- `a` (with href and title attributes)
-- `ul`, `ol`, `li`
-- `blockquote`, `code`, `pre`
+## 5. Feature Breakdown
 
-## Permissions
+* **Comment Creation**: Authenticated users can post comments on any content item, providing their perspective on content authenticity. Comments require content_id (which content is being discussed) and comment_text (the actual comment). The optional parent_comment_id enables creating replies to existing comments. Author identity is extracted from JWT token, preventing spoofing. XSS sanitization runs automatically before storage, removing dangerous HTML while preserving safe formatting like bold, italics, and links.
 
-- **Create**: Any authenticated user
-- **Read**: Anyone (including unauthenticated)
-- **Update**: Comment author OR moderator/admin
-- **Delete**: Comment author OR moderator/admin
+* **Threaded Replies**: Unlimited nesting support through self-referential foreign keys enables rich discussion threads. Users reply to specific comments by providing the parent comment's ID. SQLAlchemy relationships automatically load reply chains, making it easy to construct nested comment trees for display. The database structure supports infinite depth, though frontend implementations typically limit display to 2-3 levels with "show more" functionality for deeper threads.
 
-## Environment Variables
+* **XSS Protection**: Comprehensive HTML sanitization using the Bleach library prevents cross-site scripting attacks. User-submitted HTML is cleaned to allow only safe tags (p, br, strong, em, ul, ol, li, blockquote, code, pre) and attributes (href and title on links). Dangerous elements like script tags, event handlers, and inline styles are stripped. This allows users to format comments with basic markup while preventing malicious JavaScript injection that could steal tokens or hijack sessions.
 
-Create a `.env` file:
+* **Soft Deletion**: Comments are never physically deleted from the database, preserving discussion thread integrity. Instead, the is_deleted flag is set to true, and comment_text is replaced with "[deleted]" when retrieved. This approach maintains thread structure so replies to deleted comments remain in context, prevents gaps in discussions that would confuse readers, and preserves content for moderation appeals and audit trails. Only comment authors and moderators/admins can soft-delete comments.
 
-```env
-# Database
-DATABASE_URL=postgresql://postgres:postgres@localhost:5434/veridiapp_comments
+* **Role-Based Permissions**: Edit and delete operations enforce permission checks using JWT role claims. Comment authors can edit or delete their own comments at any time. Moderators and admins can edit or delete any comment for moderation purposes. Regular users cannot modify others' comments, preventing censorship and maintaining discussion integrity. Unauthorized modification attempts return 403 Forbidden with clear error messages.
 
-# JWT Settings (must match user_service)
-JWT_SECRET_KEY=your-secret-key
-JWT_ALGORITHM=HS256
+* **Comment Retrieval**: Multiple query patterns supported - get all comments for a content item (most common), get a specific comment by ID, and get all comments by a user. Results are ordered chronologically by default with optional sorting by popularity (planned). The API returns full comment objects including author_id, timestamps, deletion status, and reply relationships. Nested replies are loaded efficiently using SQLAlchemy's selectin loading strategy to avoid N+1 query problems.
 
-# CORS
-BACKEND_CORS_ORIGINS=["http://localhost:3000", "http://localhost:8000"]
-```
+* **Comment Updates**: Authenticated users can edit their own comment text after posting, useful for correcting typos or adding additional context. The comment_text is updated and re-sanitized with Bleach to ensure edited content is still XSS-safe. Only comment text can be modified - author, content_id, parent_comment_id, and creation timestamp are immutable to prevent discussion manipulation. Edit history tracking (planned feature) would log all modifications for transparency.
 
-## API Documentation
+* **Health Checks**: Service health endpoints verify API availability and PostgreSQL connectivity. Used by load balancers (AWS ALB, Kubernetes probes) to detect failures and route traffic away from unhealthy instances. Database connectivity checks ensure the service can actually execute queries, not just respond to HTTP requests. Critical for automated recovery and monitoring.
 
-Interactive API documentation available at:
-- Swagger UI: http://localhost:8004/docs
-- ReDoc: http://localhost:8004/redoc
+---
 
-## Example Usage
+## 6. API Security Overview
 
-### Create Comment
+* **JWT Authentication**: Comment creation, updates, and deletions require valid JWT access tokens from the User Service. Tokens are validated using the shared JWT_SECRET_KEY, ensuring only authenticated users can participate in discussions. The user_id claim is extracted to identify comment authors, preventing users from posting as someone else. Expired tokens are rejected with 401 Unauthorized. Anonymous users can read comments but cannot post or modify them.
 
-```bash
-curl -X POST http://localhost:8004/api/v1/comments/ \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "content_id": "123e4567-e89b-12d3-a456-426614174000",
-    "comment_text": "This content seems credible based on the sources provided.",
-    "parent_comment_id": null
-  }'
-```
+* **Authorization Checks**: Write operations (update, delete) enforce permission rules based on JWT role claims. Comment authors can modify their own comments (verified by comparing JWT user_id with comment.user_id). Moderators and admins (identified by role claim in JWT) can modify any comment for moderation purposes. These checks happen at the database layer and API layer for defense in depth. Unauthorized attempts return 403 Forbidden with clear error messages explaining permission requirements.
 
-### Create Reply
+* **XSS Protection with Bleach**: All comment text is sanitized before storage using Bleach's clean() function with strict whitelist. Allowed tags: p, br, strong, em, u, a (with href/title only), ul, ol, li, blockquote, code, pre. All other tags, attributes, and JavaScript are stripped. This prevents stored XSS attacks where malicious HTML is saved to the database and executes when other users view comments. Bleach is battle-tested and actively maintained, providing reliable protection against evolving XSS techniques.
 
-```bash
-curl -X POST http://localhost:8004/api/v1/comments/ \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "content_id": "123e4567-e89b-12d3-a456-426614174000",
-    "comment_text": "I agree with your assessment.",
-    "parent_comment_id": "987e4567-e89b-12d3-a456-426614174000"
-  }'
-```
+* **SQL Injection Protection**: SQLAlchemy ORM with parameterized queries prevents SQL injection attacks. All user inputs (comment_text, UUIDs) are bound as parameters, never concatenated into SQL strings. SQLAlchemy's query builder automatically escapes special characters and uses prepared statements. Even if validation is bypassed, the database driver prevents SQL injection at the protocol level. Regular security audits verify no raw SQL concatenation exists in the codebase.
 
-### Get Comments for Content
+* **Input Validation**: Pydantic schemas validate all request data before processing. content_id and parent_comment_id must be valid UUIDs, comment_text has maximum length limits (10,000 characters) to prevent storage abuse, and all required fields are enforced. Invalid UUIDs, oversized text, or missing required fields result in 422 Unprocessable Entity responses with detailed error messages guiding clients to fix requests.
 
-```bash
-curl http://localhost:8004/api/v1/comments/content/123e4567-e89b-12d3-a456-426614174000
-```
+* **CORS Configuration**: Cross-Origin Resource Sharing configured to allow requests from approved frontend domains only. In development, localhost origins are permitted for testing. Production whitelists only the specific frontend domain (e.g., https://veridiapp.com). Credentials (JWT in Authorization headers) are only accepted from trusted origins, preventing malicious websites from making authenticated requests through users' browsers.
 
-## License
+* **Database-Level Constraints**: Foreign key constraints ensure comment integrity - user_id, content_id, and parent_comment_id reference valid entities (enforced at application level since services use separate databases). UUID uniqueness is guaranteed by the database. Indexes on frequently-queried fields (user_id, content_id) prevent performance degradation under load, ensuring consistent response times even with millions of comments.
 
-MIT License
+* **Rate Limiting**: Future implementation will protect against comment spam and API abuse. Authenticated users will be limited to reasonable comment rates (e.g., 10 comments per minute), preventing automated spam bots while allowing legitimate discussion. IP-based limits will protect against anonymous flooding attempts. Rate limit information will be returned in response headers (X-RateLimit-Limit, X-RateLimit-Remaining) to help clients avoid throttling.
+
+---
+
+## 7. CI/CD Pipeline Overview
+
+Continuous Integration and Continuous Deployment (CI/CD) automates the Comment Service development lifecycle, ensuring code quality, preventing regressions, and enabling rapid feature delivery. For the Comment Service, CI/CD is critical because bugs in nested comment handling or XSS sanitization could break discussion threads or create security vulnerabilities, making automated testing essential.
+
+The Comment Service uses **GitHub Actions** as the CI/CD platform, with workflows triggered automatically on pushes to feature branches and pull requests to main. The pipeline includes: code linting with flake8 and black for style consistency, running pytest test suite covering comment CRUD operations and nested threading, XSS sanitization tests verifying Bleach configuration, code coverage reporting (target: 80%+), security scanning with bandit detecting common vulnerabilities, and Docker image building to verify containerization.
+
+**Continuous Integration (CI)** validates every code change before merge. When code is pushed, the pipeline provisions a clean Python 3.11 environment, installs dependencies from requirements.txt, starts a PostgreSQL 14 container using Docker Compose, runs Alembic migrations to set up the database schema, and executes the complete pytest suite. Tests verify comment creation, nested replies, soft deletion, XSS protection, permission checks, and error handling. Failed tests automatically block pull request merging, preventing broken code from reaching main branch.
+
+**Continuous Deployment (CD)** automatically deploys to staging and production after merge to main. The pipeline builds a Docker image with the latest code, tags it with git commit SHA for traceability, pushes to container registry (AWS ECR, Docker Hub, Google Container Registry), and updates deployment configuration (Kubernetes, ECS, Docker Compose). Database migrations run automatically before service restart with rollback capability on failure. Environment-specific configuration (database URLs, JWT secrets) is injected from GitHub Secrets or cloud provider secret management. Staging deployment happens immediately for smoke testing; production may require manual approval for additional safety.
+
+The entire pipeline from commit to production deployment typically completes in 5-7 minutes, enabling multiple deployments per day. Failed deployments trigger automatic rollback to previous stable version, and alerts are sent to the development team via Slack or email. Monitoring dashboards track deployment success rates, helping identify and fix problematic changes quickly.
+
+---
+
+## 8. Resources
+
+* [FastAPI Documentation](https://fastapi.tiangolo.com/) - Modern Python web framework
+* [SQLAlchemy Documentation](https://docs.sqlalchemy.org/) - Python ORM for database operations
+* [Alembic Documentation](https://alembic.sqlalchemy.org/) - Database migration tool
+* [Bleach Documentation](https://bleach.readthedocs.io/) - HTML sanitization library for XSS protection
+* [PostgreSQL UUID Documentation](https://www.postgresql.org/docs/current/datatype-uuid.html) - UUID data type guide
+* [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html) - XSS protection best practices
+
+---
+
+## 9. License
+
+This project is licensed under the **MIT License**.
+
+---
+
+## 10. Created By
+
+**Phinehas Macharia**
