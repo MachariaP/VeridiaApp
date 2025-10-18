@@ -61,7 +61,12 @@ def test_create_content_without_content_fails(client: TestClient, auth_headers: 
     )
     
     assert response.status_code == 400
-    assert "at least one" in response.json()["detail"].lower()
+    detail = response.json()["detail"]
+    # Support both string and dict formats
+    if isinstance(detail, dict):
+        assert "at least one" in detail.get("error", "").lower()
+    else:
+        assert "at least one" in detail.lower()
 
 
 def test_create_content_without_auth_fails(client: TestClient, sample_content_data: dict):
@@ -218,4 +223,9 @@ def test_get_content_invalid_id(client: TestClient):
     invalid_id = "not-a-valid-objectid"
     response = client.get(f"/api/v1/content/{invalid_id}")
     assert response.status_code == 400
-    assert "invalid" in response.json()["detail"].lower()
+    detail = response.json()["detail"]
+    # Support both string and dict formats
+    if isinstance(detail, dict):
+        assert "invalid" in detail.get("error", "").lower()
+    else:
+        assert "invalid" in detail.lower()

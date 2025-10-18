@@ -13,10 +13,16 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
     This validates the JWT token and returns the user information.
     Note: This service doesn't have direct database access to the user service,
     so it relies on the JWT token payload for user information.
+    
+    Raises:
+        HTTPException 401: If token is missing, invalid, or expired
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail={
+            "error": "Invalid or expired token",
+            "status": 401
+        },
         headers={"WWW-Authenticate": "Bearer"},
     )
     
