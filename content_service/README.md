@@ -161,10 +161,12 @@ Environment variables (see `.env.example`):
 |----------|-------------|---------|
 | `MONGODB_URL` | MongoDB connection string | `mongodb://localhost:27017` |
 | `MONGODB_DB_NAME` | Database name | `veridiapp_content_db` |
-| `JWT_SECRET_KEY` | JWT secret key (must match user service) | - |
+| `JWT_SECRET_KEY` | JWT secret key (must match user service) | **REQUIRED - no default** |
 | `JWT_ALGORITHM` | JWT algorithm | `HS256` |
 | `UPLOAD_DIR` | File upload directory | `/tmp/veridiapp_uploads` |
 | `MAX_UPLOAD_SIZE` | Maximum file size (bytes) | `10485760` (10MB) |
+
+**⚠️ Security Note**: The `JWT_SECRET_KEY` environment variable MUST be set and must match the value used by the User Service. For security reasons, no default value is provided. The application will fail to authenticate requests if this is not properly configured.
 
 ## File Upload
 

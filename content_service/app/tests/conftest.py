@@ -13,6 +13,10 @@ from app.core.security import decode_token
 TEST_MONGODB_URL = "mongodb://localhost:27017"
 TEST_MONGODB_DB_NAME = "veridiapp_content_test_db"
 
+# Set JWT secret for tests
+os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-testing-only"
+settings.JWT_SECRET_KEY = "test-secret-key-for-testing-only"
+
 
 @pytest.fixture(scope="function")
 async def test_db():

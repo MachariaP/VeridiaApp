@@ -9,13 +9,6 @@ class ContentCreate(BaseModel):
     content_text: Optional[str] = Field(None, max_length=10000)
     tags: List[str] = Field(default_factory=list, max_length=20)
     
-    @field_validator('content_url', 'content_text')
-    @classmethod
-    def validate_at_least_one_content(cls, v, info):
-        """Ensure at least one of content_url or content_text is provided."""
-        # This will be checked in the endpoint after all fields are validated
-        return v
-    
     @field_validator('tags')
     @classmethod
     def validate_tags(cls, v):
