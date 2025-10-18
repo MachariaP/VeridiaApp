@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VeridiaApp Frontend
 
-## Getting Started
+This is the frontend application for VeridiaApp, built with Next.js 15, React 19, and TypeScript.
 
-First, run the development server:
+## Features
+
+- 🎨 Modern, responsive landing page with gradient backgrounds
+- 🔐 Complete authentication flow (registration, login, logout)
+- 🎭 Beautiful UI with Tailwind CSS
+- 🎯 TypeScript for type safety
+- ⚡ Fast development with Next.js hot reload
+- 🎨 Lucide React icons
+
+## Prerequisites
+
+- Node.js 18+ and npm
+- Backend API running on `http://localhost:8000`
+
+## Installation
+
+```bash
+npm install
+```
+
+## Development
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+The API endpoint is currently hardcoded to `http://localhost:8000/api/v1`. In a production environment, you would want to use environment variables:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env.local` file:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+NEXT_PUBLIC_API_BASE_URL=https://api.yourdomain.com/api/v1
+```
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+frontend/
+├── app/
+│   ├── page.tsx          # Main landing page component
+│   ├── layout.tsx        # Root layout
+│   └── globals.css       # Global styles
+├── public/               # Static assets
+└── package.json
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Features Implemented
+
+### Landing Page
+- Hero section with call-to-action buttons
+- Feature cards showcasing AI Grounding, Community Vetted, and Full Transparency
+- Responsive navigation bar
+- Footer with copyright information
+
+### Authentication Forms
+- **Registration Form**: Email, password, first name, last name with validation
+- **Login Form**: Email and password authentication
+- **Password Recovery**: UI for password recovery (simulated)
+
+### Dashboard
+- Welcome screen for authenticated users
+- User ID display
+- Sign out functionality
+
+## API Integration
+
+The frontend integrates with the following backend endpoints:
+
+- `POST /api/v1/auth/register` - User registration
+- `POST /api/v1/auth/token` - User login (OAuth2 compatible)
+- Password recovery endpoint (to be implemented in backend)
+
+## Technologies Used
+
+- **Next.js 15**: React framework with App Router
+- **React 19**: UI library
+- **TypeScript**: Type-safe JavaScript
+- **Tailwind CSS**: Utility-first CSS framework
+- **Lucide React**: Beautiful icon library
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## Contributing
+
+When making changes to the frontend:
+
+1. Follow the existing code structure
+2. Use TypeScript for all new components
+3. Ensure responsive design
+4. Test authentication flows
+5. Update this README if adding new features
+
+## License
+
+MIT License - See main repository for details
