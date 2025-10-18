@@ -1,5 +1,47 @@
 # VeridiaApp - Community-Driven Content Verification Platform
 
+## 🚀 Quick Start
+
+### Running the Application
+
+#### Backend Setup
+```bash
+cd user_service
+
+# Start PostgreSQL database
+docker compose up -d db
+
+# Run database migrations
+alembic upgrade head
+
+# Start the backend API server
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Backend API will be available at http://localhost:8000
+
+#### Frontend Setup
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+Frontend application will be available at http://localhost:3000
+
+### Testing the Application
+1. Visit http://localhost:3000
+2. Click "Join Now" to create an account
+3. Fill in the registration form and submit
+4. Login with your credentials
+5. You'll see the authenticated dashboard!
+
+---
+
 ## 📜 Table of Contents
 * [Project Overview](#1-project-overview)
 * [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
