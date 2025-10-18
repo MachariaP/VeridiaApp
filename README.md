@@ -1,4 +1,24 @@
-# VeridiaApp - Community-Driven Content Verification Platform
+<div align="center">
+
+# 🛡️ VeridiaApp
+
+### Community-Driven Content Verification Platform
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-316192.svg)](https://www.postgresql.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6+-47A248.svg)](https://www.mongodb.com/)
+[![Elasticsearch](https://img.shields.io/badge/Elasticsearch-8.x-005571.svg)](https://www.elastic.co/)
+
+**Combat misinformation through collective intelligence and AI-powered verification**
+
+[Quick Start](#-quick-start) • [Features](#5-feature-breakdown) • [Documentation](#-table-of-contents) • [License](#9-license)
+
+---
+
+</div>
 
 ## 🚀 Quick Start
 
@@ -50,20 +70,20 @@ Frontend application will be available at http://localhost:3000
 ---
 
 ## 📜 Table of Contents
-* [Project Overview](#1-project-overview)
-* [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
-* [Technology Stack Overview](#3-technology-stack-overview)
-* [Database Design Overview](#4-database-design-overview)
-* [Feature Breakdown](#5-feature-breakdown)
-* [API Security Overview](#6-api-security-overview)
-* [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
-* [Resources](#8-resources)
-* [License](#9-license)
-* [Created By](#10-created-by)
+* [📋 Project Overview](#-1-project-overview)
+* [👥 Team Roles and Responsibilities](#-2-team-roles-and-responsibilities)
+* [🛠️ Technology Stack Overview](#️-3-technology-stack-overview)
+* [🗄️ Database Design Overview](#️-4-database-design-overview)
+* [✨ Feature Breakdown](#-5-feature-breakdown)
+* [🔒 API Security Overview](#-6-api-security-overview)
+* [🚀 CI/CD Pipeline Overview](#-7-cicd-pipeline-overview)
+* [📚 Resources](#-8-resources)
+* [📄 License](#-9-license)
+* [👨‍💻 Created By](#-10-created-by)
 
 ---
 
-## 1. Project Overview
+## 📋 1. Project Overview
 
 **Brief Description:**
 
@@ -91,7 +111,7 @@ The system addresses the critical challenge of information authenticity in the d
 
 ---
 
-## 2. Team Roles and Responsibilities
+## 👥 2. Team Roles and Responsibilities
 
 | Role | Key Responsibility |
 |------|-------------------|
@@ -114,7 +134,34 @@ The system addresses the critical challenge of information authenticity in the d
 
 ---
 
-## 3. Technology Stack Overview
+## 🛠️ 3. Technology Stack Overview
+
+<div align="center">
+
+### Backend Technologies
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+
+### Frontend Technologies
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
+### Databases
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Elasticsearch](https://img.shields.io/badge/Elasticsearch-005571?style=for-the-badge&logo=elasticsearch&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+
+### DevOps & Infrastructure
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+
+</div>
+
+---
 
 | Technology | Purpose in the Project |
 |-----------|----------------------|
@@ -144,7 +191,7 @@ The system addresses the critical challenge of information authenticity in the d
 
 ---
 
-## 4. Database Design Overview
+## 🗄️ 4. Database Design Overview
 
 **Key Entities:**
 
@@ -172,7 +219,7 @@ The system addresses the critical challenge of information authenticity in the d
 
 ---
 
-## 5. Feature Breakdown
+## ✨ 5. Feature Breakdown
 
 * **User Authentication & Authorization**: Comprehensive JWT-based authentication system with secure registration, login, logout, and password reset flows. Implements refresh token rotation, token expiration management, and role-based access control (RBAC) for different permission levels (admin, moderator, user). Includes OAuth 2.0 preparation for future social login integration.
 
@@ -196,7 +243,7 @@ The system addresses the critical challenge of information authenticity in the d
 
 ---
 
-## 6. API Security Overview
+## 🔒 6. API Security Overview
 
 * **JWT Authentication**: JSON Web Tokens provide stateless, scalable authentication across all microservices. Access tokens expire after 15 minutes to minimize exposure risk, while refresh tokens enable seamless session extension. Tokens are signed using RS256 algorithm with rotating keys, and include user ID, roles, and permissions in claims for efficient authorization checks without database lookups.
 
@@ -218,7 +265,7 @@ The system addresses the critical challenge of information authenticity in the d
 
 ---
 
-## 7. CI/CD Pipeline Overview
+## 🚀 7. CI/CD Pipeline Overview
 
 Continuous Integration and Continuous Deployment (CI/CD) automates the software delivery process, enabling rapid, reliable, and repeatable deployments while maintaining code quality and system stability. For VeridiaApp, CI/CD is critical to managing the complexity of a microservices architecture where multiple services must be independently tested, built, and deployed in coordination.
 
@@ -232,7 +279,7 @@ The pipeline includes **environment-specific configurations** managed through Gi
 
 ---
 
-## 8. Resources
+## 📚 8. Resources
 
 ### Official Documentation
 * [FastAPI Documentation](https://fastapi.tiangolo.com/) - Comprehensive guide for building high-performance APIs
@@ -266,7 +313,7 @@ The pipeline includes **environment-specific configurations** managed through Gi
 
 ---
 
-## 9. License
+## 📄 9. License
 
 This project is licensed under the **MIT License**.
 
@@ -278,7 +325,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-## 10. Created By
+## 👨‍💻 10. Created By
 
 **Phinehas Macharia**
 
@@ -288,6 +335,18 @@ VeridiaApp was conceived and developed to address the critical challenge of misi
 
 ---
 
-*Last Updated: October 2025*  
-*Version: 1.0*  
-*Built with ❤️ for a more trustworthy internet*
+<div align="center">
+
+### 🌟 Star us on GitHub — it motivates us a lot!
+
+[![GitHub stars](https://img.shields.io/github/stars/MachariaP/VeridiaApp?style=social)](https://github.com/MachariaP/VeridiaApp/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/MachariaP/VeridiaApp?style=social)](https://github.com/MachariaP/VeridiaApp/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/MachariaP/VeridiaApp)](https://github.com/MachariaP/VeridiaApp/issues)
+
+---
+
+*Last Updated: October 2025* • *Version: 1.0*
+
+**Built with ❤️ for a more trustworthy internet**
+
+</div>

@@ -1,20 +1,36 @@
-# VeridiaApp Voting Service
+<div align="center">
 
-## 📜 Table of Contents
-* [Project Overview](#1-project-overview)
-* [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
-* [Technology Stack Overview](#3-technology-stack-overview)
-* [Database Design Overview](#4-database-design-overview)
-* [Feature Breakdown](#5-feature-breakdown)
-* [API Security Overview](#6-api-security-overview)
-* [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
-* [Resources](#8-resources)
-* [License](#9-license)
-* [Created By](#10-created-by)
+# 🗳️ VeridiaApp Voting Service
+
+### Democratic Content Verification Microservice
+
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-316192.svg)](https://www.postgresql.org/)
+[![Democracy](https://img.shields.io/badge/System-Democratic-purple.svg)](https://en.wikipedia.org/wiki/Voting_system)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Fair voting with duplicate prevention and real-time aggregation**
+
+</div>
 
 ---
 
-## 1. Project Overview
+## 📜 Table of Contents
+* [📋 Project Overview](#-1-project-overview)
+* [👥 Team Roles and Responsibilities](#-2-team-roles-and-responsibilities)
+* [🛠️ Technology Stack Overview](#️-3-technology-stack-overview)
+* [🗄️ Database Design Overview](#️-4-database-design-overview)
+* [✨ Feature Breakdown](#-5-feature-breakdown)
+* [🔒 API Security Overview](#-6-api-security-overview)
+* [🚀 CI/CD Pipeline Overview](#-7-cicd-pipeline-overview)
+* [📚 Resources](#-8-resources)
+* [📄 License](#-9-license)
+* [👨‍💻 Created By](#-10-created-by)
+
+---
+
+## 📋 1. Project Overview
 
 **Brief Description:**
 
@@ -39,7 +55,7 @@ The VeridiaApp Voting Service is the democratic heart of the content verificatio
 
 ---
 
-## 2. Team Roles and Responsibilities
+## 👥 2. Team Roles and Responsibilities
 
 | Role | Key Responsibility |
 |------|-------------------|
@@ -52,7 +68,7 @@ The VeridiaApp Voting Service is the democratic heart of the content verificatio
 
 ---
 
-## 3. Technology Stack Overview
+## 🛠️ 3. Technology Stack Overview
 
 | Technology | Purpose in the Project |
 |-----------|----------------------|
@@ -72,7 +88,7 @@ The VeridiaApp Voting Service is the democratic heart of the content verificatio
 
 ---
 
-## 4. Database Design Overview
+## 🗄️ 4. Database Design Overview
 
 **Key Entities:**
 
@@ -88,7 +104,7 @@ The VeridiaApp Voting Service is the democratic heart of the content verificatio
 
 ---
 
-## 5. Feature Breakdown
+## ✨ 5. Feature Breakdown
 
 * **Vote Submission**: Authenticated users can cast votes on any content item by providing content_id, vote_type (authentic/false/unsure), and optional reasoning. Voter identity is extracted from JWT token, ensuring votes are attributed correctly and users cannot vote as someone else. The system checks for existing votes using the unique constraint - duplicate vote attempts return 409 Conflict with a helpful error message. Vote reasoning allows users to explain their decision, cite sources, or provide evidence, enriching the verification quality beyond simple thumbs up/down.
 
@@ -108,7 +124,7 @@ The VeridiaApp Voting Service is the democratic heart of the content verificatio
 
 ---
 
-## 6. API Security Overview
+## 🔒 6. API Security Overview
 
 * **JWT Authentication**: Vote submission, updates, and vote history retrieval require valid JWT access tokens from the User Service. Tokens are validated using the shared JWT_SECRET_KEY, ensuring only authenticated users can participate in verification. The user_id claim is extracted to identify voters, preventing users from voting as someone else or viewing others' vote histories. Expired tokens are rejected with 401 Unauthorized. Anonymous users can view vote results but cannot cast votes.
 
@@ -128,7 +144,7 @@ The VeridiaApp Voting Service is the democratic heart of the content verificatio
 
 ---
 
-## 7. CI/CD Pipeline Overview
+## 🚀 7. CI/CD Pipeline Overview
 
 Continuous Integration and Continuous Deployment (CI/CD) automates the Voting Service development lifecycle, ensuring vote counting accuracy, preventing regressions in democratic verification logic, and enabling rapid feature delivery. For the Voting Service, CI/CD is critical because bugs in vote aggregation or duplicate prevention could undermine the entire verification platform's integrity, making comprehensive automated testing essential.
 
@@ -142,7 +158,7 @@ The entire pipeline from commit to production typically completes in 5-7 minutes
 
 ---
 
-## 8. Resources
+## 📚 8. Resources
 
 * [FastAPI Documentation](https://fastapi.tiangolo.com/) - Modern Python web framework
 * [SQLAlchemy Documentation](https://docs.sqlalchemy.org/) - Python ORM with unique constraint support
@@ -153,12 +169,20 @@ The entire pipeline from commit to production typically completes in 5-7 minutes
 
 ---
 
-## 9. License
+## 📄 9. License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-## 10. Created By
+## 👨‍💻 10. Created By
+
+<div align="center">
 
 **Phinehas Macharia**
+
+[![GitHub](https://img.shields.io/badge/GitHub-MachariaP-181717?style=for-the-badge&logo=github)](https://github.com/MachariaP)
+
+*Democratic verification for VeridiaApp*
+
+</div>

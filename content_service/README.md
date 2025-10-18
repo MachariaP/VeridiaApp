@@ -1,20 +1,36 @@
-# VeridiaApp Content Service
+<div align="center">
 
-## 📜 Table of Contents
-* [Project Overview](#1-project-overview)
-* [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
-* [Technology Stack Overview](#3-technology-stack-overview)
-* [Database Design Overview](#4-database-design-overview)
-* [Feature Breakdown](#5-feature-breakdown)
-* [API Security Overview](#6-api-security-overview)
-* [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
-* [Resources](#8-resources)
-* [License](#9-license)
-* [Created By](#10-created-by)
+# 📝 VeridiaApp Content Service
+
+### Content Submission & Management Microservice
+
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6+-47A248.svg)](https://www.mongodb.com/)
+[![File Upload](https://img.shields.io/badge/Upload-10MB_Max-orange.svg)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Flexible document storage with media upload support**
+
+</div>
 
 ---
 
-## 1. Project Overview
+## 📜 Table of Contents
+* [📋 Project Overview](#-1-project-overview)
+* [👥 Team Roles and Responsibilities](#-2-team-roles-and-responsibilities)
+* [🛠️ Technology Stack Overview](#️-3-technology-stack-overview)
+* [🗄️ Database Design Overview](#️-4-database-design-overview)
+* [✨ Feature Breakdown](#-5-feature-breakdown)
+* [🔒 API Security Overview](#-6-api-security-overview)
+* [🚀 CI/CD Pipeline Overview](#-7-cicd-pipeline-overview)
+* [📚 Resources](#-8-resources)
+* [📄 License](#-9-license)
+* [👨‍💻 Created By](#-10-created-by)
+
+---
+
+## 📋 1. Project Overview
 
 **Brief Description:**
 
@@ -39,7 +55,7 @@ The VeridiaApp Content Service is a specialized microservice responsible for man
 
 ---
 
-## 2. Team Roles and Responsibilities
+## 👥 2. Team Roles and Responsibilities
 
 | Role | Key Responsibility |
 |------|-------------------|
@@ -52,7 +68,7 @@ The VeridiaApp Content Service is a specialized microservice responsible for man
 
 ---
 
-## 3. Technology Stack Overview
+## 🛠️ 3. Technology Stack Overview
 
 | Technology | Purpose in the Project |
 |-----------|----------------------|
@@ -71,7 +87,7 @@ The VeridiaApp Content Service is a specialized microservice responsible for man
 
 ---
 
-## 4. Database Design Overview
+## 🗄️ 4. Database Design Overview
 
 **Key Entities:**
 
@@ -87,7 +103,7 @@ The VeridiaApp Content Service is a specialized microservice responsible for man
 
 ---
 
-## 5. Feature Breakdown
+## ✨ 5. Feature Breakdown
 
 * **Content Submission**: Comprehensive content submission API accepting text, URLs, or media files through multipart/form-data POST requests. Users must provide at least one of: content_url, content_text, or media_file. Validation ensures URLs are properly formatted, text doesn't exceed 10,000 characters, and combined submission size stays within limits. Author identity is automatically extracted from JWT token, ensuring accurate attribution without client-side spoofing.
 
@@ -107,7 +123,7 @@ The VeridiaApp Content Service is a specialized microservice responsible for man
 
 ---
 
-## 6. API Security Overview
+## 🔒 6. API Security Overview
 
 * **JWT Authentication**: All content submission endpoints require valid JWT access tokens issued by the User Service. Tokens are validated using the shared JWT_SECRET_KEY environment variable, ensuring only authenticated users can submit content. The author_id is extracted from validated token claims, preventing users from submitting content as someone else. Expired tokens are rejected with 401 Unauthorized, requiring users to refresh their access tokens through the User Service.
 
@@ -127,7 +143,7 @@ The VeridiaApp Content Service is a specialized microservice responsible for man
 
 ---
 
-## 7. CI/CD Pipeline Overview
+## 🚀 7. CI/CD Pipeline Overview
 
 Continuous Integration and Continuous Deployment (CI/CD) automates the content service development lifecycle, ensuring all code changes are tested, validated, and deployed reliably. For the Content Service, CI/CD is essential because bugs in file upload handling could lead to data loss or security vulnerabilities, making automated testing critical before production deployment.
 
@@ -141,7 +157,7 @@ The entire pipeline completes in 4-6 minutes, enabling rapid iteration. Deployme
 
 ---
 
-## 8. Resources
+## 📚 8. Resources
 
 * [FastAPI Documentation](https://fastapi.tiangolo.com/) - Web framework with automatic validation and documentation
 * [MongoDB Documentation](https://docs.mongodb.com/) - NoSQL database for flexible document storage
@@ -152,12 +168,20 @@ The entire pipeline completes in 4-6 minutes, enabling rapid iteration. Deployme
 
 ---
 
-## 9. License
+## 📄 9. License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-## 10. Created By
+## 👨‍💻 10. Created By
+
+<div align="center">
 
 **Phinehas Macharia**
+
+[![GitHub](https://img.shields.io/badge/GitHub-MachariaP-181717?style=for-the-badge&logo=github)](https://github.com/MachariaP)
+
+*Content management for VeridiaApp ecosystem*
+
+</div>
