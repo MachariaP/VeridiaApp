@@ -716,12 +716,23 @@ export default function App() {
 
   // Function to handle successful login from AuthForm
   const handleLoginSuccess = useCallback((token: string, userId: string) => {
+    // Store token and userId in localStorage for persistence
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', userId);
+    }
     setAuth({ isAuthenticated: true, userId, token });
-    setView('home'); // Go back to home view to show dashboard
+    // Redirect to feed page instead of showing dashboard
+    window.location.href = '/feed';
   }, []);
 
   // Function to handle logout
   const handleLogout = useCallback(() => {
+    // Clear localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+    }
     setAuth({ isAuthenticated: false, userId: null, token: null });
     setMessage({ type: 'info', text: 'You have been successfully logged out.' });
     setView('home');
