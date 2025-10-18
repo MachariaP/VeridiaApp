@@ -1,20 +1,36 @@
-# VeridiaApp Comment Service
+<div align="center">
 
-## 📜 Table of Contents
-* [Project Overview](#1-project-overview)
-* [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
-* [Technology Stack Overview](#3-technology-stack-overview)
-* [Database Design Overview](#4-database-design-overview)
-* [Feature Breakdown](#5-feature-breakdown)
-* [API Security Overview](#6-api-security-overview)
-* [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
-* [Resources](#8-resources)
-* [License](#9-license)
-* [Created By](#10-created-by)
+# 💬 VeridiaApp Comment Service
+
+### Threaded Discussion & Community Engagement Microservice
+
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-316192.svg)](https://www.postgresql.org/)
+[![XSS Protection](https://img.shields.io/badge/Security-XSS_Protected-red.svg)](https://owasp.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Secure threaded discussions with XSS protection and moderation**
+
+</div>
 
 ---
 
-## 1. Project Overview
+## 📜 Table of Contents
+* [📋 Project Overview](#-1-project-overview)
+* [👥 Team Roles and Responsibilities](#-2-team-roles-and-responsibilities)
+* [🛠️ Technology Stack Overview](#️-3-technology-stack-overview)
+* [🗄️ Database Design Overview](#️-4-database-design-overview)
+* [✨ Feature Breakdown](#-5-feature-breakdown)
+* [🔒 API Security Overview](#-6-api-security-overview)
+* [🚀 CI/CD Pipeline Overview](#-7-cicd-pipeline-overview)
+* [📚 Resources](#-8-resources)
+* [📄 License](#-9-license)
+* [👨‍💻 Created By](#-10-created-by)
+
+---
+
+## 📋 1. Project Overview
 
 **Brief Description:**
 
@@ -39,7 +55,7 @@ The VeridiaApp Comment Service is a specialized microservice enabling threaded d
 
 ---
 
-## 2. Team Roles and Responsibilities
+## 👥 2. Team Roles and Responsibilities
 
 | Role | Key Responsibility |
 |------|-------------------|
@@ -52,7 +68,7 @@ The VeridiaApp Comment Service is a specialized microservice enabling threaded d
 
 ---
 
-## 3. Technology Stack Overview
+## 🛠️ 3. Technology Stack Overview
 
 | Technology | Purpose in the Project |
 |-----------|----------------------|
@@ -72,7 +88,7 @@ The VeridiaApp Comment Service is a specialized microservice enabling threaded d
 
 ---
 
-## 4. Database Design Overview
+## 🗄️ 4. Database Design Overview
 
 **Key Entities:**
 
@@ -88,7 +104,7 @@ The VeridiaApp Comment Service is a specialized microservice enabling threaded d
 
 ---
 
-## 5. Feature Breakdown
+## ✨ 5. Feature Breakdown
 
 * **Comment Creation**: Authenticated users can post comments on any content item, providing their perspective on content authenticity. Comments require content_id (which content is being discussed) and comment_text (the actual comment). The optional parent_comment_id enables creating replies to existing comments. Author identity is extracted from JWT token, preventing spoofing. XSS sanitization runs automatically before storage, removing dangerous HTML while preserving safe formatting like bold, italics, and links.
 
@@ -108,7 +124,7 @@ The VeridiaApp Comment Service is a specialized microservice enabling threaded d
 
 ---
 
-## 6. API Security Overview
+## 🔒 6. API Security Overview
 
 * **JWT Authentication**: Comment creation, updates, and deletions require valid JWT access tokens from the User Service. Tokens are validated using the shared JWT_SECRET_KEY, ensuring only authenticated users can participate in discussions. The user_id claim is extracted to identify comment authors, preventing users from posting as someone else. Expired tokens are rejected with 401 Unauthorized. Anonymous users can read comments but cannot post or modify them.
 
@@ -128,7 +144,7 @@ The VeridiaApp Comment Service is a specialized microservice enabling threaded d
 
 ---
 
-## 7. CI/CD Pipeline Overview
+## 🚀 7. CI/CD Pipeline Overview
 
 Continuous Integration and Continuous Deployment (CI/CD) automates the Comment Service development lifecycle, ensuring code quality, preventing regressions, and enabling rapid feature delivery. For the Comment Service, CI/CD is critical because bugs in nested comment handling or XSS sanitization could break discussion threads or create security vulnerabilities, making automated testing essential.
 
@@ -142,7 +158,7 @@ The entire pipeline from commit to production deployment typically completes in 
 
 ---
 
-## 8. Resources
+## 📚 8. Resources
 
 * [FastAPI Documentation](https://fastapi.tiangolo.com/) - Modern Python web framework
 * [SQLAlchemy Documentation](https://docs.sqlalchemy.org/) - Python ORM for database operations
@@ -153,12 +169,20 @@ The entire pipeline from commit to production deployment typically completes in 
 
 ---
 
-## 9. License
+## 📄 9. License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-## 10. Created By
+## 👨‍💻 10. Created By
+
+<div align="center">
 
 **Phinehas Macharia**
+
+[![GitHub](https://img.shields.io/badge/GitHub-MachariaP-181717?style=for-the-badge&logo=github)](https://github.com/MachariaP)
+
+*Enabling community discussions on VeridiaApp*
+
+</div>

@@ -1,20 +1,36 @@
-# VeridiaApp User Service
+<div align="center">
 
-## 📜 Table of Contents
-* [Project Overview](#1-project-overview)
-* [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
-* [Technology Stack Overview](#3-technology-stack-overview)
-* [Database Design Overview](#4-database-design-overview)
-* [Feature Breakdown](#5-feature-breakdown)
-* [API Security Overview](#6-api-security-overview)
-* [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
-* [Resources](#8-resources)
-* [License](#9-license)
-* [Created By](#10-created-by)
+# 🔐 VeridiaApp User Service
+
+### Secure Authentication & Authorization Microservice
+
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-316192.svg)](https://www.postgresql.org/)
+[![JWT](https://img.shields.io/badge/JWT-Authentication-000000.svg)](https://jwt.io/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Production-ready authentication service with JWT tokens and RBAC**
+
+</div>
 
 ---
 
-## 1. Project Overview
+## 📜 Table of Contents
+* [📋 Project Overview](#-1-project-overview)
+* [👥 Team Roles and Responsibilities](#-2-team-roles-and-responsibilities)
+* [🛠️ Technology Stack Overview](#️-3-technology-stack-overview)
+* [🗄️ Database Design Overview](#️-4-database-design-overview)
+* [✨ Feature Breakdown](#-5-feature-breakdown)
+* [🔒 API Security Overview](#-6-api-security-overview)
+* [🚀 CI/CD Pipeline Overview](#-7-cicd-pipeline-overview)
+* [📚 Resources](#-8-resources)
+* [📄 License](#-9-license)
+* [👨‍💻 Created By](#-10-created-by)
+
+---
+
+## 📋 1. Project Overview
 
 **Brief Description:**
 
@@ -39,7 +55,7 @@ The VeridiaApp User Service is a high-performance, production-ready microservice
 
 ---
 
-## 2. Team Roles and Responsibilities
+## 👥 2. Team Roles and Responsibilities
 
 | Role | Key Responsibility |
 |------|-------------------|
@@ -52,7 +68,7 @@ The VeridiaApp User Service is a high-performance, production-ready microservice
 
 ---
 
-## 3. Technology Stack Overview
+## 🛠️ 3. Technology Stack Overview
 
 | Technology | Purpose in the Project |
 |-----------|----------------------|
@@ -72,7 +88,7 @@ The VeridiaApp User Service is a high-performance, production-ready microservice
 
 ---
 
-## 4. Database Design Overview
+## 🗄️ 4. Database Design Overview
 
 **Key Entities:**
 
@@ -88,7 +104,7 @@ The VeridiaApp User Service is a high-performance, production-ready microservice
 
 ---
 
-## 5. Feature Breakdown
+## ✨ 5. Feature Breakdown
 
 * **User Registration**: Complete registration flow with email validation, password strength requirements, and duplicate email detection. Validates email format using email-validator library, enforces minimum password length, and automatically hashes passwords with bcrypt before storage. Returns detailed error messages for validation failures to guide users through the registration process.
 
@@ -112,7 +128,7 @@ The VeridiaApp User Service is a high-performance, production-ready microservice
 
 ---
 
-## 6. API Security Overview
+## 🔒 6. API Security Overview
 
 * **JWT Authentication**: Stateless token-based authentication using JSON Web Tokens signed with HS256 algorithm and a secret key. Access tokens expire after 15 minutes, minimizing the window of opportunity if a token is compromised. Refresh tokens last 7 days and are used exclusively for obtaining new access tokens, never for direct API access. Token claims include user ID, role, token type, and expiration timestamp, providing all necessary information for authorization without database lookups.
 
@@ -134,7 +150,7 @@ The VeridiaApp User Service is a high-performance, production-ready microservice
 
 ---
 
-## 7. CI/CD Pipeline Overview
+## 🚀 7. CI/CD Pipeline Overview
 
 Continuous Integration and Continuous Deployment (CI/CD) automates the software development lifecycle, ensuring that code changes are automatically tested, validated, and deployed without manual intervention. For the User Service, CI/CD is critical because authentication bugs or security vulnerabilities could compromise the entire platform, making automated quality checks essential before deployment.
 
@@ -148,7 +164,7 @@ The entire pipeline from code commit to production deployment typically complete
 
 ---
 
-## 8. Resources
+## 📚 8. Resources
 
 * [FastAPI Documentation](https://fastapi.tiangolo.com/) - Official guide for building APIs with FastAPI
 * [SQLAlchemy Documentation](https://docs.sqlalchemy.org/) - ORM and database toolkit for Python
@@ -160,12 +176,20 @@ The entire pipeline from code commit to production deployment typically complete
 
 ---
 
-## 9. License
+## 📄 9. License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-## 10. Created By
+## 👨‍💻 10. Created By
+
+<div align="center">
 
 **Phinehas Macharia**
+
+[![GitHub](https://img.shields.io/badge/GitHub-MachariaP-181717?style=for-the-badge&logo=github)](https://github.com/MachariaP)
+
+*Secure authentication for VeridiaApp ecosystem*
+
+</div>
