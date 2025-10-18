@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
-import { LogIn, UserPlus, Lock, CheckCircle, AlertTriangle, Loader, Zap, Aperture, User, LockKeyhole, Mail } from 'lucide-react';
+import { LogIn, UserPlus, Lock, CheckCircle, AlertTriangle, Loader, Zap, Aperture, User, LockKeyhole, Mail, FileText, Link as LinkIcon, Tag, Upload, Send, X } from 'lucide-react';
 
 // --- Global Constants and API Configuration ---
 // Note: In a real Next.js environment, these would be loaded from .env variables.
-const API_BASE_URL = 'http://localhost:8000/api/v1'; // Placeholder for the FastAPI Microservices
+const API_BASE_URL = 'http://localhost:8000/api/v1'; // Placeholder for the User Service
+const CONTENT_API_BASE_URL = 'http://localhost:8001/api/v1'; // Placeholder for the Content Service
 
 // --- TypeScript Types ---
 
@@ -390,25 +391,305 @@ const InputField: React.FC<{
 );
 
 /**
- * Placeholder component for authenticated users.
+ * Content Submission Form Component
  */
-const Dashboard: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
+const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void }> = ({ onMessage }) => {
+  const { auth } = useAuth();
+  const [contentUrl, setContentUrl] = useState('');
+  const [contentText, setContentText] = useState('');
+  const [tags, setTags] = useState('');
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const ALLOWED_FILE_TYPES = ['.txt', '.jpg', '.jpeg', '.png', '.gif', '.pdf'];
+  const MAX_TEXT_LENGTH = 10000;
+  const MAX_TAGS = 20;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        onMessage({ type: 'error', text: 'File size exceeds 10MB limit.' });
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+      
+      // Validate file type
+      const fileExt = '.' + file.name.split('.').pop()?.toLowerCase();
+      if (!ALLOWED_FILE_TYPES.includes(fileExt)) {
+        onMessage({ type: 'error', text: `File type not allowed. Supported types: ${ALLOWED_FILE_TYPES.join(', ')}` });
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+      
+      setMediaFile(file);
+      onMessage(null);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    onMessage(null);
+
+    try {
+      // Validate that at least one content field is provided
+      if (!contentUrl && !contentText) {
+        throw new Error('Please provide either a URL or text content to submit.');
+      }
+
+      // Validate text length
+      if (contentText && contentText.length > MAX_TEXT_LENGTH) {
+        throw new Error(`Content text exceeds maximum length of ${MAX_TEXT_LENGTH} characters.`);
+      }
+
+      // Validate tags count
+      if (tags) {
+        const tagList = tags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+        if (tagList.length > MAX_TAGS) {
+          throw new Error(`Maximum ${MAX_TAGS} tags allowed.`);
+        }
+      }
+
+      // Create FormData for multipart upload
+      const formData = new FormData();
+      if (contentUrl) formData.append('content_url', contentUrl);
+      if (contentText) formData.append('content_text', contentText);
+      if (tags) formData.append('tags', tags);
+      if (mediaFile) formData.append('media_file', mediaFile);
+
+      // Submit to content service
+      const response = await fetch(`${CONTENT_API_BASE_URL}/content/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${auth.token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        onMessage({ type: 'success', text: 'Content submitted successfully! Your submission is now pending verification.' });
+        // Clear form
+        setContentUrl('');
+        setContentText('');
+        setTags('');
+        setMediaFile(null);
+        // Reset file input
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      } else {
+        throw new Error(data.detail || 'Failed to submit content.');
+      }
+    } catch (error) {
+      onMessage({ type: 'error', text: (error as Error).message });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClear = () => {
+    setContentUrl('');
+    setContentText('');
+    setTags('');
+    setMediaFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    onMessage(null);
+  };
+
+  return (
+    <div className="bg-gray-800/90 backdrop-blur-md p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-4xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-white flex items-center">
+          <Send className="w-6 h-6 mr-3 text-indigo-400" />
+          Submit Content for Verification
+        </h2>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-indigo-400 hover:text-indigo-300 transition duration-200 text-sm font-medium"
+        >
+          {isExpanded ? 'Collapse' : 'Expand'}
+        </button>
+      </div>
+
+      {isExpanded && (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
+            {/* Content URL Input */}
+            <div>
+              <label htmlFor="content-url" className="block text-sm font-medium text-gray-300 mb-2">
+                Content URL
+              </label>
+              <div className="relative">
+                <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400" />
+                <input
+                  id="content-url"
+                  type="url"
+                  placeholder="https://example.com/article-to-verify"
+                  value={contentUrl}
+                  onChange={(e) => setContentUrl(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-700/80 text-white placeholder-gray-400 border border-transparent focus:border-indigo-500 rounded-xl focus:ring-1 focus:ring-indigo-500 outline-none transition duration-200"
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Provide the URL of content you want verified</p>
+            </div>
+
+            {/* Content Text Input */}
+            <div>
+              <label htmlFor="content-text" className="block text-sm font-medium text-gray-300 mb-2">
+                Content Text
+              </label>
+              <div className="relative">
+                <FileText className="absolute left-4 top-4 w-5 h-5 text-indigo-400" />
+                <textarea
+                  id="content-text"
+                  placeholder="Paste the text content you want to verify..."
+                  value={contentText}
+                  onChange={(e) => setContentText(e.target.value)}
+                  rows={5}
+                  maxLength={MAX_TEXT_LENGTH}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-700/80 text-white placeholder-gray-400 border border-transparent focus:border-indigo-500 rounded-xl focus:ring-1 focus:ring-indigo-500 outline-none transition duration-200 resize-y"
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-1">
+                Or paste the text content directly ({contentText.length}/{MAX_TEXT_LENGTH} characters)
+              </p>
+            </div>
+
+            {/* Tags Input */}
+            <div>
+              <label htmlFor="tags" className="block text-sm font-medium text-gray-300 mb-2">
+                Tags (Optional)
+              </label>
+              <div className="relative">
+                <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400" />
+                <input
+                  id="tags"
+                  type="text"
+                  placeholder="news, technology, health (comma-separated, max 20)"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-700/80 text-white placeholder-gray-400 border border-transparent focus:border-indigo-500 rounded-xl focus:ring-1 focus:ring-indigo-500 outline-none transition duration-200"
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Add relevant tags to categorize your submission</p>
+            </div>
+
+            {/* File Upload */}
+            <div>
+              <label htmlFor="media-file-input" className="block text-sm font-medium text-gray-300 mb-2">
+                Media Attachment (Optional)
+              </label>
+              <div className="flex items-center space-x-3">
+                <label
+                  htmlFor="media-file-input"
+                  className="flex-1 flex items-center justify-center px-4 py-3 bg-gray-700/80 text-white border border-dashed border-gray-500 hover:border-indigo-500 rounded-xl cursor-pointer transition duration-200"
+                >
+                  <Upload className="w-5 h-5 mr-2 text-indigo-400" />
+                  <span className="text-sm">
+                    {mediaFile ? mediaFile.name : 'Choose file or drag here'}
+                  </span>
+                </label>
+                {mediaFile && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMediaFile(null);
+                      if (fileInputRef.current) fileInputRef.current.value = '';
+                    }}
+                    className="p-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition duration-200"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                id="media-file-input"
+                type="file"
+                onChange={handleFileChange}
+                accept=".txt,.jpg,.jpeg,.png,.gif,.pdf"
+                className="hidden"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Supported: Images (.jpg, .png, .gif), Documents (.pdf, .txt) - Max 10MB
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex space-x-3 pt-4">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-200 transform hover:scale-[1.01] flex items-center justify-center disabled:opacity-50"
+            >
+              {isLoading ? (
+                <LoadingSpinner />
+              ) : (
+                <>
+                  <Send className="w-5 h-5 mr-2" />
+                  Submit for Verification
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              disabled={isLoading}
+              className="px-6 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-200 disabled:opacity-50"
+            >
+              Clear
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Dashboard component for authenticated users with content submission.
+ */
+const Dashboard: React.FC<{ onLogout: () => void, onMessage: (msg: Message | null) => void }> = ({ onLogout, onMessage }) => {
   const { auth } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-900 text-white">
-      <CheckCircle className="w-16 h-16 text-green-400 mb-6" />
-      <h1 className="text-4xl font-bold mb-3">Welcome Back!</h1>
-      <p className="text-xl text-gray-300 mb-6">You are authenticated as User ID: <span className="font-mono text-indigo-300 break-all">{auth.userId}</span></p>
-      <p className="text-md text-gray-400 mb-8 max-w-xl text-center">
-        This is your secure Dashboard. Here you will find content submission forms, voting lists, and verification tools (Features 2-5).
-      </p>
-      <button
-        onClick={onLogout}
-        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-out hover:scale-105"
-      >
-        Sign Out
-      </button>
+    <div className="min-h-screen flex flex-col p-8 bg-gray-900 text-white">
+      {/* Welcome Header */}
+      <div className="text-center mb-8">
+        <CheckCircle className="w-16 h-16 text-green-400 mb-4 mx-auto" />
+        <h1 className="text-4xl font-bold mb-2">Welcome Back!</h1>
+        <p className="text-lg text-gray-300 mb-2">
+          You are authenticated as User ID: <span className="font-mono text-indigo-300">{auth.userId}</span>
+        </p>
+        <button
+          onClick={onLogout}
+          className="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-out hover:scale-105"
+        >
+          Sign Out
+        </button>
+      </div>
+
+      {/* Content Submission Form */}
+      <div className="flex-1 flex items-start justify-center">
+        <ContentSubmissionForm onMessage={onMessage} />
+      </div>
+
+      {/* Additional Info */}
+      <div className="mt-8 text-center text-sm text-gray-400 max-w-2xl mx-auto">
+        <p className="mb-2">
+          Submit content for community verification. Your submission will be reviewed by the community and AI systems.
+        </p>
+        <p>
+          Make sure to provide accurate information to help maintain the integrity of the verification process.
+        </p>
+      </div>
     </div>
   );
 };
@@ -441,7 +722,7 @@ export default function App() {
 
   const renderContent = () => {
     if (auth.isAuthenticated) {
-      return <Dashboard onLogout={handleLogout} />;
+      return <Dashboard onLogout={handleLogout} onMessage={setMessage} />;
     }
 
     if (view === 'home') {
