@@ -180,3 +180,42 @@ def test_create_content_without_tags(client: TestClient, auth_headers: dict):
     assert response.status_code == 201
     data = response.json()
     assert data["tags"] == []
+
+
+def test_get_content_success(client: TestClient, auth_headers: dict):
+    """Test successful content retrieval."""
+    # First create content
+    create_response = client.post(
+        "/api/v1/content/",
+        data={"content_text": "Test content for retrieval"},
+        headers=auth_headers
+    )
+    assert create_response.status_code == 201
+    created_data = create_response.json()
+    content_id = created_data["_id"]
+    
+    # Then retrieve it
+    get_response = client.get(f"/api/v1/content/{content_id}")
+    assert get_response.status_code == 200
+    retrieved_data = get_response.json()
+    
+    assert retrieved_data["_id"] == content_id
+    assert retrieved_data["content_text"] == "Test content for retrieval"
+    assert retrieved_data["status"] == "pending"
+
+
+def test_get_content_not_found(client: TestClient):
+    """Test getting non-existent content returns 404."""
+    # Use a valid ObjectId format but non-existent ID
+    fake_id = "507f1f77bcf86cd799439011"
+    response = client.get(f"/api/v1/content/{fake_id}")
+    assert response.status_code == 404
+    assert "not found" in response.json()["detail"].lower()
+
+
+def test_get_content_invalid_id(client: TestClient):
+    """Test getting content with invalid ID format returns 400."""
+    invalid_id = "not-a-valid-objectid"
+    response = client.get(f"/api/v1/content/{invalid_id}")
+    assert response.status_code == 400
+    assert "invalid" in response.json()["detail"].lower()
