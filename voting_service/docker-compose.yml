@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    container_name: veridiapp_voting_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: veridiapp_votes
+    ports:
+      - "5433:5432"
+    volumes:
+      - voting_db_data:/var/lib/postgresql/data
+    networks:
+      - veridiapp_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  voting_service:
+    build: .
+    container_name: veridiapp_voting_service
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/veridiapp_votes
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - veridiapp_network
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8003 --reload"
+
+volumes:
+  voting_db_data:
+
+networks:
+  veridiapp_network:
+    driver: bridge

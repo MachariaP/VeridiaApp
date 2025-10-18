@@ -1,0 +1,207 @@
+version: '3.8'
+
+services:
+  # User Service Database (PostgreSQL)
+  # PRODUCTION WARNING: Change default passwords before deploying to production
+  user_db:
+    image: postgres:14
+    container_name: veridiapp_user_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres  # CHANGE IN PRODUCTION
+      POSTGRES_DB: veridiapp_users
+    ports:
+      - "5432:5432"
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    networks:
+      - veridiapp_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # User Service
+  user_service:
+    build: ./user_service
+    container_name: veridiapp_user_service
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./user_service/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@user_db:5432/veridiapp_users
+    depends_on:
+      user_db:
+        condition: service_healthy
+    networks:
+      - veridiapp_network
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  # Content Service Database (MongoDB)
+  content_db:
+    image: mongo:7
+    container_name: veridiapp_content_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - content_db_data:/data/db
+    networks:
+      - veridiapp_network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Content Service
+  content_service:
+    build: ./content_service
+    container_name: veridiapp_content_service
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./content_service/.env
+    environment:
+      - MONGODB_URL=mongodb://content_db:27017
+    depends_on:
+      content_db:
+        condition: service_healthy
+    networks:
+      - veridiapp_network
+    volumes:
+      - content_uploads:/tmp/veridiapp_uploads
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001
+
+  # Elasticsearch for Search Service
+  # PRODUCTION WARNING: Enable X-Pack security (xpack.security.enabled=true) in production
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: veridiapp_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false  # Disabled for development, ENABLE IN PRODUCTION
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - veridiapp_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Search Service
+  search_service:
+    build: ./search_service
+    container_name: veridiapp_search_service
+    ports:
+      - "8002:8002"
+    env_file:
+      - ./search_service/.env
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - veridiapp_network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8002
+
+  # Voting Service Database (PostgreSQL)
+  # PRODUCTION WARNING: Change default passwords before deploying to production
+  voting_db:
+    image: postgres:14
+    container_name: veridiapp_voting_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres  # CHANGE IN PRODUCTION
+      POSTGRES_DB: veridiapp_votes
+    ports:
+      - "5433:5432"
+    volumes:
+      - voting_db_data:/var/lib/postgresql/data
+    networks:
+      - veridiapp_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Voting Service
+  voting_service:
+    build: ./voting_service
+    container_name: veridiapp_voting_service
+    ports:
+      - "8003:8003"
+    env_file:
+      - ./voting_service/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@voting_db:5432/veridiapp_votes
+    depends_on:
+      voting_db:
+        condition: service_healthy
+    networks:
+      - veridiapp_network
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8003"
+
+  # Comment Service Database (PostgreSQL)
+  # PRODUCTION WARNING: Change default passwords before deploying to production
+  comment_db:
+    image: postgres:14
+    container_name: veridiapp_comment_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres  # CHANGE IN PRODUCTION
+      POSTGRES_DB: veridiapp_comments
+    ports:
+      - "5434:5432"
+    volumes:
+      - comment_db_data:/var/lib/postgresql/data
+    networks:
+      - veridiapp_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Comment Service
+  comment_service:
+    build: ./comment_service
+    container_name: veridiapp_comment_service
+    ports:
+      - "8004:8004"
+    env_file:
+      - ./comment_service/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@comment_db:5432/veridiapp_comments
+    depends_on:
+      comment_db:
+        condition: service_healthy
+    networks:
+      - veridiapp_network
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8004"
+
+volumes:
+  user_db_data:
+  content_db_data:
+  content_uploads:
+  elasticsearch_data:
+  voting_db_data:
+  comment_db_data:
+
+networks:
+  veridiapp_network:
+    driver: bridge
