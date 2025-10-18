@@ -38,3 +38,9 @@ user_service/alembic/versions/*.pyc
 
 # Logs
 *.log
+
+# md files
+COMPLETE0.md
+DEPLOYMENT0.md
+IMPLEMENTATION0.md
+SECURITY0.md
