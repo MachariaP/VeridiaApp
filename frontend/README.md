@@ -1,20 +1,36 @@
-# VeridiaApp Frontend
+<div align="center">
 
-## 📜 Table of Contents
-* [Project Overview](#1-project-overview)
-* [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
-* [Technology Stack Overview](#3-technology-stack-overview)
-* [Database Design Overview](#4-database-design-overview)
-* [Feature Breakdown](#5-feature-breakdown)
-* [API Security Overview](#6-api-security-overview)
-* [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
-* [Resources](#8-resources)
-* [License](#9-license)
-* [Created By](#10-created-by)
+# ⚛️ VeridiaApp Frontend
+
+### Modern Web Application with Next.js & React
+
+[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC.svg)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Fast, responsive, and intuitive user interface**
+
+</div>
 
 ---
 
-## 1. Project Overview
+## 📜 Table of Contents
+* [📋 Project Overview](#-1-project-overview)
+* [👥 Team Roles and Responsibilities](#-2-team-roles-and-responsibilities)
+* [🛠️ Technology Stack Overview](#️-3-technology-stack-overview)
+* [🗄️ Database Design Overview](#️-4-database-design-overview)
+* [✨ Feature Breakdown](#-5-feature-breakdown)
+* [🔒 API Security Overview](#-6-api-security-overview)
+* [🚀 CI/CD Pipeline Overview](#-7-cicd-pipeline-overview)
+* [📚 Resources](#-8-resources)
+* [📄 License](#-9-license)
+* [👨‍💻 Created By](#-10-created-by)
+
+---
+
+## 📋 1. Project Overview
 
 **Brief Description:**
 
@@ -40,7 +56,7 @@ The VeridiaApp Frontend is a modern, responsive web application providing the us
 
 ---
 
-## 2. Team Roles and Responsibilities
+## 👥 2. Team Roles and Responsibilities
 
 | Role | Key Responsibility |
 |------|-------------------|
@@ -53,7 +69,7 @@ The VeridiaApp Frontend is a modern, responsive web application providing the us
 
 ---
 
-## 3. Technology Stack Overview
+## 🛠️ 3. Technology Stack Overview
 
 | Technology | Purpose in the Project |
 |-----------|----------------------|
@@ -69,7 +85,7 @@ The VeridiaApp Frontend is a modern, responsive web application providing the us
 
 ---
 
-## 4. Database Design Overview
+## 🗄️ 4. Database Design Overview
 
 **Key Entities:**
 
@@ -83,7 +99,7 @@ The VeridiaApp Frontend is a modern, responsive web application providing the us
 
 ---
 
-## 5. Feature Breakdown
+## ✨ 5. Feature Breakdown
 
 * **Landing Page**: Beautiful, responsive homepage showcasing VeridiaApp's value proposition with hero section, feature cards (AI Grounding, Community Vetted, Full Transparency), and prominent call-to-action buttons. Gradient backgrounds and modern design attract users and communicate platform benefits. Optimized for SEO with proper meta tags, semantic HTML, and fast loading times through Next.js static generation.
 
@@ -107,7 +123,7 @@ The VeridiaApp Frontend is a modern, responsive web application providing the us
 
 ---
 
-## 6. API Security Overview
+## 🔒 6. API Security Overview
 
 * **JWT Token Storage**: Access tokens stored in memory (JavaScript variable) for API requests, while refresh tokens stored in httpOnly cookies (planned) for maximum security. Memory storage prevents XSS attacks from stealing tokens since JavaScript cannot access httpOnly cookies. Tokens are never stored in localStorage or sessionStorage, which are vulnerable to XSS. Token expiration is tracked, and expired tokens trigger automatic refresh before API calls.
 
@@ -127,7 +143,7 @@ The VeridiaApp Frontend is a modern, responsive web application providing the us
 
 ---
 
-## 7. CI/CD Pipeline Overview
+## 🚀 7. CI/CD Pipeline Overview
 
 Continuous Integration and Continuous Deployment (CI/CD) automates the frontend development lifecycle, ensuring code quality, catching bugs early, and delivering features rapidly to users. For the Frontend, CI/CD is critical because UI bugs directly impact user experience, and broken authentication flows could lock users out of the platform, making comprehensive testing essential before production deployment.
 
@@ -141,7 +157,7 @@ The entire pipeline from commit to production typically completes in 3-5 minutes
 
 ---
 
-## 8. Resources
+## 📚 8. Resources
 
 * [Next.js Documentation](https://nextjs.org/docs) - React framework for production applications
 * [React Documentation](https://react.dev/) - Component-based UI library guide
@@ -153,12 +169,20 @@ The entire pipeline from commit to production typically completes in 3-5 minutes
 
 ---
 
-## 9. License
+## 📄 9. License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-## 10. Created By
+## 👨‍💻 10. Created By
+
+<div align="center">
 
 **Phinehas Macharia**
+
+[![GitHub](https://img.shields.io/badge/GitHub-MachariaP-181717?style=for-the-badge&logo=github)](https://github.com/MachariaP)
+
+*Beautiful UI for VeridiaApp platform*
+
+</div>

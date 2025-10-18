@@ -108,24 +108,34 @@ export default function ContentDetailPage() {
   }, [contentId]);
 
   const loadContent = async () => {
-    // Note: This assumes content service has a GET endpoint
-    // If not, we'll need to add it or get content from search service
     setIsLoading(true);
     setError('');
     
     try {
-      // For now, we'll show a placeholder since the content service
-      // doesn't have a GET endpoint yet
+      const response = await fetch(`${CONTENT_API_URL}/content/${contentId}`);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Content not found');
+        }
+        throw new Error('Failed to load content');
+      }
+      
+      const data = await response.json();
+      // The backend returns ContentOut schema with _id field (aliased as id in the schema)
+      // We check both id (alias) and _id (actual field name) for compatibility
       setContent({
-        _id: contentId,
-        author_id: 'unknown',
-        content_text: 'Content details would be loaded here...',
-        tags: [],
-        status: 'pending',
-        submission_date: new Date().toISOString(),
+        _id: data.id || data._id,
+        author_id: data.author_id,
+        content_url: data.content_url,
+        content_text: data.content_text,
+        tags: data.tags || [],
+        status: data.status,
+        submission_date: data.submission_date,
+        media_attachment: data.media_attachment,
       });
     } catch (err) {
-      setError('Failed to load content');
+      setError(err instanceof Error ? err.message : 'Failed to load content');
     } finally {
       setIsLoading(false);
     }

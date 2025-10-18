@@ -1,20 +1,36 @@
-# VeridiaApp Search Service
+<div align="center">
 
-## 📜 Table of Contents
-* [Project Overview](#1-project-overview)
-* [Team Roles and Responsibilities](#2-team-roles-and-responsibilities)
-* [Technology Stack Overview](#3-technology-stack-overview)
-* [Database Design Overview](#4-database-design-overview)
-* [Feature Breakdown](#5-feature-breakdown)
-* [API Security Overview](#6-api-security-overview)
-* [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
-* [Resources](#8-resources)
-* [License](#9-license)
-* [Created By](#10-created-by)
+# 🔍 VeridiaApp Search Service
+
+### Full-Text Search & Content Discovery Microservice
+
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com/)
+[![Elasticsearch](https://img.shields.io/badge/Elasticsearch-8.x-005571.svg)](https://www.elastic.co/)
+[![Search](https://img.shields.io/badge/Search-Full_Text-yellow.svg)](https://www.elastic.co/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Powerful search with fuzzy matching and real-time indexing**
+
+</div>
 
 ---
 
-## 1. Project Overview
+## 📜 Table of Contents
+* [📋 Project Overview](#-1-project-overview)
+* [👥 Team Roles and Responsibilities](#-2-team-roles-and-responsibilities)
+* [🛠️ Technology Stack Overview](#️-3-technology-stack-overview)
+* [🗄️ Database Design Overview](#️-4-database-design-overview)
+* [✨ Feature Breakdown](#-5-feature-breakdown)
+* [🔒 API Security Overview](#-6-api-security-overview)
+* [🚀 CI/CD Pipeline Overview](#-7-cicd-pipeline-overview)
+* [📚 Resources](#-8-resources)
+* [📄 License](#-9-license)
+* [👨‍💻 Created By](#-10-created-by)
+
+---
+
+## 📋 1. Project Overview
 
 **Brief Description:**
 
@@ -39,7 +55,7 @@ The VeridiaApp Search Service is a specialized microservice providing powerful f
 
 ---
 
-## 2. Team Roles and Responsibilities
+## 👥 2. Team Roles and Responsibilities
 
 | Role | Key Responsibility |
 |------|-------------------|
@@ -52,7 +68,7 @@ The VeridiaApp Search Service is a specialized microservice providing powerful f
 
 ---
 
-## 3. Technology Stack Overview
+## 🛠️ 3. Technology Stack Overview
 
 | Technology | Purpose in the Project |
 |-----------|----------------------|
@@ -69,7 +85,7 @@ The VeridiaApp Search Service is a specialized microservice providing powerful f
 
 ---
 
-## 4. Database Design Overview
+## 🗄️ 4. Database Design Overview
 
 **Key Entities:**
 
@@ -83,7 +99,7 @@ The VeridiaApp Search Service is a specialized microservice providing powerful f
 
 ---
 
-## 5. Feature Breakdown
+## ✨ 5. Feature Breakdown
 
 * **Content Indexing**: Authenticated endpoint for adding content to the search index. Accepts content document with content_id, author_id, content_text, tags, status, and submission_date. Document is transformed into Elasticsearch format and indexed. The content_id is used as Elasticsearch document ID for idempotent indexing - re-indexing the same content_id updates the existing document rather than creating duplicates. Indexing is near-instantaneous (milliseconds), making content searchable immediately after submission.
 
@@ -103,7 +119,7 @@ The VeridiaApp Search Service is a specialized microservice providing powerful f
 
 ---
 
-## 6. API Security Overview
+## 🔒 6. API Security Overview
 
 * **JWT Authentication for Indexing**: Index management operations (create, update, delete documents) require valid JWT access tokens from the User Service. Only authenticated users can add content to search index, preventing spam indexing. Tokens are validated using shared JWT_SECRET_KEY. The author_id from JWT claims is used as the document's author field, ensuring accurate attribution. Anonymous index attempts return 401 Unauthorized.
 
@@ -123,7 +139,7 @@ The VeridiaApp Search Service is a specialized microservice providing powerful f
 
 ---
 
-## 7. CI/CD Pipeline Overview
+## 🚀 7. CI/CD Pipeline Overview
 
 Continuous Integration and Continuous Deployment (CI/CD) automates the Search Service development lifecycle, ensuring search accuracy, preventing query regressions, and enabling rapid feature delivery. For the Search Service, CI/CD is critical because bugs in search queries or indexing could render content undiscoverable, undermining the platform's usability and requiring comprehensive automated testing.
 
@@ -137,7 +153,7 @@ The entire pipeline completes in 4-6 minutes. Failed deployments rollback automa
 
 ---
 
-## 8. Resources
+## 📚 8. Resources
 
 * [Elasticsearch Documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html) - Comprehensive search engine guide
 * [Elasticsearch Python Client](https://elasticsearch-py.readthedocs.io/) - Official Python library documentation
@@ -148,12 +164,20 @@ The entire pipeline completes in 4-6 minutes. Failed deployments rollback automa
 
 ---
 
-## 9. License
+## 📄 9. License
 
 This project is licensed under the **MIT License**.
 
 ---
 
-## 10. Created By
+## 👨‍💻 10. Created By
+
+<div align="center">
 
 **Phinehas Macharia**
+
+[![GitHub](https://img.shields.io/badge/GitHub-MachariaP-181717?style=for-the-badge&logo=github)](https://github.com/MachariaP)
+
+*Powering content discovery for VeridiaApp*
+
+</div>
