@@ -12,7 +12,8 @@ cd user_service
 
 # Copy and configure environment variables (REQUIRED)
 cp .env.example .env
-# Edit .env and set DATABASE_URL, POSTGRES_PASSWORD, and JWT_SECRET_KEY
+# Edit .env and generate secure values for DATABASE_URL, POSTGRES_PASSWORD, and JWT_SECRET_KEY
+# See SECURITY.md for instructions on generating strong, random secrets
 
 # Start PostgreSQL database
 docker compose up -d db
@@ -275,7 +276,7 @@ For detailed information on managing secrets, environment variables, and securit
 * Always use environment variables for sensitive configuration
 * Generate strong, random secrets for production
 * Rotate secrets regularly
-* Use the same JWT_SECRET_KEY across all services
+* **⚠️ CRITICAL**: Use the same JWT_SECRET_KEY across all services - different keys will break authentication!
 
 ---
 
