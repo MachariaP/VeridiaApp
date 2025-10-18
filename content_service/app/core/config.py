@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     MONGODB_DB_NAME: str = "veridiapp_content_db"
     
     # JWT Settings (must match user_service)
-    JWT_SECRET_KEY: str = ""  # MUST be set via environment variable in production
+    JWT_SECRET_KEY: str  # MUST be set via environment variable
     JWT_ALGORITHM: str = "HS256"
     
     # File Upload Settings
