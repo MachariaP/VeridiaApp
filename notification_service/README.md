@@ -20,7 +20,7 @@ The Notification Service manages user notifications for the VeridiaApp platform.
 - **MongoDB**: NoSQL database for notification storage
 - **Motor**: Async MongoDB driver
 - **Pydantic**: Data validation and settings management
-- **python-jose**: JWT token handling
+- **python-jose**: JWT token handling (Note: Consider PyJWT for enhanced security in production)
 
 ## API Endpoints
 

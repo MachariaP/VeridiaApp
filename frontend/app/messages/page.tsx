@@ -57,7 +57,7 @@ export default function MessagesPage() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="p-4 bg-gray-800 rounded-lg hover:bg-gray-750 cursor-pointer transition"
+                  className="p-4 bg-gray-800 rounded-lg hover:bg-gray-700 cursor-pointer transition"
                 >
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center">
