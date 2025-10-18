@@ -2,11 +2,17 @@
 
 ## 🚀 Quick Start
 
+**⚠️ Important: Before running the application, please review [SECURITY.md](SECURITY.md) for instructions on setting up required environment variables and secrets.**
+
 ### Running the Application
 
 #### Backend Setup
 ```bash
 cd user_service
+
+# Copy and configure environment variables (REQUIRED)
+cp .env.example .env
+# Edit .env and set DATABASE_URL, POSTGRES_PASSWORD, and JWT_SECRET_KEY
 
 # Start PostgreSQL database
 docker compose up -d db
@@ -51,8 +57,9 @@ Frontend application will be available at http://localhost:3000
 * [API Security Overview](#6-api-security-overview)
 * [CI/CD Pipeline Overview](#7-cicd-pipeline-overview)
 * [Resources](#8-resources)
-* [License](#9-license)
-* [Created By](#10-created-by)
+* [Security Guidelines](#9-security-guidelines)
+* [License](#10-license)
+* [Created By](#11-created-by)
 
 ---
 
@@ -259,7 +266,20 @@ The pipeline includes **environment-specific configurations** managed through Gi
 
 ---
 
-## 9. License
+## 9. Security Guidelines
+
+For detailed information on managing secrets, environment variables, and security best practices, please refer to [SECURITY.md](SECURITY.md).
+
+**Key Security Points:**
+* Never commit real secrets to version control
+* Always use environment variables for sensitive configuration
+* Generate strong, random secrets for production
+* Rotate secrets regularly
+* Use the same JWT_SECRET_KEY across all services
+
+---
+
+## 10. License
 
 This project is licensed under the **MIT License**.
 
@@ -271,7 +291,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-## 10. Created By
+## 11. Created By
 
 **Phinehas Macharia**
 
