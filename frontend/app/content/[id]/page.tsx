@@ -122,6 +122,8 @@ export default function ContentDetailPage() {
       }
       
       const data = await response.json();
+      // The backend returns ContentOut schema with _id field (aliased as id in the schema)
+      // We check both id (alias) and _id (actual field name) for compatibility
       setContent({
         _id: data.id || data._id,
         author_id: data.author_id,

@@ -5,6 +5,8 @@ import os
 import uuid
 import aiofiles
 from pathlib import Path
+from bson import ObjectId
+from bson.errors import InvalidId
 
 from app.schemas.content import ContentCreate, ContentOut
 from app.api.dependencies import get_current_user
@@ -148,9 +150,6 @@ async def get_content(content_id: str):
     Returns:
         Content document
     """
-    from bson import ObjectId
-    from bson.errors import InvalidId
-    
     # Validate ObjectId format
     try:
         object_id = ObjectId(content_id)

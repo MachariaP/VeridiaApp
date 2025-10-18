@@ -487,7 +487,8 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
         if (fileInputRef.current) fileInputRef.current.value = '';
         
         // Redirect to content detail page for verification
-        // The backend returns the content with _id field aliased as id
+        // The backend returns ContentOut schema with _id field (aliased as id in the schema)
+        // We check both _id (actual field name) and id (alias) for compatibility
         const contentId = data._id || data.id;
         if (contentId) {
           // Small delay to show the success message before redirect
