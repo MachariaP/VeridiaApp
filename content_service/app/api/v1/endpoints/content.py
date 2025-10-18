@@ -135,3 +135,42 @@ async def create_content(
     created_content["_id"] = str(created_content["_id"])
     
     return ContentOut(**created_content)
+
+
+@router.get("/{content_id}", response_model=ContentOut)
+async def get_content(content_id: str):
+    """
+    Retrieve a content submission by ID.
+    
+    Args:
+        content_id: The MongoDB ObjectId of the content
+        
+    Returns:
+        Content document
+    """
+    from bson import ObjectId
+    from bson.errors import InvalidId
+    
+    # Validate ObjectId format
+    try:
+        object_id = ObjectId(content_id)
+    except InvalidId:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid content ID format"
+        )
+    
+    # Retrieve from MongoDB
+    collection = get_collection("contents")
+    content = await collection.find_one({"_id": object_id})
+    
+    if not content:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Content not found"
+        )
+    
+    # Convert ObjectId to string for JSON serialization
+    content["_id"] = str(content["_id"])
+    
+    return ContentOut(**content)

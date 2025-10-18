@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 import { LogIn, UserPlus, Lock, CheckCircle, AlertTriangle, Loader, Zap, Aperture, User, LockKeyhole, Mail, FileText, Link as LinkIcon, Tag, Upload, Send, X } from 'lucide-react';
 
 // --- Global Constants and API Configuration ---
@@ -395,6 +396,7 @@ const InputField: React.FC<{
  */
 const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void }> = ({ onMessage }) => {
   const { auth } = useAuth();
+  const router = useRouter();
   const [contentUrl, setContentUrl] = useState('');
   const [contentText, setContentText] = useState('');
   const [tags, setTags] = useState('');
@@ -475,7 +477,7 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
       const data = await response.json();
 
       if (response.ok) {
-        onMessage({ type: 'success', text: 'Content submitted successfully! Your submission is now pending verification.' });
+        onMessage({ type: 'success', text: 'Content submitted successfully! Redirecting to verification page...' });
         // Clear form
         setContentUrl('');
         setContentText('');
@@ -483,6 +485,16 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
         setMediaFile(null);
         // Reset file input
         if (fileInputRef.current) fileInputRef.current.value = '';
+        
+        // Redirect to content detail page for verification
+        // The backend returns the content with _id field aliased as id
+        const contentId = data._id || data.id;
+        if (contentId) {
+          // Small delay to show the success message before redirect
+          setTimeout(() => {
+            router.push(`/content/${contentId}`);
+          }, 1000);
+        }
       } else {
         throw new Error(data.detail || 'Failed to submit content.');
       }
