@@ -2,12 +2,13 @@ version: '3.8'
 
 services:
   # User Service Database (PostgreSQL)
+  # PRODUCTION WARNING: Change default passwords before deploying to production
   user_db:
     image: postgres:14
     container_name: veridiapp_user_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: postgres  # CHANGE IN PRODUCTION
       POSTGRES_DB: veridiapp_users
     ports:
       - "5432:5432"
@@ -76,12 +77,13 @@ services:
     command: uvicorn app.main:app --host 0.0.0.0 --port 8001
 
   # Elasticsearch for Search Service
+  # PRODUCTION WARNING: Enable X-Pack security (xpack.security.enabled=true) in production
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     container_name: veridiapp_elasticsearch
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false
+      - xpack.security.enabled=false  # Disabled for development, ENABLE IN PRODUCTION
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - "9200:9200"
@@ -113,12 +115,13 @@ services:
     command: uvicorn app.main:app --host 0.0.0.0 --port 8002
 
   # Voting Service Database (PostgreSQL)
+  # PRODUCTION WARNING: Change default passwords before deploying to production
   voting_db:
     image: postgres:14
     container_name: veridiapp_voting_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: postgres  # CHANGE IN PRODUCTION
       POSTGRES_DB: veridiapp_votes
     ports:
       - "5433:5432"
@@ -152,12 +155,13 @@ services:
              uvicorn app.main:app --host 0.0.0.0 --port 8003"
 
   # Comment Service Database (PostgreSQL)
+  # PRODUCTION WARNING: Change default passwords before deploying to production
   comment_db:
     image: postgres:14
     container_name: veridiapp_comment_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: postgres  # CHANGE IN PRODUCTION
       POSTGRES_DB: veridiapp_comments
     ports:
       - "5434:5432"
