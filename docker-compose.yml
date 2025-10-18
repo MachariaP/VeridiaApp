@@ -194,6 +194,26 @@ services:
       sh -c "alembic upgrade head &&
              uvicorn app.main:app --host 0.0.0.0 --port 8004"
 
+  # Notification Service
+  # Note: Currently shares MongoDB with content_db for development simplicity.
+  # In production, consider using a dedicated MongoDB instance for better data isolation.
+  notification_service:
+    build: ./notification_service
+    container_name: veridiapp_notification_service
+    ports:
+      - "8005:8005"
+    env_file:
+      - ./notification_service/.env
+    environment:
+      - MONGODB_URL=mongodb://content_db:27017
+      - MONGODB_DB_NAME=veridiapp_notifications
+    depends_on:
+      content_db:
+        condition: service_healthy
+    networks:
+      - veridiapp_network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8005
+
 volumes:
   user_db_data:
   content_db_data:
