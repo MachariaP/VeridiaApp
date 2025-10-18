@@ -86,12 +86,20 @@ async def create_content(
         
     Returns:
         Created content document with HTTP 201 status
+        
+    Raises:
+        HTTPException 400: If neither content_url nor content_text is provided
+        HTTPException 400: If more than 20 tags are provided
+        HTTPException 401: If token is missing or invalid (handled by dependency)
     """
     # Validate that at least one content field is provided
     if not content_url and not content_text:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="At least one of content_url or content_text must be provided"
+            detail={
+                "error": "At least one of content_url or content_text must be provided",
+                "status": 400
+            }
         )
     
     # Parse tags
@@ -149,6 +157,10 @@ async def get_content(content_id: str):
         
     Returns:
         Content document
+        
+    Raises:
+        HTTPException 400: If content_id is not a valid MongoDB ObjectId
+        HTTPException 404: If content is not found
     """
     # Validate ObjectId format
     try:
@@ -156,7 +168,10 @@ async def get_content(content_id: str):
     except InvalidId:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid content ID format"
+            detail={
+                "error": "Invalid content ID format. Must be a valid MongoDB ObjectId.",
+                "status": 400
+            }
         )
     
     # Retrieve from MongoDB
