@@ -722,8 +722,8 @@ export default function App() {
       localStorage.setItem('userId', userId);
     }
     setAuth({ isAuthenticated: true, userId, token });
-    // Redirect to feed page instead of showing dashboard
-    window.location.href = '/feed';
+    // Redirect to new dashboard page as the main landing page after login
+    window.location.href = '/dashboard-new';
   }, []);
 
   // Function to handle logout
