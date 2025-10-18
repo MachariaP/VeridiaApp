@@ -188,3 +188,42 @@ async def get_content(content_id: str):
     content["_id"] = str(content["_id"])
     
     return ContentOut(**content)
+
+
+@router.get("/user/{user_id}", response_model=List[ContentOut])
+async def get_user_content(
+    user_id: str,
+    page: int = 1,
+    per_page: int = 20
+):
+    """
+    Retrieve content submissions by a specific user.
+    
+    Args:
+        user_id: The user ID
+        page: Page number (default: 1)
+        per_page: Number of items per page (default: 20, max: 100)
+        
+    Returns:
+        List of content documents
+    """
+    # Validate pagination parameters
+    if page < 1:
+        page = 1
+    if per_page < 1:
+        per_page = 20
+    if per_page > 100:
+        per_page = 100
+    
+    skip = (page - 1) * per_page
+    
+    # Retrieve from MongoDB
+    collection = get_collection("contents")
+    cursor = collection.find({"author_id": user_id}).sort("submission_date", -1).skip(skip).limit(per_page)
+    
+    contents = []
+    async for content in cursor:
+        content["_id"] = str(content["_id"])
+        contents.append(ContentOut(**content))
+    
+    return contents
