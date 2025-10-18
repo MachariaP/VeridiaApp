@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: veridiapp_content_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: veridiapp_content_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - veridiapp_network
+
+  content_service:
+    build: .
+    container_name: veridiapp_content_service
+    ports:
+      - "8001:8000"
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=veridiapp_content_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-secret-key-here-change-in-production}
+    depends_on:
+      - mongodb
+    volumes:
+      - ./app:/app/app
+      - upload_data:/tmp/veridiapp_uploads
+    networks:
+      - veridiapp_network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  mongodb_data:
+  upload_data:
+
+networks:
+  veridiapp_network:
+    driver: bridge
