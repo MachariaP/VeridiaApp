@@ -401,10 +401,34 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const ALLOWED_FILE_TYPES = ['.txt', '.jpg', '.jpeg', '.png', '.gif', '.pdf'];
+  const MAX_TEXT_LENGTH = 10000;
+  const MAX_TAGS = 20;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setMediaFile(e.target.files[0]);
+      const file = e.target.files[0];
+      
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        onMessage({ type: 'error', text: 'File size exceeds 10MB limit.' });
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+      
+      // Validate file type
+      const fileExt = '.' + file.name.split('.').pop()?.toLowerCase();
+      if (!ALLOWED_FILE_TYPES.includes(fileExt)) {
+        onMessage({ type: 'error', text: `File type not allowed. Supported types: ${ALLOWED_FILE_TYPES.join(', ')}` });
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+      
+      setMediaFile(file);
+      onMessage(null);
     }
   };
 
@@ -417,6 +441,19 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
       // Validate that at least one content field is provided
       if (!contentUrl && !contentText) {
         throw new Error('Please provide either a URL or text content to submit.');
+      }
+
+      // Validate text length
+      if (contentText && contentText.length > MAX_TEXT_LENGTH) {
+        throw new Error(`Content text exceeds maximum length of ${MAX_TEXT_LENGTH} characters.`);
+      }
+
+      // Validate tags count
+      if (tags) {
+        const tagList = tags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+        if (tagList.length > MAX_TAGS) {
+          throw new Error(`Maximum ${MAX_TAGS} tags allowed.`);
+        }
       }
 
       // Create FormData for multipart upload
@@ -445,8 +482,7 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
         setTags('');
         setMediaFile(null);
         // Reset file input
-        const fileInput = document.getElementById('media-file-input') as HTMLInputElement;
-        if (fileInput) fileInput.value = '';
+        if (fileInputRef.current) fileInputRef.current.value = '';
       } else {
         throw new Error(data.detail || 'Failed to submit content.');
       }
@@ -462,8 +498,7 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
     setContentText('');
     setTags('');
     setMediaFile(null);
-    const fileInput = document.getElementById('media-file-input') as HTMLInputElement;
-    if (fileInput) fileInput.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = '';
     onMessage(null);
   };
 
@@ -517,10 +552,13 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
                   value={contentText}
                   onChange={(e) => setContentText(e.target.value)}
                   rows={5}
+                  maxLength={MAX_TEXT_LENGTH}
                   className="w-full pl-12 pr-4 py-3 bg-gray-700/80 text-white placeholder-gray-400 border border-transparent focus:border-indigo-500 rounded-xl focus:ring-1 focus:ring-indigo-500 outline-none transition duration-200 resize-y"
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-1">Or paste the text content directly (max 10,000 characters)</p>
+              <p className="text-xs text-gray-400 mt-1">
+                Or paste the text content directly ({contentText.length}/{MAX_TEXT_LENGTH} characters)
+              </p>
             </div>
 
             {/* Tags Input */}
@@ -562,8 +600,7 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
                     type="button"
                     onClick={() => {
                       setMediaFile(null);
-                      const fileInput = document.getElementById('media-file-input') as HTMLInputElement;
-                      if (fileInput) fileInput.value = '';
+                      if (fileInputRef.current) fileInputRef.current.value = '';
                     }}
                     className="p-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition duration-200"
                   >
@@ -572,6 +609,7 @@ const ContentSubmissionForm: React.FC<{ onMessage: (msg: Message | null) => void
                 )}
               </div>
               <input
+                ref={fileInputRef}
                 id="media-file-input"
                 type="file"
                 onChange={handleFileChange}
