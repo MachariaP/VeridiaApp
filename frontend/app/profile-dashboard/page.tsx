@@ -5,10 +5,7 @@ import {
   User, Aperture, MessageSquare, Bell, Settings, Rss, Globe, Users,
   Briefcase, Heart, ThumbsUp, Share2, CornerDownLeft, Filter, Zap, Lock, Eye
 } from 'lucide-react';
-
-// API Configuration
-const API_BASE_URL = 'http://localhost:8000/api/v1';
-const CONTENT_API_BASE_URL = 'http://localhost:8001/api/v1';
+import { API_BASE_URL, CONTENT_API_URL } from '@/lib/api-config';
 
 // --- MOCK DATA ---
 const mockProfile = {

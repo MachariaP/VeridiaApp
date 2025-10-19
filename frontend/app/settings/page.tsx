@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Settings as SettingsIcon, User, Lock, Shield, Bell, Palette, Globe, Trash2, Save, AlertTriangle } from 'lucide-react';
-
-// API Configuration
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+import { getToken, clearAuthData } from '@/lib/auth';
+import { API_BASE_URL } from '@/lib/api-config';
 
 // TypeScript Interfaces
 interface ISettings {
@@ -38,14 +37,6 @@ export default function SettingsPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
-
-  // Get token from localStorage
-  const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  };
 
   // Fetch settings
   useEffect(() => {
@@ -182,9 +173,8 @@ export default function SettingsPage() {
         throw new Error('Failed to delete account');
       }
 
-      // Clear localStorage and redirect
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
+      // Clear auth data and redirect
+      clearAuthData();
       router.push('/');
     } catch (err) {
       setError((err as Error).message);
