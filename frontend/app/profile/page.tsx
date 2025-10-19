@@ -820,6 +820,71 @@ export default function ProfilePage() {
               </div>
             ) : activeTab === 'achievements' ? (
               <div className="space-y-4">
+                {/* Profile Analytics */}
+                <div className="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 rounded-xl p-6 border border-indigo-700/30">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Award className="w-5 h-5 text-indigo-400" />
+                    Profile Insights
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-white">{profile.profile_views || 0}</div>
+                      <div className="text-sm text-gray-400 mt-1">Profile Views</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-white">{posts.length}</div>
+                      <div className="text-sm text-gray-400 mt-1">Total Posts</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-white">
+                        {(profile.work_experience?.length || 0) + (profile.education?.length || 0)}
+                      </div>
+                      <div className="text-sm text-gray-400 mt-1">Experience Items</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-white">{profile.portfolio_items?.length || 0}</div>
+                      <div className="text-sm text-gray-400 mt-1">Portfolio Items</div>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-gray-700">
+                    <p className="text-sm text-gray-400">
+                      Profile Completeness: <span className="text-white font-semibold">
+                        {Math.round(
+                          ((profile.first_name ? 1 : 0) +
+                          (profile.last_name ? 1 : 0) +
+                          (profile.bio ? 1 : 0) +
+                          (profile.avatar ? 1 : 0) +
+                          (profile.cover_photo ? 1 : 0) +
+                          (profile.location ? 1 : 0) +
+                          (profile.job_title ? 1 : 0) +
+                          (profile.skills && profile.skills.length > 0 ? 1 : 0) +
+                          (profile.work_experience && profile.work_experience.length > 0 ? 1 : 0) +
+                          (profile.portfolio_items && profile.portfolio_items.length > 0 ? 1 : 0)) / 10 * 100
+                        )}%
+                      </span>
+                    </p>
+                    <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-indigo-600 h-2 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.round(
+                            ((profile.first_name ? 1 : 0) +
+                            (profile.last_name ? 1 : 0) +
+                            (profile.bio ? 1 : 0) +
+                            (profile.avatar ? 1 : 0) +
+                            (profile.cover_photo ? 1 : 0) +
+                            (profile.location ? 1 : 0) +
+                            (profile.job_title ? 1 : 0) +
+                            (profile.skills && profile.skills.length > 0 ? 1 : 0) +
+                            (profile.work_experience && profile.work_experience.length > 0 ? 1 : 0) +
+                            (profile.portfolio_items && profile.portfolio_items.length > 0 ? 1 : 0)) / 10 * 100
+                          )}%`
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {/* Achievements */}
                 <div className="bg-gray-800 rounded-xl p-6">
                   <div className="flex justify-between items-center mb-4">
