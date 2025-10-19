@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, MapPin, Briefcase, Zap, CheckCircle, ArrowRight } from 'lucide-react';
-
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+import { API_BASE_URL } from '@/lib/api-config';
+import { getToken } from '@/lib/auth';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const token = getToken();
     if (!token) {
       router.push('/');
     }
@@ -38,7 +38,7 @@ export default function OnboardingPage() {
 
   const handleComplete = async () => {
     setIsLoading(true);
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const token = getToken();
     
     try {
       // Update user profile with onboarding data

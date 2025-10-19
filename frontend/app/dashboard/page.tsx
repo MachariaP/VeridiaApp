@@ -14,12 +14,9 @@ import {
   Clock,
   AlertCircle,
   Calendar,
-  Tag,
 } from 'lucide-react';
-
-const CONTENT_API_URL = 'http://localhost:8001/api/v1';
-const VOTING_API_URL = 'http://localhost:8003/api/v1';
-const COMMENT_API_URL = 'http://localhost:8004/api/v1';
+import { getToken, getUserId, clearAuthData } from '@/lib/auth';
+import { VOTING_API_URL, COMMENT_API_URL } from '@/lib/api-config';
 
 interface UserVote {
   id: string;
@@ -53,21 +50,6 @@ export default function DashboardPage() {
   const [error, setError] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Get token and userId from localStorage
-  const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  };
-
-  const getUserId = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('userId');
-    }
-    return null;
-  };
-
   useEffect(() => {
     const token = getToken();
     const uid = getUserId();
@@ -79,7 +61,7 @@ export default function DashboardPage() {
 
     setUserId(uid);
     loadUserData(token);
-  }, []);
+  }, [router]);
 
   const loadUserData = async (token: string) => {
     setIsLoading(true);
@@ -118,10 +100,7 @@ export default function DashboardPage() {
   };
 
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-    }
+    clearAuthData();
     router.push('/');
   };
 

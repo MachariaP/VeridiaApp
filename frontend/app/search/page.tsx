@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search as SearchIcon, Filter, Tag, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
-
-const SEARCH_API_URL = 'http://localhost:8002/api/v1';
+import { SEARCH_API_URL } from '@/lib/api-config';
 
 interface SearchResult {
   _id: string;

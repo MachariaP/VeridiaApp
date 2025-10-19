@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserPlus, User, Mail, LockKeyhole, Zap, AlertTriangle, CheckCircle, Loader } from 'lucide-react';
-
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+import { API_BASE_URL } from '@/lib/api-config';
+import { setAuthData } from '@/lib/auth';
 
 type Message = {
   type: 'success' | 'error' | 'info';
@@ -55,8 +55,7 @@ export default function RegisterPage() {
 
         if (loginResponse.ok) {
           const loginBody = await loginResponse.json();
-          localStorage.setItem('token', loginBody.access_token);
-          localStorage.setItem('userId', loginBody.user_id);
+          setAuthData(loginBody.access_token, loginBody.user_id);
           
           // Redirect to onboarding
           setTimeout(() => {

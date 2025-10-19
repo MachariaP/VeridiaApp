@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Send, X, Upload, FileText, LinkIcon, Tag, ArrowLeft, Home, User, Search } from 'lucide-react';
-
-const CONTENT_API_BASE_URL = 'http://localhost:8001/api/v1';
+import { getToken } from '@/lib/auth';
+import { CONTENT_API_URL } from '@/lib/api-config';
 
 type Message = {
   type: 'success' | 'error' | 'info';
@@ -26,19 +26,12 @@ export default function CreateContentPage() {
   const MAX_TEXT_LENGTH = 10000;
   const MAX_TAGS = 20;
 
-  const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  };
-
   useEffect(() => {
     const token = getToken();
     if (!token) {
       router.push('/');
     }
-  }, []);
+  }, [router]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -101,7 +94,7 @@ export default function CreateContentPage() {
       if (mediaFile) formData.append('media_file', mediaFile);
 
       // Submit to content service
-      const response = await fetch(`${CONTENT_API_BASE_URL}/content/`, {
+      const response = await fetch(`${CONTENT_API_URL}/content/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
