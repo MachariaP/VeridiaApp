@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search as SearchIcon, Filter, Tag, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 
 const SEARCH_API_URL = 'http://localhost:8002/api/v1';
@@ -41,6 +42,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function SearchPage() {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [tagsFilter, setTagsFilter] = useState('');
@@ -122,15 +124,18 @@ export default function SearchPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <a href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <button
+                onClick={() => router.push('/dashboard-new')}
+                className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent cursor-pointer"
+              >
                 VeridiaApp
-              </a>
+              </button>
               <span className="text-gray-500">|</span>
               <h1 className="text-xl font-semibold text-gray-800">Search</h1>
             </div>
             <nav className="flex space-x-4">
-              <a href="/" className="text-gray-600 hover:text-gray-900">Home</a>
-              <a href="/dashboard" className="text-gray-600 hover:text-gray-900">Dashboard</a>
+              <button onClick={() => router.push('/dashboard-new')} className="text-gray-600 hover:text-gray-900">Home</button>
+              <button onClick={() => router.push('/dashboard')} className="text-gray-600 hover:text-gray-900">My Activity</button>
             </nav>
           </div>
         </div>

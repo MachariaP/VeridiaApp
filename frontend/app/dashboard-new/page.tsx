@@ -76,11 +76,11 @@ interface IUser {
 // Navigation Items Configuration
 const navItems: INavItem[] = [
   { label: 'Home', route: '/dashboard-new', icon: Home, requiresAuth: true },
-  { label: 'Profile', route: '/dashboard', icon: User, requiresAuth: true },
+  { label: 'Profile', route: '/profile', icon: User, requiresAuth: true },
   { label: 'Search', route: '/search', icon: Search, requiresAuth: true },
   { label: 'Notifications', route: '/notifications', icon: Bell, requiresAuth: true },
   { label: 'Messages', route: '/messages', icon: MessageSquare, requiresAuth: true },
-  { label: 'Settings', route: '/settings/account', icon: Settings, requiresAuth: true },
+  { label: 'Settings', route: '/settings', icon: Settings, requiresAuth: true },
 ];
 
 // Status configuration
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                 <MessageSquare className="w-6 h-6" />
               </button>
               <button
-                onClick={() => router.push('/dashboard')}
+                onClick={() => router.push('/profile')}
                 className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white hover:shadow-lg transition-shadow"
                 title="Profile"
                 aria-label="Profile"
@@ -391,10 +391,10 @@ export default function DashboardPage() {
                   const Icon = item.icon;
                   const isActive = item.route === '/dashboard-new';
                   return (
-                    <a
+                    <button
                       key={item.route}
-                      href={item.route}
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
+                      onClick={() => router.push(item.route)}
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors w-full text-left ${
                         isActive
                           ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold border-l-4 border-blue-600'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
@@ -403,7 +403,7 @@ export default function DashboardPage() {
                     >
                       <Icon className="w-5 h-5 flex-shrink-0" />
                       <span>{item.label}</span>
-                    </a>
+                    </button>
                   );
                 })}
                 <button
@@ -420,18 +420,18 @@ export default function DashboardPage() {
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-4 mb-2">
                   Quick Links
                 </h3>
-                <a
-                  href="/dashboard"
-                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors w-full text-left"
                 >
                   My Activity
-                </a>
-                <a
-                  href="/settings/account"
-                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"
+                </button>
+                <button
+                  onClick={() => router.push('/settings')}
+                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors w-full text-left"
                 >
                   Settings
-                </a>
+                </button>
               </div>
             </div>
           </aside>
@@ -619,27 +619,27 @@ export default function DashboardPage() {
                   <span>Trending Topics</span>
                 </h3>
                 <div className="space-y-3">
-                  <a
-                    href="/search?q=technology"
-                    className="block p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                  <button
+                    onClick={() => router.push('/search?q=technology')}
+                    className="block w-full text-left p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                   >
                     <p className="text-sm font-medium text-gray-900 dark:text-white">#Technology</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">125 posts</p>
-                  </a>
-                  <a
-                    href="/search?q=health"
-                    className="block p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                  </button>
+                  <button
+                    onClick={() => router.push('/search?q=health')}
+                    className="block w-full text-left p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                   >
                     <p className="text-sm font-medium text-gray-900 dark:text-white">#Health</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">98 posts</p>
-                  </a>
-                  <a
-                    href="/search?q=news"
-                    className="block p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                  </button>
+                  <button
+                    onClick={() => router.push('/search?q=news')}
+                    className="block w-full text-left p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                   >
                     <p className="text-sm font-medium text-gray-900 dark:text-white">#News</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">87 posts</p>
-                  </a>
+                  </button>
                 </div>
               </div>
 

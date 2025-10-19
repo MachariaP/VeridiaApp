@@ -312,13 +312,16 @@ export default function ContentDetailPage() {
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <a href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <button
+                onClick={() => router.push('/dashboard-new')}
+                className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent cursor-pointer"
+              >
                 VeridiaApp
-              </a>
+              </button>
             </div>
             <nav className="flex space-x-4">
-              <a href="/search" className="text-gray-600 hover:text-gray-900">Search</a>
-              <a href="/dashboard" className="text-gray-600 hover:text-gray-900">Dashboard</a>
+              <button onClick={() => router.push('/search')} className="text-gray-600 hover:text-gray-900">Search</button>
+              <button onClick={() => router.push('/dashboard')} className="text-gray-600 hover:text-gray-900">My Activity</button>
             </nav>
           </div>
         </div>
