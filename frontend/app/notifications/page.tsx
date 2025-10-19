@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bell, Heart, MessageCircle, UserPlus, AlertCircle, Check, CheckCheck, User } from 'lucide-react';
-
-// API Configuration
-const API_BASE_URL = 'http://localhost:8005/api/v1';
+import { getToken } from '@/lib/auth';
+import { NOTIFICATION_API_URL } from '@/lib/api-config';
+import { formatDate } from '@/lib/utils';
 
 // TypeScript Interfaces
 interface INotification {
@@ -39,7 +39,6 @@ const getNotificationIcon = (type: string) => {
   }
 };
 
-// Notifications Page Component
 export default function NotificationsPage() {
   const router = useRouter();
   const [notifications, setNotifications] = useState<INotification[]>([]);
@@ -47,14 +46,6 @@ export default function NotificationsPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [unreadCount, setUnreadCount] = useState(0);
-
-  // Get token from localStorage
-  const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  };
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -69,7 +60,7 @@ export default function NotificationsPage() {
       setLoading(true);
       
       const unreadOnlyParam = filter === 'unread' ? '?unread_only=true' : '';
-      const response = await fetch(`${API_BASE_URL}/notifications/${unreadOnlyParam}`, {
+      const response = await fetch(`${NOTIFICATION_API_URL}/notifications/${unreadOnlyParam}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -94,7 +85,7 @@ export default function NotificationsPage() {
     if (!token) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/notifications/unread-count`, {
+      const response = await fetch(`${NOTIFICATION_API_URL}/notifications/unread-count`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -115,7 +106,7 @@ export default function NotificationsPage() {
     if (!token) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/notifications/mark-read`, {
+      const response = await fetch(`${NOTIFICATION_API_URL}/notifications/mark-read`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -142,7 +133,7 @@ export default function NotificationsPage() {
     if (!token) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/notifications/mark-all-read`, {
+      const response = await fetch(`${NOTIFICATION_API_URL}/notifications/mark-all-read`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -169,40 +160,19 @@ export default function NotificationsPage() {
 
   if (loading && notifications.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading notifications...</div>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-gray-900 dark:text-white text-xl">Loading notifications...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Navigation Bar */}
-      <header className="sticky top-0 z-10 bg-gray-900/80 backdrop-blur-md shadow-lg border-b border-gray-700/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div
-            onClick={() => router.push('/dashboard-new')}
-            className="text-2xl font-extrabold text-white flex items-center cursor-pointer group"
-          >
-            <span>Veridia</span><span className="text-indigo-400">App</span>
-          </div>
-          <nav className="flex items-center space-x-4">
-            <button
-              onClick={() => router.push('/profile')}
-              className="text-indigo-300 hover:text-white transition duration-200 text-sm flex items-center"
-            >
-              <User className="w-4 h-4 mr-1" />
-              Profile
-            </button>
-          </nav>
-        </div>
-      </header>
-
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="space-y-6">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold flex items-center">
+            <h1 className="text-3xl font-bold flex items-center text-gray-900 dark:text-white">
               <Bell className="w-8 h-8 mr-3 text-indigo-400" />
               Notifications
               {unreadCount > 0 && (
@@ -226,13 +196,13 @@ export default function NotificationsPage() {
         </div>
 
         {/* Filter Tabs */}
-        <div className="mb-6 flex space-x-4 border-b border-gray-700">
+        <div className="mb-6 flex space-x-4 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={() => setFilter('all')}
             className={`pb-4 px-2 font-medium transition ${
               filter === 'all'
                 ? 'border-b-2 border-indigo-500 text-indigo-500'
-                : 'text-gray-400 hover:text-gray-300'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
             }`}
           >
             All Notifications
@@ -242,7 +212,7 @@ export default function NotificationsPage() {
             className={`pb-4 px-2 font-medium transition ${
               filter === 'unread'
                 ? 'border-b-2 border-indigo-500 text-indigo-500'
-                : 'text-gray-400 hover:text-gray-300'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
             }`}
           >
             Unread {unreadCount > 0 && `(${unreadCount})`}
@@ -251,7 +221,7 @@ export default function NotificationsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-300">
+          <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/50 border border-red-400 dark:border-red-500 rounded-lg text-red-800 dark:text-red-300">
             {error}
           </div>
         )}
@@ -260,8 +230,8 @@ export default function NotificationsPage() {
         <div className="space-y-3">
           {notifications.length === 0 ? (
             <div className="text-center py-12">
-              <Bell className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 text-lg">No notifications yet</p>
+              <Bell className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-600 dark:text-gray-400 text-lg">No notifications yet</p>
               <p className="text-gray-500 text-sm mt-2">
                 When you get notifications, they'll show up here
               </p>
@@ -272,8 +242,8 @@ export default function NotificationsPage() {
                 key={notification.id}
                 className={`p-4 rounded-xl transition cursor-pointer ${
                   notification.is_read
-                    ? 'bg-gray-800 hover:bg-gray-750'
-                    : 'bg-indigo-900/30 border border-indigo-700/50 hover:bg-indigo-900/40'
+                    ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-750'
+                    : 'bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/40'
                 }`}
                 onClick={() => {
                   if (!notification.is_read) {
@@ -288,7 +258,7 @@ export default function NotificationsPage() {
                 <div className="flex items-start space-x-4">
                   {/* Sender Avatar */}
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                       {notification.sender.avatar ? (
                         <img
                           src={notification.sender.avatar}
@@ -305,21 +275,16 @@ export default function NotificationsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2 mb-1">
                       {getNotificationIcon(notification.type)}
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold text-gray-900 dark:text-white">
                         {notification.sender.name}
                       </span>
                       {!notification.is_read && (
                         <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
                       )}
                     </div>
-                    <p className="text-gray-300">{notification.message}</p>
+                    <p className="text-gray-700 dark:text-gray-300">{notification.message}</p>
                     <p className="text-sm text-gray-500 mt-1">
-                      {new Date(notification.timestamp).toLocaleString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      })}
+                      {formatDate(notification.timestamp)}
                     </p>
                   </div>
 
