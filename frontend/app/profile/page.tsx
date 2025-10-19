@@ -97,6 +97,24 @@ export default function ProfilePage() {
   const [showEducationModal, setShowEducationModal] = useState(false);
   const [showPortfolioModal, setShowPortfolioModal] = useState(false);
 
+  // Calculate profile completeness percentage
+  const calculateProfileCompleteness = (profile: IProfile): number => {
+    const fields = [
+      profile.first_name,
+      profile.last_name,
+      profile.bio,
+      profile.avatar,
+      profile.cover_photo,
+      profile.location,
+      profile.job_title,
+      profile.skills && profile.skills.length > 0,
+      profile.work_experience && profile.work_experience.length > 0,
+      profile.portfolio_items && profile.portfolio_items.length > 0,
+    ];
+    const filledFields = fields.filter(Boolean).length;
+    return Math.round((filledFields / fields.length) * 100);
+  };
+
   // Get token from localStorage
   const getToken = () => {
     if (typeof window !== 'undefined') {
@@ -849,37 +867,13 @@ export default function ProfilePage() {
                   <div className="mt-4 pt-4 border-t border-gray-700">
                     <p className="text-sm text-gray-400">
                       Profile Completeness: <span className="text-white font-semibold">
-                        {Math.round(
-                          ((profile.first_name ? 1 : 0) +
-                          (profile.last_name ? 1 : 0) +
-                          (profile.bio ? 1 : 0) +
-                          (profile.avatar ? 1 : 0) +
-                          (profile.cover_photo ? 1 : 0) +
-                          (profile.location ? 1 : 0) +
-                          (profile.job_title ? 1 : 0) +
-                          (profile.skills && profile.skills.length > 0 ? 1 : 0) +
-                          (profile.work_experience && profile.work_experience.length > 0 ? 1 : 0) +
-                          (profile.portfolio_items && profile.portfolio_items.length > 0 ? 1 : 0)) / 10 * 100
-                        )}%
+                        {calculateProfileCompleteness(profile)}%
                       </span>
                     </p>
                     <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
                       <div 
                         className="bg-indigo-600 h-2 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.round(
-                            ((profile.first_name ? 1 : 0) +
-                            (profile.last_name ? 1 : 0) +
-                            (profile.bio ? 1 : 0) +
-                            (profile.avatar ? 1 : 0) +
-                            (profile.cover_photo ? 1 : 0) +
-                            (profile.location ? 1 : 0) +
-                            (profile.job_title ? 1 : 0) +
-                            (profile.skills && profile.skills.length > 0 ? 1 : 0) +
-                            (profile.work_experience && profile.work_experience.length > 0 ? 1 : 0) +
-                            (profile.portfolio_items && profile.portfolio_items.length > 0 ? 1 : 0)) / 10 * 100
-                          )}%`
-                        }}
+                        style={{ width: `${calculateProfileCompleteness(profile)}%` }}
                       />
                     </div>
                   </div>

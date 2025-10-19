@@ -523,6 +523,11 @@ Privacy fields in database:
 
 ## Future Enhancements
 
+### Implemented Features
+- [x] Profile completeness indicator (with visual progress bar)
+- [x] Profile analytics/insights dashboard (views, posts, experience)
+- [x] Profile badges and achievements system (basic structure)
+
 ### Planned Features
 - [ ] File upload for images (not just URLs)
 - [ ] Image cropping and editing tools
@@ -533,10 +538,8 @@ Privacy fields in database:
 - [ ] Activity timeline/feed
 - [ ] Saved posts collection
 - [ ] Recommendations system
-- [ ] Profile completeness indicator
-- [ ] Profile analytics dashboard
+- [ ] Advanced analytics (engagement trends, growth charts)
 - [ ] Export profile data (PDF/JSON)
-- [ ] Profile badges and achievements system
 - [ ] Custom profile URLs (vanity URLs)
 - [ ] Profile sections visibility toggles
 
