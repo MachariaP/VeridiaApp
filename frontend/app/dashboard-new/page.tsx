@@ -1,3 +1,16 @@
+/**
+ * Main Feed Dashboard Page
+ * 
+ * This is the primary dashboard showing:
+ * - All content feed with voting and comments
+ * - Pagination support
+ * - Create post functionality
+ * 
+ * Different from:
+ * - /dashboard: User's personal activity (votes & comments only)
+ * - /feed: Alternative feed view with different navigation layout
+ * - /profile: Comprehensive user profile page
+ */
 'use client';
 
 import React, { useState, useEffect } from 'react';

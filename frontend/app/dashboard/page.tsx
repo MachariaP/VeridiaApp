@@ -1,3 +1,15 @@
+/**
+ * User Activity Dashboard Page
+ * 
+ * This page displays a user's activity including:
+ * - Personal votes cast on content
+ * - Comments made by the user
+ * 
+ * Different from:
+ * - /dashboard-new: Main feed with all content
+ * - /feed: Alternative feed view with custom navigation
+ * - /profile: Comprehensive user profile with portfolio and settings
+ */
 'use client';
 
 import React, { useState, useEffect } from 'react';
