@@ -1,3 +1,17 @@
+/**
+ * Alternative Feed Page with Custom Navigation
+ * 
+ * This page provides an alternative feed view with:
+ * - Custom inline navigation (not using AppLayout)
+ * - Sidebar navigation
+ * - Feed items with vote/comment counts
+ * - Quick actions sidebar
+ * 
+ * Different from:
+ * - /dashboard-new: Main feed using AppLayout component
+ * - /dashboard: User's personal activity only (votes & comments)
+ * - /profile: Comprehensive user profile page
+ */
 'use client';
 
 import React, { useState, useEffect } from 'react';

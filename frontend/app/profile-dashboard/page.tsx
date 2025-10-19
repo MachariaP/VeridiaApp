@@ -1,3 +1,22 @@
+/**
+ * Profile Dashboard Prototype Page
+ * 
+ * This is an alternative profile dashboard design with:
+ * - Mock data for demonstration purposes
+ * - Activity feed with post interactions
+ * - Portfolio showcase with skills and endorsements
+ * - Connections and followers management
+ * - Notifications panel
+ * - Privacy and visibility controls
+ * 
+ * NOTE: This appears to be a design prototype/mockup and uses hardcoded mock data.
+ * For actual user profile functionality, see /profile page.
+ * 
+ * Different from:
+ * - /profile: Real user profile with API integration
+ * - /dashboard: User's activity (votes & comments only)
+ * - /dashboard-new: Main content feed
+ */
 'use client';
 
 import React, { useState, useMemo } from 'react';

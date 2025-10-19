@@ -1,3 +1,21 @@
+/**
+ * Comprehensive User Profile Page
+ * 
+ * This is the full-featured user profile including:
+ * - Cover photo and avatar
+ * - Bio and personal information
+ * - Work experience and education
+ * - Portfolio items
+ * - Achievements and endorsements
+ * - Social links
+ * - User posts
+ * - Profile editing capabilities
+ * 
+ * Different from:
+ * - /profile-dashboard: Simplified dashboard prototype with mock data
+ * - /dashboard: User's activity (votes & comments only)
+ * - /dashboard-new: Main content feed
+ */
 'use client';
 
 import React, { useState, useEffect } from 'react';
