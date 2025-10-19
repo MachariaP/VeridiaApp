@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useMemo } from 'react';
 import {
   User, Aperture, MessageSquare, Bell, Settings, Rss, Globe, Users,
   Briefcase, Heart, ThumbsUp, Share2, CornerDownLeft, Filter, Zap, Lock, Eye
@@ -41,7 +40,14 @@ const mockNotifications = [
 
 // --- UTILITY COMPONENTS ---
 
-const NavItem = ({ icon: Icon, label, isActive, onClick }: any) => (
+interface NavItemProps {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+const NavItem = ({ icon: Icon, label, isActive, onClick }: NavItemProps) => (
   <button
     onClick={onClick}
     className={`flex items-center w-full px-4 py-2 text-sm rounded-lg transition duration-200
@@ -55,7 +61,19 @@ const NavItem = ({ icon: Icon, label, isActive, onClick }: any) => (
   </button>
 );
 
-const PostCard = ({ post }: any) => (
+interface PostCardProps {
+  post: {
+    id: number;
+    type: string;
+    content: string;
+    media: { title: string; url: string } | null;
+    timestamp: string;
+    likes: number;
+    comments: number;
+  };
+}
+
+const PostCard = ({ post }: PostCardProps) => (
   <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md mb-6">
     <div className="flex items-start space-x-4">
       <img src={mockProfile.profilePic} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
@@ -94,7 +112,11 @@ const PostCard = ({ post }: any) => (
 
 // --- CONTENT SECTIONS ---
 
-const ActivityFeedComponent = ({ posts }: any) => (
+interface ActivityFeedProps {
+  posts: typeof mockFeed;
+}
+
+const ActivityFeedComponent = ({ posts }: ActivityFeedProps) => (
   <>
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md mb-6">
       <h2 className="text-xl font-bold mb-4 dark:text-white">Status Update</h2>
@@ -135,20 +157,38 @@ const ActivityFeedComponent = ({ posts }: any) => (
   </>
 );
 
-const ConnectionsList = ({ connections, followers }: any) => (
+interface ConnectionsListProps {
+  connections: number;
+  followers: number;
+}
+
+// Generate consistent mock data for connections
+const mockFollowers = Array.from({ length: 5 }, (_, i) => ({
+  id: i + 1,
+  name: `Connection ${i + 1}`,
+  mutuals: [9, 2, 23, 21, 44][i],
+}));
+
+const mockConnections = Array.from({ length: 5 }, (_, i) => ({
+  id: i + 1,
+  name: `Friend ${i + 1}`,
+  role: 'Colleague',
+}));
+
+const ConnectionsList = ({ connections, followers }: ConnectionsListProps) => (
     <div className="grid md:grid-cols-2 gap-6">
         {/* Followers Section */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
             <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Followers ({followers})</h3>
             <p className="text-sm text-gray-500 mb-4 dark:text-gray-400">Search, filter, or categorize your followers here.</p>
             <div className="space-y-3">
-                {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition">
+                {mockFollowers.map((follower) => (
+                    <div key={follower.id} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition">
                         <div className="flex items-center">
-                            <img src={`https://placehold.co/40x40/FCA5A5/881D1D?text=C${i+1}`} alt="Connection" className="w-10 h-10 rounded-full object-cover mr-3" />
+                            <img src={`https://placehold.co/40x40/FCA5A5/881D1D?text=C${follower.id}`} alt="Connection" className="w-10 h-10 rounded-full object-cover mr-3" />
                             <div>
-                                <div className="font-medium dark:text-white">Connection {i+1}</div>
-                                <div className="text-xs text-gray-500 dark:text-gray-400">Mutuals: {Math.floor(Math.random() * 50)}</div>
+                                <div className="font-medium dark:text-white">{follower.name}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">Mutuals: {follower.mutuals}</div>
                             </div>
                         </div>
                         <button className="text-indigo-600 text-sm hover:text-indigo-500">View</button>
@@ -162,13 +202,13 @@ const ConnectionsList = ({ connections, followers }: any) => (
             <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Connections ({connections})</h3>
             <p className="text-sm text-gray-500 mb-4 dark:text-gray-400">Your categorized professional and social network.</p>
             <div className="space-y-3">
-                {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition">
+                {mockConnections.map((connection) => (
+                    <div key={connection.id} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition">
                         <div className="flex items-center">
-                            <img src={`https://placehold.co/40x40/93C5FD/1E3A8A?text=F${i+1}`} alt="Connection" className="w-10 h-10 rounded-full object-cover mr-3" />
+                            <img src={`https://placehold.co/40x40/93C5FD/1E3A8A?text=F${connection.id}`} alt="Connection" className="w-10 h-10 rounded-full object-cover mr-3" />
                             <div>
-                                <div className="font-medium dark:text-white">Friend {i+1}</div>
-                                <div className="text-xs text-indigo-600 dark:text-indigo-400">Colleague</div>
+                                <div className="font-medium dark:text-white">{connection.name}</div>
+                                <div className="text-xs text-indigo-600 dark:text-indigo-400">{connection.role}</div>
                             </div>
                         </div>
                         <button className="text-gray-400 text-sm hover:text-red-500">Remove</button>
@@ -179,7 +219,20 @@ const ConnectionsList = ({ connections, followers }: any) => (
     </div>
 );
 
-const PortfolioSection = ({ skills }: any) => (
+interface PortfolioSectionProps {
+  skills: string[];
+}
+
+// Generate consistent endorsement counts for skills
+const skillEndorsements: Record<string, number> = {
+  'React': 46,
+  'Tailwind CSS': 12,
+  'Figma': 35,
+  'UX Research': 15,
+  'Prototyping': 50,
+};
+
+const PortfolioSection = ({ skills }: PortfolioSectionProps) => (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Portfolio & Skills Showcase</h2>
 
@@ -190,7 +243,7 @@ const PortfolioSection = ({ skills }: any) => (
                     <span key={index} className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-medium rounded-full dark:bg-indigo-900 dark:text-indigo-300 flex items-center">
                         {skill}
                         <span className="ml-2 font-bold text-xs bg-indigo-600 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                            {Math.floor(Math.random() * 50) + 1}
+                            {skillEndorsements[skill] || 1}
                         </span>
                     </span>
                 ))}
@@ -261,7 +314,12 @@ const SettingsAndPrivacy = () => (
     </div>
 );
 
-const NotificationsPanel = ({ notifications, markAllRead }: any) => {
+interface NotificationsPanelProps {
+  notifications: typeof mockNotifications;
+  markAllRead: () => void;
+}
+
+const NotificationsPanel = ({ notifications, markAllRead }: NotificationsPanelProps) => {
     const unreadCount = notifications.filter((n: any) => !n.read).length;
 
     return (
@@ -315,7 +373,6 @@ const NotificationsPanel = ({ notifications, markAllRead }: any) => {
 // --- MAIN APP COMPONENT ---
 
 export default function ProfileDashboard() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('feed');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [notifications, setNotifications] = useState(mockNotifications);
@@ -465,7 +522,7 @@ export default function ProfileDashboard() {
 
         {/* Simple Onboarding Tip (Mock) */}
         <div className="fixed bottom-24 right-6 p-3 bg-yellow-100 text-yellow-800 rounded-lg shadow-xl text-sm hidden sm:block">
-            <p className="font-medium">💡 Quick Tip: Don&apos;t forget to update your <a href="#bio" className="underline">Bio Section</a>!</p>
+            <p className="font-medium">💡 Quick Tip: Don&apos;t forget to update your Bio Section!</p>
         </div>
 
       </div>
