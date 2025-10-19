@@ -12,7 +12,7 @@
  * - Profile editing capabilities
  * 
  * Different from:
- * - /profile-dashboard: Simplified dashboard prototype with mock data
+ * - /profile-dashboard: Alternative profile dashboard design with mock data
  * - /dashboard: User's activity (votes & comments only)
  * - /dashboard-new: Main content feed
  */

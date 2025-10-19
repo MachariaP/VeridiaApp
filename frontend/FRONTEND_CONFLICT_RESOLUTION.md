@@ -226,8 +226,12 @@ export const isAuthenticated = (): boolean
 #### API Configuration Enhancement
 Consider environment-based configuration:
 ```typescript
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-export const API_BASE_URL = `${API_BASE}/api/v1`;
+// In api-config.ts
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost';
+export const API_BASE_URL = `${API_BASE}:8000/api/v1`;
+export const CONTENT_API_URL = `${API_BASE}:8001/api/v1`;
+export const SEARCH_API_URL = `${API_BASE}:8002/api/v1`;
+// ... etc
 ```
 
 ---

@@ -9,7 +9,7 @@
  * - Notifications panel
  * - Privacy and visibility controls
  * 
- * NOTE: This appears to be a design prototype/mockup and uses hardcoded mock data.
+ * NOTE: This is a design prototype/mockup that uses hardcoded mock data.
  * For actual user profile functionality, see /profile page.
  * 
  * Different from:
