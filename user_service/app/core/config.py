@@ -1,4 +1,5 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import AliasChoices, Field
 from typing import Optional
 
 
@@ -10,7 +11,8 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     
     # Database
-    DATABASE_URL: str
+    # Support both DATABASE_URL and SQLALCHEMY_DATABASE_URL for backward compatibility
+    DATABASE_URL: str = Field(validation_alias=AliasChoices("DATABASE_URL", "SQLALCHEMY_DATABASE_URL"))
     TEST_DATABASE_URL: Optional[str] = None
     
     # JWT Settings
@@ -19,9 +21,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore"  # Ignore extra fields to prevent validation errors
+    )
 
 
 settings = Settings()
