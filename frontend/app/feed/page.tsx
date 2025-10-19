@@ -22,10 +22,8 @@ import {
   Tag,
   ExternalLink,
 } from 'lucide-react';
-
-const CONTENT_API_URL = 'http://localhost:8001/api/v1';
-const VOTING_API_URL = 'http://localhost:8003/api/v1';
-const COMMENT_API_URL = 'http://localhost:8004/api/v1';
+import { getToken, getUserId, clearAuthData } from '@/lib/auth';
+import { SEARCH_API_URL, VOTING_API_URL, COMMENT_API_URL } from '@/lib/api-config';
 
 interface ContentItem {
   _id: string;
@@ -67,20 +65,6 @@ export default function FeedPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
 
-  const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  };
-
-  const getUserId = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('userId');
-    }
-    return null;
-  };
-
   useEffect(() => {
     const token = getToken();
     const uid = getUserId();
@@ -92,14 +76,14 @@ export default function FeedPage() {
 
     setUserId(uid);
     loadFeed();
-  }, []);
+  }, [router]);
 
   const loadFeed = async () => {
     setIsLoading(true);
     try {
       // For now, we'll use the search API to get all content
       // In a production app, there would be a dedicated feed endpoint
-      const response = await fetch(`http://localhost:8002/api/v1/search/query?query=*&per_page=20&page=1`);
+      const response = await fetch(`${SEARCH_API_URL}/search/query?query=*&per_page=20&page=1`);
       
       if (response.ok) {
         const data = await response.json();
@@ -152,10 +136,7 @@ export default function FeedPage() {
   };
 
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-    }
+    clearAuthData();
     router.push('/');
   };
 
