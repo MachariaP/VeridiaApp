@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field, HttpUrl
-from typing import Optional, Literal
+from typing import Optional, Literal, List, Dict, Any
 from datetime import datetime
 
 
@@ -58,6 +58,23 @@ class ProfileOut(BaseModel):
     is_active: bool
     created_at: datetime
     
+    # Dashboard fields
+    job_title: Optional[str] = None
+    company: Optional[str] = None
+    skills: Optional[List[str]] = None
+    work_experience: Optional[List[Dict[str, Any]]] = None
+    education: Optional[List[Dict[str, Any]]] = None
+    portfolio_items: Optional[List[Dict[str, Any]]] = None
+    achievements: Optional[List[Dict[str, Any]]] = None
+    endorsements: Optional[List[Dict[str, Any]]] = None
+    social_links: Optional[Dict[str, str]] = None
+    custom_widgets: Optional[Dict[str, Any]] = None
+    profile_views: int = 0
+    followers_count: int = 0
+    following_count: int = 0
+    status_message: Optional[str] = None
+    status_expiry: Optional[datetime] = None
+    
     model_config = {"from_attributes": True}
 
 
@@ -70,6 +87,20 @@ class ProfileUpdate(BaseModel):
     cover_photo: Optional[str] = Field(None, max_length=512)
     location: Optional[str] = Field(None, max_length=100)
     website: Optional[str] = Field(None, max_length=255)
+    
+    # Dashboard fields
+    job_title: Optional[str] = Field(None, max_length=200)
+    company: Optional[str] = Field(None, max_length=200)
+    skills: Optional[List[str]] = None
+    work_experience: Optional[List[Dict[str, Any]]] = None
+    education: Optional[List[Dict[str, Any]]] = None
+    portfolio_items: Optional[List[Dict[str, Any]]] = None
+    achievements: Optional[List[Dict[str, Any]]] = None
+    endorsements: Optional[List[Dict[str, Any]]] = None
+    social_links: Optional[Dict[str, str]] = None
+    custom_widgets: Optional[Dict[str, Any]] = None
+    status_message: Optional[str] = Field(None, max_length=200)
+    status_expiry: Optional[datetime] = None
 
 
 class SettingsOut(BaseModel):
