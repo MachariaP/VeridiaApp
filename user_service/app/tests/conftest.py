@@ -1,3 +1,9 @@
+# Set test environment variables BEFORE any app imports
+# This ensures settings are loaded with test configuration
+import os
+os.environ["DATABASE_URL"] = os.getenv("TEST_DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/veridiapp_user_test_db")
+os.environ["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "test-secret-key-for-testing-only-do-not-use-in-production")
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -6,12 +12,8 @@ from app.db.base import Base, get_db
 from app.main import app
 from app.models.user import User
 
-# Use in-memory SQLite for testing
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+# Use PostgreSQL for testing to match production database
+engine = create_engine(os.environ["DATABASE_URL"], pool_pre_ping=True)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
