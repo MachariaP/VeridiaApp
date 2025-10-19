@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, MapPin, Globe, Calendar, Edit2, Camera, Settings, Mail, Briefcase, GraduationCap, Award, ExternalLink } from 'lucide-react';
+import { User, MapPin, Globe, Calendar, Edit2, Camera, Settings, Mail, Briefcase, GraduationCap, Award, ExternalLink, Plus, X } from 'lucide-react';
 
 // API Configuration
 const API_BASE_URL = 'http://localhost:8000/api/v1';
@@ -93,6 +93,9 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<'posts' | 'about' | 'experience' | 'portfolio' | 'achievements'>('posts');
   const [isEditing, setIsEditing] = useState(false);
   const [editSection, setEditSection] = useState<string | null>(null);
+  const [showWorkModal, setShowWorkModal] = useState(false);
+  const [showEducationModal, setShowEducationModal] = useState(false);
+  const [showPortfolioModal, setShowPortfolioModal] = useState(false);
 
   // Get token from localStorage
   const getToken = () => {
@@ -362,11 +365,61 @@ export default function ProfilePage() {
         {isEditing && (
           <div className="mt-6 bg-gray-800 rounded-2xl p-6">
             <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const updateData: any = {};
+              
+              // Basic fields
+              ['first_name', 'last_name', 'bio', 'location', 'website', 'job_title', 'company', 'status_message'].forEach(field => {
+                const value = formData.get(field) as string;
+                if (value) updateData[field] = value;
+              });
+
+              // Skills (comma-separated)
+              const skillsValue = formData.get('skills') as string;
+              if (skillsValue) {
+                updateData.skills = skillsValue.split(',').map(s => s.trim()).filter(s => s);
+              }
+
+              // Social links
+              const socialLinks: any = {};
+              ['github', 'linkedin', 'twitter', 'behance'].forEach(platform => {
+                const value = formData.get(platform) as string;
+                if (value) socialLinks[platform] = value;
+              });
+              if (Object.keys(socialLinks).length > 0) {
+                updateData.social_links = socialLinks;
+              }
+
+              try {
+                const token = getToken();
+                const response = await fetch(`${API_BASE_URL}/profile/me`, {
+                  method: 'PUT',
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(updateData),
+                });
+
+                if (response.ok) {
+                  const updatedProfile = await response.json();
+                  setProfile(updatedProfile);
+                  setIsEditing(false);
+                  alert('Profile updated successfully!');
+                } else {
+                  alert('Failed to update profile');
+                }
+              } catch (err) {
+                alert('Error updating profile');
+              }
+            }}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
                   <input
+                    name="first_name"
                     type="text"
                     defaultValue={profile.first_name || ''}
                     className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
@@ -375,6 +428,7 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
                   <input
+                    name="last_name"
                     type="text"
                     defaultValue={profile.last_name || ''}
                     className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
@@ -385,6 +439,7 @@ export default function ProfilePage() {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
                 <textarea
+                  name="bio"
                   defaultValue={profile.bio || ''}
                   maxLength={160}
                   rows={3}
@@ -393,22 +448,118 @@ export default function ProfilePage() {
                 />
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Job Title</label>
+                  <input
+                    name="job_title"
+                    type="text"
+                    defaultValue={profile.job_title || ''}
+                    className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                    placeholder="e.g. Software Engineer"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Company</label>
+                  <input
+                    name="company"
+                    type="text"
+                    defaultValue={profile.company || ''}
+                    className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                    placeholder="e.g. Tech Corp"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Skills (comma-separated)</label>
+                <input
+                  name="skills"
+                  type="text"
+                  defaultValue={profile.skills?.join(', ') || ''}
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. Python, JavaScript, React"
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Location</label>
                 <input
+                  name="location"
                   type="text"
                   defaultValue={profile.location || ''}
                   className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. New York, USA"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Website</label>
                 <input
+                  name="website"
                   type="url"
                   defaultValue={profile.website || ''}
                   className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="https://yourwebsite.com"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Status Message</label>
+                <input
+                  name="status_message"
+                  type="text"
+                  defaultValue={profile.status_message || ''}
+                  maxLength={200}
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="What's on your mind?"
+                />
+              </div>
+
+              <div className="border-t border-gray-700 pt-4">
+                <h3 className="text-lg font-semibold mb-3">Social Links</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">GitHub</label>
+                    <input
+                      name="github"
+                      type="url"
+                      defaultValue={profile.social_links?.github || ''}
+                      className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      placeholder="https://github.com/username"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">LinkedIn</label>
+                    <input
+                      name="linkedin"
+                      type="url"
+                      defaultValue={profile.social_links?.linkedin || ''}
+                      className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      placeholder="https://linkedin.com/in/username"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Twitter</label>
+                    <input
+                      name="twitter"
+                      type="url"
+                      defaultValue={profile.social_links?.twitter || ''}
+                      className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      placeholder="https://twitter.com/username"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Behance</label>
+                    <input
+                      name="behance"
+                      type="url"
+                      defaultValue={profile.social_links?.behance || ''}
+                      className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      placeholder="https://behance.net/username"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-3">
@@ -571,7 +722,12 @@ export default function ProfilePage() {
                 <div className="bg-gray-800 rounded-xl p-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">Work Experience</h3>
-                    <button className="text-indigo-400 hover:text-indigo-300 text-sm">+ Add</button>
+                    <button 
+                      onClick={() => setShowWorkModal(true)}
+                      className="text-indigo-400 hover:text-indigo-300 text-sm flex items-center gap-1"
+                    >
+                      <Plus className="w-4 h-4" /> Add
+                    </button>
                   </div>
                   {profile.work_experience && profile.work_experience.length > 0 ? (
                     <div className="space-y-4">
@@ -595,7 +751,12 @@ export default function ProfilePage() {
                 <div className="bg-gray-800 rounded-xl p-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">Education</h3>
-                    <button className="text-indigo-400 hover:text-indigo-300 text-sm">+ Add</button>
+                    <button 
+                      onClick={() => setShowEducationModal(true)}
+                      className="text-indigo-400 hover:text-indigo-300 text-sm flex items-center gap-1"
+                    >
+                      <Plus className="w-4 h-4" /> Add
+                    </button>
                   </div>
                   {profile.education && profile.education.length > 0 ? (
                     <div className="space-y-4">
@@ -619,7 +780,12 @@ export default function ProfilePage() {
               <div className="bg-gray-800 rounded-xl p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold">Portfolio</h3>
-                  <button className="text-indigo-400 hover:text-indigo-300 text-sm">+ Add Item</button>
+                  <button 
+                    onClick={() => setShowPortfolioModal(true)}
+                    className="text-indigo-400 hover:text-indigo-300 text-sm flex items-center gap-1"
+                  >
+                    <Plus className="w-4 h-4" /> Add Item
+                  </button>
                 </div>
                 {profile.portfolio_items && profile.portfolio_items.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -702,6 +868,359 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Work Experience Modal */}
+      {showWorkModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">Add Work Experience</h3>
+              <button onClick={() => setShowWorkModal(false)} className="text-gray-400 hover:text-white">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const newExp = {
+                title: formData.get('title') as string,
+                company: formData.get('company') as string,
+                start_date: formData.get('start_date') as string,
+                end_date: formData.get('current') === 'on' ? undefined : (formData.get('end_date') as string),
+                current: formData.get('current') === 'on',
+                description: formData.get('description') as string,
+              };
+
+              const currentExperience = profile.work_experience || [];
+              const updatedExperience = [...currentExperience, newExp];
+
+              try {
+                const token = getToken();
+                const response = await fetch(`${API_BASE_URL}/profile/me`, {
+                  method: 'PUT',
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ work_experience: updatedExperience }),
+                });
+
+                if (response.ok) {
+                  const updatedProfile = await response.json();
+                  setProfile(updatedProfile);
+                  setShowWorkModal(false);
+                  alert('Work experience added successfully!');
+                } else {
+                  alert('Failed to add work experience');
+                }
+              } catch (err) {
+                alert('Error adding work experience');
+              }
+            }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Job Title*</label>
+                <input
+                  name="title"
+                  type="text"
+                  required
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. Senior Software Engineer"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Company*</label>
+                <input
+                  name="company"
+                  type="text"
+                  required
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. Tech Corp"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Start Date*</label>
+                  <input
+                    name="start_date"
+                    type="month"
+                    required
+                    className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">End Date</label>
+                  <input
+                    name="end_date"
+                    type="month"
+                    className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center">
+                <input
+                  name="current"
+                  type="checkbox"
+                  id="current"
+                  className="w-4 h-4 text-indigo-600 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500"
+                />
+                <label htmlFor="current" className="ml-2 text-sm text-gray-300">I currently work here</label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                <textarea
+                  name="description"
+                  rows={4}
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                  placeholder="Describe your role and responsibilities..."
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition"
+                >
+                  Add Experience
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowWorkModal(false)}
+                  className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Education Modal */}
+      {showEducationModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">Add Education</h3>
+              <button onClick={() => setShowEducationModal(false)} className="text-gray-400 hover:text-white">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const newEdu = {
+                degree: formData.get('degree') as string,
+                school: formData.get('school') as string,
+                field: formData.get('field') as string,
+                start_date: formData.get('start_date') as string,
+                end_date: formData.get('end_date') as string,
+              };
+
+              const currentEducation = profile.education || [];
+              const updatedEducation = [...currentEducation, newEdu];
+
+              try {
+                const token = getToken();
+                const response = await fetch(`${API_BASE_URL}/profile/me`, {
+                  method: 'PUT',
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ education: updatedEducation }),
+                });
+
+                if (response.ok) {
+                  const updatedProfile = await response.json();
+                  setProfile(updatedProfile);
+                  setShowEducationModal(false);
+                  alert('Education added successfully!');
+                } else {
+                  alert('Failed to add education');
+                }
+              } catch (err) {
+                alert('Error adding education');
+              }
+            }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Degree*</label>
+                <input
+                  name="degree"
+                  type="text"
+                  required
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. Bachelor of Science"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">School*</label>
+                <input
+                  name="school"
+                  type="text"
+                  required
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. University of Technology"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Field of Study</label>
+                <input
+                  name="field"
+                  type="text"
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. Computer Science"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Start Date*</label>
+                  <input
+                    name="start_date"
+                    type="month"
+                    required
+                    className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">End Date</label>
+                  <input
+                    name="end_date"
+                    type="month"
+                    className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition"
+                >
+                  Add Education
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEducationModal(false)}
+                  className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Portfolio Modal */}
+      {showPortfolioModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">Add Portfolio Item</h3>
+              <button onClick={() => setShowPortfolioModal(false)} className="text-gray-400 hover:text-white">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const newItem = {
+                title: formData.get('title') as string,
+                description: formData.get('description') as string,
+                url: formData.get('url') as string,
+                image: formData.get('image') as string,
+                category: formData.get('category') as string,
+              };
+
+              const currentPortfolio = profile.portfolio_items || [];
+              const updatedPortfolio = [...currentPortfolio, newItem];
+
+              try {
+                const token = getToken();
+                const response = await fetch(`${API_BASE_URL}/profile/me`, {
+                  method: 'PUT',
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ portfolio_items: updatedPortfolio }),
+                });
+
+                if (response.ok) {
+                  const updatedProfile = await response.json();
+                  setProfile(updatedProfile);
+                  setShowPortfolioModal(false);
+                  alert('Portfolio item added successfully!');
+                } else {
+                  alert('Failed to add portfolio item');
+                }
+              } catch (err) {
+                alert('Error adding portfolio item');
+              }
+            }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Title*</label>
+                <input
+                  name="title"
+                  type="text"
+                  required
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. My Awesome Project"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                <textarea
+                  name="description"
+                  rows={3}
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                  placeholder="Describe your project..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Project URL</label>
+                <input
+                  name="url"
+                  type="url"
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="https://project-url.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Image URL</label>
+                <input
+                  name="image"
+                  type="url"
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="https://image-url.com/image.jpg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                <input
+                  name="category"
+                  type="text"
+                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  placeholder="e.g. Web Development"
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition"
+                >
+                  Add Item
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPortfolioModal(false)}
+                  className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
