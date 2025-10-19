@@ -143,17 +143,23 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <a href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <button
+                onClick={() => router.push('/dashboard-new')}
+                className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent cursor-pointer"
+              >
                 VeridiaApp
-              </a>
+              </button>
               <span className="text-gray-500">|</span>
               <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
             </div>
             <nav className="flex items-center space-x-4">
-              <a href="/search" className="text-gray-600 hover:text-gray-900 flex items-center gap-2">
+              <button
+                onClick={() => router.push('/search')}
+                className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
+              >
                 <Search className="w-4 h-4" />
                 Search
-              </a>
+              </button>
               <button
                 onClick={handleLogout}
                 className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
@@ -273,20 +279,20 @@ export default function DashboardPage() {
                     <ThumbsUp className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No votes yet</h3>
                     <p className="text-gray-600 mb-6">Start verifying content to see your votes here</p>
-                    <a
-                      href="/search"
+                    <button
+                      onClick={() => router.push('/search')}
                       className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       <Search className="w-4 h-4" />
                       Search Content
-                    </a>
+                    </button>
                   </div>
                 ) : (
                   userVotes.map((vote) => (
-                    <a
+                    <button
                       key={vote.id}
-                      href={`/content/${vote.content_id}`}
-                      className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
+                      onClick={() => router.push(`/content/${vote.content_id}`)}
+                      className="block w-full text-left bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-3">
@@ -304,7 +310,7 @@ export default function DashboardPage() {
                       <div className="text-xs text-gray-400 mt-2">
                         Content ID: {vote.content_id}
                       </div>
-                    </a>
+                    </button>
                   ))
                 )}
               </div>
@@ -315,20 +321,20 @@ export default function DashboardPage() {
                     <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No comments yet</h3>
                     <p className="text-gray-600 mb-6">Join the discussion on content items</p>
-                    <a
-                      href="/search"
+                    <button
+                      onClick={() => router.push('/search')}
                       className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       <Search className="w-4 h-4" />
                       Search Content
-                    </a>
+                    </button>
                   </div>
                 ) : (
                   userComments.map((comment) => (
-                    <a
+                    <button
                       key={comment.id}
-                      href={`/content/${comment.content_id}`}
-                      className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
+                      onClick={() => router.push(`/content/${comment.content_id}`)}
+                      className="block w-full text-left bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
                     >
                       <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                         <Calendar className="w-4 h-4" />
@@ -341,7 +347,7 @@ export default function DashboardPage() {
                       <div className="text-xs text-gray-400">
                         Content ID: {comment.content_id}
                       </div>
-                    </a>
+                    </button>
                   ))
                 )}
               </div>
