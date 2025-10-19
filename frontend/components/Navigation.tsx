@@ -15,6 +15,7 @@ import {
   X as CloseIcon,
   PlusCircle,
 } from 'lucide-react';
+import { clearAuthData } from '@/lib/auth';
 
 interface NavigationProps {
   userId?: string | null;
@@ -41,10 +42,7 @@ export default function Navigation({ userId }: NavigationProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-    }
+    clearAuthData();
     router.push('/');
   };
 
