@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogIn, UserPlus, Lock, CheckCircle, AlertTriangle, Loader, Zap, Aperture, LockKeyhole, Mail } from 'lucide-react';
-
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+import { API_BASE_URL } from '@/lib/api-config';
+import { setAuthData } from '@/lib/auth';
 
 type ViewState = 'home' | 'login' | 'recover';
 
@@ -237,10 +237,7 @@ export default function App() {
   const [message, setMessage] = useState<Message | null>(null);
 
   const handleLoginSuccess = (token: string, userId: string) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', userId);
-    }
+    setAuthData(token, userId);
     window.location.href = '/dashboard-new';
   };
 

@@ -3,10 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, MapPin, Globe, Calendar, Edit2, Camera, Settings, Mail, Briefcase, GraduationCap, Award, ExternalLink, Plus, X } from 'lucide-react';
-
-// API Configuration
-const API_BASE_URL = 'http://localhost:8000/api/v1';
-const CONTENT_API_BASE_URL = 'http://localhost:8001/api/v1';
+import { getToken, getUserId, clearAuthData } from '@/lib/auth';
+import { API_BASE_URL, CONTENT_API_URL } from '@/lib/api-config';
+import { formatDate } from '@/lib/utils';
 
 // TypeScript Interfaces
 interface IProfile {
@@ -115,14 +114,6 @@ export default function ProfilePage() {
     return Math.round((filledFields / fields.length) * 100);
   };
 
-  // Get token from localStorage
-  const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  };
-
   // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
@@ -151,7 +142,7 @@ export default function ProfilePage() {
         setProfile(profileData);
 
         // Fetch user posts
-        const postsResponse = await fetch(`${CONTENT_API_BASE_URL}/content/user/${profileData.id}`, {
+        const postsResponse = await fetch(`${CONTENT_API_URL}/content/user/${profileData.id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

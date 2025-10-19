@@ -3,6 +3,7 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Navigation from './Navigation';
+import { getUserId } from '@/lib/auth';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -19,14 +20,12 @@ export default function AppLayout({ children, rightSidebar }: AppLayoutProps) {
   const shouldShowNavigation = !excludedPaths.includes(pathname);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const uid = localStorage.getItem('userId');
-      setUserId(uid);
-      
-      // Redirect to home if not authenticated (except for excluded paths)
-      if (!uid && shouldShowNavigation) {
-        router.push('/');
-      }
+    const uid = getUserId();
+    setUserId(uid);
+    
+    // Redirect to home if not authenticated (except for excluded paths)
+    if (!uid && shouldShowNavigation) {
+      router.push('/');
     }
   }, [pathname, shouldShowNavigation, router]);
 

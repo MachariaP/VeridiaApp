@@ -18,10 +18,8 @@ import {
   ExternalLink,
   ArrowLeft,
 } from 'lucide-react';
-
-const CONTENT_API_URL = 'http://localhost:8001/api/v1';
-const VOTING_API_URL = 'http://localhost:8003/api/v1';
-const COMMENT_API_URL = 'http://localhost:8004/api/v1';
+import { getToken } from '@/lib/auth';
+import { CONTENT_API_URL, VOTING_API_URL, COMMENT_API_URL } from '@/lib/api-config';
 
 interface Content {
   _id: string;
@@ -90,14 +88,6 @@ export default function ContentDetailPage() {
   // Comment state
   const [newComment, setNewComment] = useState('');
   const [isCommenting, setIsCommenting] = useState(false);
-
-  // Get token from localStorage
-  const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  };
 
   useEffect(() => {
     if (contentId) {
