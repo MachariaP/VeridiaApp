@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, JSON
 from sqlalchemy.sql import func
 from app.db.base import Base
 import enum
@@ -38,6 +38,23 @@ class User(Base):
     language = Column(String(10), default="en", nullable=False)
     privacy_posts = Column(String(20), default="public", nullable=False)
     privacy_profile = Column(String(20), default="public", nullable=False)
+    
+    # Dashboard fields (JSON for flexibility)
+    job_title = Column(String(200), nullable=True)
+    company = Column(String(200), nullable=True)
+    skills = Column(JSON, nullable=True)  # ["Python", "FastAPI", ...]
+    work_experience = Column(JSON, nullable=True)  # [{"title": "...", "company": "...", ...}]
+    education = Column(JSON, nullable=True)  # [{"degree": "...", "school": "...", ...}]
+    portfolio_items = Column(JSON, nullable=True)  # [{"title": "...", "description": "...", ...}]
+    achievements = Column(JSON, nullable=True)  # [{"title": "...", "date": "...", ...}]
+    endorsements = Column(JSON, nullable=True)  # [{"skill": "...", "endorsers": [...], ...}]
+    social_links = Column(JSON, nullable=True)  # {"github": "...", "linkedin": "...", ...}
+    custom_widgets = Column(JSON, nullable=True)  # Widget configurations
+    profile_views = Column(Integer, default=0, nullable=False)
+    followers_count = Column(Integer, default=0, nullable=False)
+    following_count = Column(Integer, default=0, nullable=False)
+    status_message = Column(String(200), nullable=True)  # Current status/mood
+    status_expiry = Column(DateTime(timezone=True), nullable=True)  # When status expires
     
     def __repr__(self):
         return f"<User(id={self.id}, email='{self.email}', role='{self.role}')>"
