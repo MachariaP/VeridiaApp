@@ -111,7 +111,7 @@ The system addresses the critical challenge of information authenticity in the d
 
 ---
 
-## 👥 2. Team Roles and Responsibilities
+## 👥 2. Team Roles and Responsibilities.
 
 | Role | Key Responsibility |
 |------|-------------------|
