@@ -83,7 +83,7 @@ Frontend application will be available at http://localhost:3000
 
 ---
 
-## 📋 1. Project Overview
+## 📋 1. Project Overview.
 
 **Brief Description:**
 
