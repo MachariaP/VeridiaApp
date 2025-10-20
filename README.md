@@ -243,7 +243,7 @@ The system addresses the critical challenge of information authenticity in the d
 
 ---
 
-## 🔒 6. API Security Overview
+## 🔒 6. API Security Overview.
 
 * **JWT Authentication**: JSON Web Tokens provide stateless, scalable authentication across all microservices. Access tokens expire after 15 minutes to minimize exposure risk, while refresh tokens enable seamless session extension. Tokens are signed using RS256 algorithm with rotating keys, and include user ID, roles, and permissions in claims for efficient authorization checks without database lookups.
 
