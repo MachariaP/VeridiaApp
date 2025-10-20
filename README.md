@@ -24,7 +24,7 @@
 
 **⚠️ Important: Before running the application, please review [SECURITY.md](SECURITY.md) for instructions on setting up required environment variables and secrets.**
 
-### Running the Application
+### Running the Application.
 
 #### Backend Setup
 ```bash
